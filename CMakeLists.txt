@@ -21,11 +21,5 @@ add_executable(Raytracing ${SOURCES} ${HEADERS})
 
 enable_warnings(Raytracing)
 
-# Add the include directory for headers
-# include_directories(${PROJECT_SOURCE_DIR}/include)
-
-# Add glm to project
-add_subdirectory(ext/glm)
-#set(glm_DIR ${PROJECT_SOURCE_DIR}/ext/glm)
-# find_package(glm REQUIRED)
-target_link_libraries(Raytracing PUBLIC glm::glm)
+# Add glm to project and source 
+target_include_directories(Raytracing PUBLIC ${PROJECT_SOURCE_DIR}/ext/glm ${PROJECT_SOURCE_DIR})
