@@ -11,17 +11,13 @@ public:
 	void calcNormal();
 
 	bool rayIntersection(Ray& ray) const;
+	bool planeIntersection(Ray& ray) const;
 
-	glm::vec4 getNormal() const;
+	glm::vec3 getNormal() const;
 
 private:
 	glm::vec3 _v0, _v1, _v2, _normal, _colour;
 
 };
-
-glm::vec3 Triangle::getNormal() const {
-	return _normal;
-}
-
 
 // points

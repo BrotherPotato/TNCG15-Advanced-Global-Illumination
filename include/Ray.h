@@ -13,6 +13,9 @@ public:
 	~Ray();
 	glm::vec3 shadowRay();
 	glm::vec3 bounce();
+
+	glm::vec3 getDirection() const;
+	glm::vec3 getStartPos() const;
 	    
 private:
 	glm::vec3 _startPos;
