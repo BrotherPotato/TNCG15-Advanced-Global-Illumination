@@ -9,7 +9,7 @@
 class Ray
 {
 public:
-	Ray(glm::vec3 start, glm::vec3 direction, glm::vec3 colour);
+	Ray(glm::vec3& start, glm::vec3& direction, glm::vec3& colour);
 	~Ray();
 	glm::vec3 shadowRay();
 	glm::vec3 bounce();
@@ -17,7 +17,7 @@ public:
 private:
 	glm::vec3 _startPos;
 	glm::vec3 _endPos;
-	glm::vec3 _rayDirection; //egenvärdet right?
+	glm::vec3 _direction; //egenvärdet right?
 
 	//doubly linked list
 	Ray* _prevRay;
@@ -26,8 +26,8 @@ private:
 	// om vi vill kunnda döda en ray efter x antal studsar
 	int _timeToLive; 
 
-	//slidesen skriver att man ska skapa colourRGB så prob. needs changing later
-	glm::vec3 _colour;
+	//slidesen skriver att man ska skapa colourRGB så prob. needs changing later också double precision
+	glm::vec3 _colour; 
 
 	std::shared_ptr<glm::vec3> startingVertexPos;
 
