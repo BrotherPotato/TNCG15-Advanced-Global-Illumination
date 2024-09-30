@@ -38,6 +38,6 @@ private:
 
 };
 
-Ray::~Ray()
-{
-}
+//Ray::~Ray()
+//{
+//}

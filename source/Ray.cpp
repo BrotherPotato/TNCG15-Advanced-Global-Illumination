@@ -13,4 +13,5 @@ glm::vec3 Ray::getStartPos() const {
 
 Ray::~Ray()
 {
+
 }
