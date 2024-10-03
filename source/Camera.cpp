@@ -25,33 +25,27 @@ void Camera::writeToPPM() {
 	std::ofstream render("../render.ppm");
 
 	// add try catch or if statement
-
+	if (!render) {
+		std::cout << "NEJ";
+		return;
+	}
 
 	render << "P3" << std::endl;
-	render << pixelsPerSide << " " << pixelsPerSide << std::endl;
+	render << _pixelsPerSide << " " << _pixelsPerSide << std::endl;
 	render << "255" << std::endl;
 	int counter = 0;
 
-	for (std::vector<Pixel>& a : pixels)
+	for (std::vector<Pixel>& pixelRow : _pixels)
 	{
-		for (Pixel b : a) {
+		for (Pixel currentPixel : pixelRow) {
 			/*if (counter == 255) {
 				counter = 0;
 			}
 			counter++;
 			render << counter / 3 << " " << counter / 2 << " " << counter << std::endl;*/
-			render << b;
+			render << currentPixel;
 		}
 	}
-
-	/*for (size_t i = 0; i < pixelsPerSide; i++)
-	{
-		for (size_t y = 0; y < pixelsPerSide; y++)
-		{
-			
-		}
-	}*/
-
 
 	render.close();
 	std::cout << "JA";
