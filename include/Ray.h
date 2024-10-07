@@ -23,7 +23,7 @@ public:
 private:
 	glm::vec3 _startPos;
 	glm::vec3 _endPos;
-	glm::vec3 _direction; //egenvärdet right?
+	glm::vec3 _direction;
 
 	//doubly linked list
 	Ray* _prevRay;
@@ -35,7 +35,7 @@ private:
 	//slidesen skriver att man ska skapa colourRGB så prob. needs changing later också double precision
 	CustomColor _colour;
 
-	std::shared_ptr<glm::vec3> startingVertexPos;
+	std::shared_ptr<glm::vec3> _startingVertexPos;
 
 	//använder _ för att visa att det är klassvariabel.
 

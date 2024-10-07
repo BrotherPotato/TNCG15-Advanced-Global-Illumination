@@ -22,6 +22,4 @@ public:
 
 private:
 	double _R, _G, _B;
-
-
 };

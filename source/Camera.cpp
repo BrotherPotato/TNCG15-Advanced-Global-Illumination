@@ -24,7 +24,6 @@ void Camera::writeToPPM() {
 	*/
 	std::ofstream render("../render.ppm");
 
-	// add try catch or if statement
 	if (!render) {
 		std::cout << "NEJ";
 		return;
@@ -40,7 +39,8 @@ void Camera::writeToPPM() {
 	int counter = 0;
 	int onePercentage = 800 * 800 / 100;
 
-	//std::cout << "<" << std::setw(100) << ">" << std::endl << "<";
+	std::cout << "<" << std::setw(100) << ">" << std::endl;
+	std::cout << "<";
 
 	for (std::vector<Pixel>& pixelRow : _pixels)
 	{

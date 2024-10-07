@@ -2,8 +2,10 @@
 
 #include "glm.hpp"
 #include "Ray.h"
+#include "./include/Object.h"
 
-class Triangle
+
+class Triangle : Object
 {
 public:
 	Triangle(glm::vec3& v0, glm::vec3& v1, glm::vec3& v2, CustomColor& color);
