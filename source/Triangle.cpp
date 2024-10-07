@@ -5,8 +5,8 @@
 #include "gtx/normal.hpp" //cross(product) kanske normalize också
 
 
-Triangle::Triangle(glm::vec3& v0, glm::vec3& v1, glm::vec3& v2, glm::vec3& colour) :
-_v0(v0), _v1(v0), _v2(v0), _colour(colour){
+Triangle::Triangle(glm::vec3& v0, glm::vec3& v1, glm::vec3& v2, CustomColor& color) :
+_v0(v0), _v1(v0), _v2(v0), _color(color){
 	calcNormal();
 }
 
@@ -20,7 +20,6 @@ void Triangle::calcNormal() {
 	glm::vec3 v = _v2 - _v0;
 
 	_normal = glm::normalize(glm::cross(u, v));
-
 }
 
 //kanske dåligt namn

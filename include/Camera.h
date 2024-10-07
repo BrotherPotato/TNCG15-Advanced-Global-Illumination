@@ -5,6 +5,9 @@
 #include <fstream>
 #include <iostream>
 
+#include <iomanip>
+
+
 
 // double array of pixels
 

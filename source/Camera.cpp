@@ -35,15 +35,19 @@ void Camera::writeToPPM() {
 	render << "255" << std::endl;
 	int counter = 0;
 
+	std::cout << _pixels.size();
+	std::cout << _pixels[0].size();
+
 	for (std::vector<Pixel>& pixelRow : _pixels)
 	{
-		for (Pixel currentPixel : pixelRow) {
+		for (Pixel& currentPixel : pixelRow) {
 			/*if (counter == 255) {
 				counter = 0;
 			}
 			counter++;
 			render << counter / 3 << " " << counter / 2 << " " << counter << std::endl;*/
 			render << currentPixel;
+			//std::cout << std::setprecision(15) << currentPixel.getColour().getR();
 		}
 	}
 

@@ -1,7 +1,11 @@
 #pragma once
 
 #include "glm.hpp"
+
+
 #include <iostream>
+
+#include "./include/CustomColor.h"
 
 class Pixel
 {
@@ -9,11 +13,11 @@ public:
 	Pixel();
 	~Pixel() = default;
 
-	void setColour(glm::vec3& colour);
-	glm::vec3 getColour() const;
+	void setColour(CustomColor& colour);
+	CustomColor getColour() const;
 
 	friend std::ostream& operator<< (std::ostream&, const Pixel& currentPixel);
 
 private:
-	glm::vec3 _colour;
+	CustomColor _colour;
 };
