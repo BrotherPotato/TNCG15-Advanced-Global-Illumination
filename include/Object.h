@@ -8,5 +8,5 @@ public:
 	// fix intersection functions
 
 private:
-	
+	// material
 };
