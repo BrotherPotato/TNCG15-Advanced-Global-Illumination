@@ -13,7 +13,8 @@ public:
 	Pixel();
 	~Pixel() = default;
 
-	void setColour(CustomColor& colour);
+	void setColour(CustomColor colour);
+	void addColour(CustomColor colour);
 	CustomColor getColour() const;
 
 	friend std::ostream& operator<< (std::ostream&, const Pixel& currentPixel);

@@ -4,7 +4,7 @@
 
 class CustomColor {
 public:
-	CustomColor(double R, double G, double B);
+	CustomColor(double R = 0, double G = 0, double B = 0);
 
 	~CustomColor() = default;
 

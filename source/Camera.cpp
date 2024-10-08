@@ -1,4 +1,10 @@
+
+
+#include "glm.hpp"
+#include "./include/CustomColor.h"
+#include "./include/Ray.h"
 #include "./include/Camera.h"
+
 
 
 
@@ -61,3 +67,25 @@ void Camera::writeToPPM() {
 	render.close();
 	//std::cout << "JA";
 };
+
+void Camera::emitRays() {
+
+	// 800 rader
+	for (int i = 0; i < _pixels.size(); i++) {
+
+		// 800 kolumner
+		for (int j = 0; j < _pixels[i].size(); j++) {
+
+			glm::vec3 endPos = glm::vec3(0, i * 0.0025 - 0.99875, j * 0.0025 - 0.99875); // lecture 4 slide 8
+			glm::vec3 dir = endPos - _cameraPosition;
+
+			// skjut flera rays genom samma pixel
+			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
+
+				Ray ray{ _cameraPosition, dir, CustomColor() };
+				_pixels[i][j].addColour(ray.getColour()); // lägg till färgen från rayens slutpunkt till pixeln
+
+			}
+		}
+	}
+}

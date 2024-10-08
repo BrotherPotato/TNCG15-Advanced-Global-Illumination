@@ -1,11 +1,11 @@
-#pragma once
-
-#include "./include/Triangle.h"
-
-// fix include
-class Shape {
-public:
-
-private:
-
-};
+//#pragma once
+//
+//#include "./include/triangle.h"
+//
+//// fix include
+//class shape {
+//public:
+//
+//private:
+//
+//};

@@ -3,8 +3,14 @@
 
 Pixel::Pixel() : _colour(CustomColor(0.30000000000001, 0.2, 1.0)){}; // between 0 and 1
 
-void Pixel::setColour(CustomColor& colour) {
+void Pixel::setColour(CustomColor colour) {
 	_colour = colour;
+}
+
+void Pixel::addColour(CustomColor colour) {
+	_colour.setR(_colour.getR() + colour.getR());
+	_colour.setG(_colour.getG() + colour.getG());
+	_colour.setB(_colour.getB() + colour.getB());
 }
 
 CustomColor Pixel::getColour() const {
