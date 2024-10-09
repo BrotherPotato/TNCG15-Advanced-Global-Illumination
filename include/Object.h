@@ -8,7 +8,7 @@ public:
 	// fix intersection functions
 
 private:
-	//virtual Material 
+	//virtual getMaterial ? 
 	virtual glm::vec3 getNormal() const;
 	virtual bool planeIntersection(Ray& ray) const; // tror det är den vi ska ha
 };

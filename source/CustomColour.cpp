@@ -19,13 +19,13 @@ double CustomColour::getB() {
 };
 
 void CustomColour::setR(double R) {
-	_R = R;
+	_R = std::max(std::min(R, 1.0), 0.0);
 };
 
 void CustomColour::setG(double G) {
-	_G = G;
+	_G = std::max(std::min(G, 1.0), 0.0);
 };
 
 void CustomColour::setB(double B) {
-	_B = B;
+	_B = std::max(std::min(B, 1.0), 0.0);
 };

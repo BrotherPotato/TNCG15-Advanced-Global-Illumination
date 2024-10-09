@@ -65,7 +65,6 @@ void Camera::writeToPPM() {
 	std::cout << ">";
 
 	render.close();
-	//std::cout << "JA";
 };
 
 void Camera::emitRays() {
