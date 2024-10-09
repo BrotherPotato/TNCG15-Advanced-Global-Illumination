@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include "./include/CustomColor.h"
+#include "./include/CustomColour.h"
 
 class Pixel
 {
@@ -13,12 +13,12 @@ public:
 	Pixel();
 	~Pixel() = default;
 
-	void setColour(CustomColor colour);
-	void addColour(CustomColor colour);
-	CustomColor getColour() const;
+	void setColour(CustomColour colour);
+	void addColour(CustomColour colour);
+	CustomColour getColour() const;
 
 	friend std::ostream& operator<< (std::ostream&, const Pixel& currentPixel);
 
 private:
-	CustomColor _colour;
+	CustomColour _colour;
 };

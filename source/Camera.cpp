@@ -1,7 +1,7 @@
 
 
 #include "glm.hpp"
-#include "./include/CustomColor.h"
+#include "./include/CustomColour.h"
 #include "./include/Ray.h"
 #include "./include/Camera.h"
 
@@ -82,7 +82,7 @@ void Camera::emitRays() {
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 
-				Ray ray{ _cameraPosition, dir, CustomColor() };
+				Ray ray{ _cameraPosition, dir, CustomColour() };
 				_pixels[i][j].addColour(ray.getColour()); // lägg till färgen från rayens slutpunkt till pixeln
 
 			}

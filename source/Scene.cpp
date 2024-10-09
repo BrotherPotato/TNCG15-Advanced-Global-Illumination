@@ -4,7 +4,7 @@ Scene::Scene(){
 
 }
 
-void Scene::createBox(glm::vec3 pos, double width, double length, double height, CustomColor col) {
+void Scene::createBox(glm::vec3 pos, double width, double length, double height, CustomColour colour) {
 
 	width /= 2;
 	length /= 2;
@@ -21,18 +21,18 @@ void Scene::createBox(glm::vec3 pos, double width, double length, double height,
 	glm::vec3 p7(pos.x + width, pos.y + length, pos.z + height);
 
 	// alla trianglar
-	Triangle t0(p0, p3, p1, col);
-	Triangle t1(p0, p2, p3, col);
-	Triangle t2(p1, p4, p0, col);
-	Triangle t3(p1, p5, p4, col);
-	Triangle t4(p4, p2, p0, col);
-	Triangle t5(p4, p6, p2, col);
-	Triangle t6(p1, p3, p7, col);
-	Triangle t7(p1, p7, p5, col);
-	Triangle t8(p7, p2, p6, col);
-	Triangle t9(p7, p3, p2, col);
-	Triangle t10(p4, p5, p7, col);
-	Triangle t11(p4, p7, p6, col);
+	Triangle t0(p0, p3, p1, colour);
+	Triangle t1(p0, p2, p3, colour);
+	Triangle t2(p1, p4, p0, colour);
+	Triangle t3(p1, p5, p4, colour);
+	Triangle t4(p4, p2, p0, colour);
+	Triangle t5(p4, p6, p2, colour);
+	Triangle t6(p1, p3, p7, colour);
+	Triangle t7(p1, p7, p5, colour);
+	Triangle t8(p7, p2, p6, colour);
+	Triangle t9(p7, p3, p2, colour);
+	Triangle t10(p4, p5, p7, colour);
+	Triangle t11(p4, p7, p6, colour);
 
 	// lägg till i listan
 	// funkar inte för tillfället, men ska göra det
@@ -48,5 +48,6 @@ void Scene::createBox(glm::vec3 pos, double width, double length, double height,
 	objects.push_back(t9);
 	objects.push_back(t10);
 	objects.push_back(t11);
+
 
 }
