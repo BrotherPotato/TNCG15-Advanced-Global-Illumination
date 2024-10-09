@@ -17,7 +17,8 @@ public:
 	// kallar på spheres konstruktor, och lägger till i objects
 	void createSphere();
 
+
 private:
 	std::vector<Triangle> a;
-	std::vector<Object*> objects; // innehåller trianglar och sfärer
+	std::vector<Object*> _Objects; // innehåller trianglar och sfärer
 };

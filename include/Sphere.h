@@ -4,7 +4,7 @@
 #include "./include/Object.h"
 #include "./include/Ray.h"
 
-class Sphere : Object {
+class Sphere : public Object {
 public:
 	Sphere(glm::vec3 pos, double r);
 

@@ -4,6 +4,7 @@ Scene::Scene(){
 
 }
 
+
 void Scene::createBox(glm::vec3 pos, double width, double length, double height, CustomColour colour) {
 
 	width /= 2;
@@ -35,19 +36,18 @@ void Scene::createBox(glm::vec3 pos, double width, double length, double height,
 	Triangle t11(p4, p7, p6, colour);
 
 	// lägg till i listan
-	// funkar inte för tillfället, men ska göra det
-	objects.push_back(t0);
-	objects.push_back(t1);
-	objects.push_back(t2);
-	objects.push_back(t3);
-	objects.push_back(t4);
-	objects.push_back(t5);
-	objects.push_back(t6);
-	objects.push_back(t7);
-	objects.push_back(t8);
-	objects.push_back(t9);
-	objects.push_back(t10);
-	objects.push_back(t11);
+	_Objects.push_back(new Triangle(t0));
+	_Objects.push_back(new Triangle(t1));
+	_Objects.push_back(new Triangle(t2));
+	_Objects.push_back(new Triangle(t3));
+	_Objects.push_back(new Triangle(t4));
+	_Objects.push_back(new Triangle(t5));
+	_Objects.push_back(new Triangle(t6));
+	_Objects.push_back(new Triangle(t7));
+	_Objects.push_back(new Triangle(t8));
+	_Objects.push_back(new Triangle(t9));
+	_Objects.push_back(new Triangle(t10));
+	_Objects.push_back(new Triangle(t11));
 
 
 }
