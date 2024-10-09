@@ -6,7 +6,7 @@
 
 class Sphere : public Object {
 public:
-	Sphere(glm::vec3 pos, double r);
+	Sphere(glm::vec3& pos, double radius, CustomColour& colour);
 
 	// returnar en normal beroende på inkommande ray
 	glm::vec3 calcNormal(Ray& ray);
