@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "vector"
 #include "ColourRGB.h"
+#include "LightSource.h"
 
 class Scene {
 public:
@@ -24,4 +25,6 @@ public:
 private:
 	std::vector<Triangle> a;
 	std::vector<Object*> _Objects; // innehåller trianglar och sfärer
+	std::vector<LightSource*> _LightSources; // Lightsource är trianglar 
 };
+ 

@@ -51,10 +51,10 @@ void Scene::createBox(glm::vec3& pos, double width, double length, double height
 }
 
 void Scene::createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, ColourRGB& colour) {
-	// typ så om y är upp kommer inte ihåg
+	// z är upp, skiss finns på whiteboard vänster om COORDSYSTEWM
 	glm::vec3 p0(posBotLeft);
-	glm::vec3 p1(posTopRight.x, posBotLeft.y, posTopRight.z);
-	glm::vec3 p2(posBotLeft.x, posTopRight.y, posBotLeft.z);
+	glm::vec3 p1(posTopRight.x, posTopRight.y, posBotLeft.z);
+	glm::vec3 p2(posBotLeft.x, posBotLeft.y, posTopRight.z);
 	glm::vec3 p3(posTopRight);
 
 	Triangle t0(p0, p3, p1, colour);
