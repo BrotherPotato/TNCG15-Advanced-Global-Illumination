@@ -13,6 +13,7 @@ int main() {
 	std::cout << "hello world";
 
 	Camera a;
+	a.emitRays();
 	a.writeToPPM();
 
 

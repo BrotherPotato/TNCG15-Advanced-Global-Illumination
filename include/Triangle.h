@@ -9,7 +9,7 @@ class Triangle : public Object
 {
 public:
 	Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const CustomColour& colour);
-	~Triangle();
+	//~Triangle();
 	void calcNormal();
 
 	bool rayIntersection(Ray& ray) const;
