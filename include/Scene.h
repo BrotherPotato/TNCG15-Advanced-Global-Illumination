@@ -7,7 +7,7 @@
 #include "Triangle.h"
 #include "Sphere.h"
 #include "vector"
-#include "CustomColour.h"
+#include "ColourRGB.h"
 
 class Scene {
 public:
@@ -20,7 +20,6 @@ public:
 
 	// kallar på spheres konstruktor, och lägger till i objects
 	void createSphere(glm::vec3& pos, double radius, ColourRGB& colour);
-
 
 private:
 	std::vector<Triangle> a;
