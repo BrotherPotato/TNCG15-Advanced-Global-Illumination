@@ -2,7 +2,7 @@
 
 #include "glm.hpp"
 
-class LightSource {
+class LightSource : Triangle {
 
 	LightSource(glm::vec3 pos);
 

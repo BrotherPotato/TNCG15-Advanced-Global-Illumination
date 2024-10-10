@@ -22,6 +22,8 @@ public:
 	// kallar på spheres konstruktor, och lägger till i objects
 	void createSphere(glm::vec3& pos, double radius, ColourRGB& colour);
 
+	void createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight, ColourRGB& colour);
+
 private:
 	std::vector<Triangle> a;
 	std::vector<Object*> _Objects; // innehåller trianglar och sfärer
