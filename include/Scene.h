@@ -25,6 +25,8 @@ public:
 
 	void createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight, Material& material);
 
+	std::vector<Object*> getObjects() { return _Objects; };
+
 private:
 	std::vector<Triangle> a;
 	std::vector<Object*> _Objects; // innehåller trianglar och sfärer

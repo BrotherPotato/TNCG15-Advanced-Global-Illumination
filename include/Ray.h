@@ -22,6 +22,10 @@ public:
 	glm::vec3 getStartPos() const;
 	
 	ColourRGB getColour() const { return _colour; };
+	void addColour(ColourRGB colour);
+
+
+	void reflect(glm::vec3 start, glm::vec3 direction);
 	    
 private:
 	glm::vec3 _startPos;
@@ -41,6 +45,9 @@ private:
 	std::shared_ptr<glm::vec3> _startingVertexPos;
 
 	//använder _ för att visa att det är klassvariabel.
+
+
+	int bounces = 1; // börja på 1 annars dör den
 
 };
 

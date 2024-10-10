@@ -26,9 +26,14 @@ public:
 	// Loop through all pixels, shoot a ray through each pixel.
 	void emitRays();
 
+
+	std::vector<Ray> getRays() { return _rays; };
+
 private:
 	int _pixelsPerSide = 800;
 	std::vector<std::vector<Pixel>> _pixels;
 	glm::vec3 _cameraPosition = glm::vec3(-1.0,0.0,0); // eye poisition enligt slides
 	int _numberOfRaysPerPixel = 50;
+
+	std::vector<Ray> _rays;
 };

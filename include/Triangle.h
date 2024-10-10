@@ -23,10 +23,11 @@ public:
 
 	Material getMaterial() const;
 
+	bool intersect(Ray& ray) const;
 
 private:
 	glm::vec3 _v0, _v1, _v2, _normal;
-	//ColourRGB _colour; 
+	ColourRGB _colour; 
 	Material _ObjectMaterial;
 };
 

@@ -14,6 +14,10 @@ public:
 	glm::vec3 getNormal(Ray& ray) const;
 
 	ColourRGB getColour() const;
+
+
+	bool rayIntersection(Ray& ray) const;
+
 private:
 	glm::vec3 _Position;
 	double _Radius;

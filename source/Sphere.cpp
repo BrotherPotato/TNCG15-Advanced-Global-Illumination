@@ -22,4 +22,7 @@ ColourRGB Sphere::getColour() const {
 };
 
 
+bool Sphere::rayIntersection(Ray& ray) const {
 
+	return false;
+}

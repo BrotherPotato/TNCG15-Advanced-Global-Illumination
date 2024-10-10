@@ -32,8 +32,18 @@ int main() {
 	// rays tillhör kameran, objekten tillhör scenen...
 	// kolla intersektions?
 
+	//for (Ray r : a.getRays()) {
+	//	for (Object* o : s.getObjects()) {
+	//		
+	//	}
+	//}
+
+	
+
 	// render
 	a.writeToPPM();
-
-
 }
+
+// jag såg en skepnad bortom molnen, strålar skjöts ut ur hans ögon, 
+// ett regn av ljus krossade himlavalvet och sprickorna föll ner över skapelsen 
+// berg föll samman i högar av damm, människor med, strålarna tog deras liknelse

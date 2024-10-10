@@ -23,3 +23,24 @@ Ray::~Ray()
 {
 
 }
+
+// smitta av lite färg, mindre för varje bounce... tro mig mannen
+void Ray::addColour(ColourRGB colour) {
+	_colour.setR((_colour.getR() + colour.getR()) /bounces);
+	_colour.setG((_colour.getG() + colour.getG()) / bounces);
+	_colour.setB((_colour.getB() + colour.getB()) / bounces);
+}
+
+
+void Ray::reflect(glm::vec3 start, glm::vec3 direction) {
+
+	// gör nån check här ifall den ens ska studsa, eller om den bara dör på plats via Russian Roulette
+
+	bounces++;
+	_startPos = start;
+	_direction = direction;
+
+	// basically flyttar på rayen
+	// pixlarna kommer fortfarande veta vilka rays som tillhör varje pixel
+
+}
