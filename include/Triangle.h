@@ -3,6 +3,7 @@
 #include "glm.hpp"
 #include "Ray.h"
 #include "./include/Object.h"
+#include "./include/Material.h"
 
 // �ndra color till material sen
 class Triangle : public Object
@@ -19,8 +20,8 @@ public:
 
 private:
 	glm::vec3 _v0, _v1, _v2, _normal;
-	ColourRGB _colour;
-
+	ColourRGB _colour; // flytta in i Material sen
+	Material _ObjectMaterial;
 };
 
 // points
