@@ -4,7 +4,7 @@
 #include "Ray.h"
 #include "./include/Object.h"
 
-// ändra color till material sen
+// ï¿½ndra color till material sen
 class Triangle : public Object
 {
 public:

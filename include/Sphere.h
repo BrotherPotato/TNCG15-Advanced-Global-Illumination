@@ -9,7 +9,7 @@ public:
 	Sphere(glm::vec3& pos, double radius, ColourRGB& colour);
 
 	// returnar en normal beroende på inkommande ray
-	glm::vec3 calcNormal(Ray& ray);
+	glm::vec3 getNormal(Ray& ray);
 private:
 	glm::vec3 position;
 	double radius;

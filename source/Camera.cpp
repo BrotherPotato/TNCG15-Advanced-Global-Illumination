@@ -78,13 +78,18 @@ void Camera::emitRays() {
 			glm::vec3 endPos = glm::vec3(0, i * 0.0025 - 0.99875, j * 0.0025 - 0.99875); // lecture 4 slide 8
 			glm::vec3 dir = endPos - _cameraPosition;
 
-			// skjut flera rays genom samma pixel
+			//// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 
 				Ray ray{ _cameraPosition, dir, ColourRGB() };
-				_pixels[i][j].addColour(ray.getColour()); // lägg till färgen från rayens slutpunkt till pixeln
-
+				_pixels[i][j].addColour(ray.getColour()); // lï¿½gg till fï¿½rgen frï¿½n rayens slutpunkt till pixeln
 			}
+			
+			// testing testing
+			//double ig = i / (double)_pixels.size();
+			//double jg = j / (double)_pixels[i].size();
+			////std::cout << "\n" << ig << " : " << jg;
+			//_pixels[i][j].setColour(CustomColour(ig, jg, 0));
 		}
 	}
 }

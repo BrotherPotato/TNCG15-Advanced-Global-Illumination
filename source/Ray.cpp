@@ -4,7 +4,7 @@
 Ray::Ray(glm::vec3 start, glm::vec3 direction, ColourRGB colour) {
 	_startPos = start;
 	_direction = direction;
-	_colour = ColourRGB();
+	_colour = colour;
 }
 
 glm::vec3 Ray::getDirection() const{

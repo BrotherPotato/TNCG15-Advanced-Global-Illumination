@@ -15,6 +15,7 @@ public:
 	Ray(glm::vec3 start, glm::vec3 direction, ColourRGB colour);
 	~Ray();
 	glm::vec3 shadowRay();
+
 	glm::vec3 bounce();
 
 	glm::vec3 getDirection() const;

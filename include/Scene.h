@@ -7,6 +7,7 @@
 #include "Triangle.h"
 #include "Sphere.h"
 #include "vector"
+#include "CustomColour.h"
 
 class Scene {
 public:
