@@ -9,9 +9,9 @@ public:
 
 	Material(MaterialType material = _LambertianReflector, ColourRGB colour = ColourRGB());
 
-	MaterialType getMaterial();
+	MaterialType getMaterial() const;
 
-	ColourRGB getColour();
+	ColourRGB getColour() const;
 
 private:
 	ColourRGB _ObjectColour;

@@ -22,7 +22,8 @@ int main() {
 
 	// bygg upp innehållet i scenen, bara en box för tillfället
 	glm::vec3 boxPos{ glm::vec3(0,0,10) };
-	ColourRGB boxRed{ ColourRGB(0.5,0,0)};
+	//ColourRGB boxRed{ ColourRGB(0.5,0,0)};
+	Material boxRed{ Material::_LambertianReflector ,ColourRGB(0.5,0,0) };
 	s.createBox(boxPos, 1, 1, 1, boxRed);
 
 	// skjut rays

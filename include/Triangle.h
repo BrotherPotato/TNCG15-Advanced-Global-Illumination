@@ -9,7 +9,8 @@
 class Triangle : public Object
 {
 public:
-	Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const ColourRGB& colour);
+	//Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const ColourRGB& colour);
+	Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const Material& material);
 	//~Triangle();
 	void calcNormal();
 
@@ -18,10 +19,14 @@ public:
 
 	glm::vec3 getNormal() const;
 
+	ColourRGB getColour() const;
+
+	Material getMaterial() const;
+
 
 private:
 	glm::vec3 _v0, _v1, _v2, _normal;
-	ColourRGB _colour; // flytta in i Material sen
+	//ColourRGB _colour; 
 	Material _ObjectMaterial;
 };
 

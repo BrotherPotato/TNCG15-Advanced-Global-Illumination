@@ -12,6 +12,6 @@ public:
 	void emitPhotons();
 private:
 	//glm::vec3 _v0, _v1, _v2, _normal;
-	Material _ObjectMaterial = Material::_LightSource;
+	//Material _ObjectMaterial = Material::_LightSource;
 
 };

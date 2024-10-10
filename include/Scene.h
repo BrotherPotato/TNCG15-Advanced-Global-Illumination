@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "vector"
 #include "ColourRGB.h"
+#include "Material.h"
 #include "LightSource.h"
 
 class Scene {
@@ -15,14 +16,14 @@ public:
 	Scene();
 
 	// istället för att definiera 12 trianglar... lägger också till i objects
-	void createBox(glm::vec3& pos, double width, double length, double height, ColourRGB& colour);
+	void createBox(glm::vec3& pos, double width, double length, double height, Material& material);
 
-	void createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, ColourRGB& colour);
+	void createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, Material& material);
 
 	// kallar på spheres konstruktor, och lägger till i objects
-	void createSphere(glm::vec3& pos, double radius, ColourRGB& colour);
+	void createSphere(glm::vec3& pos, double radius, Material& material);
 
-	void createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight, ColourRGB& colour);
+	void createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight, Material& material);
 
 private:
 	std::vector<Triangle> a;

@@ -4,17 +4,22 @@
 #include "./include/Ray.h"
 
 
-Sphere::Sphere(glm::vec3& pos, double radius, ColourRGB& colour) {
-	position = pos;
-	radius = radius;
+Sphere::Sphere(glm::vec3& pos, double radius, Material& material) {
+	_Position = pos;
+	_Radius = radius;
+	_ObjectMaterial = material;
 }
 
-glm::vec3 Sphere::getNormal(Ray& ray) {
+glm::vec3 Sphere::getNormal(Ray& ray) const {
 
 
 	return glm::vec3();
 
 }
+
+ColourRGB Sphere::getColour() const {
+	return _ObjectMaterial.getColour();
+};
 
 
 

@@ -3,16 +3,16 @@
 
 
 
-Material::Material(MaterialType material = _LambertianReflector, ColourRGB colour = ColourRGB()) {
+Material::Material(MaterialType material, ColourRGB colour) {
 	_ObjectMaterial = material;
 	_ObjectColour = colour;
 };
 // galen syntax jag vet
-Material::MaterialType Material::getMaterial() {
+Material::MaterialType Material::getMaterial() const {
 	return _ObjectMaterial;
 }
 
-ColourRGB Material::getColour() {
+ColourRGB Material::getColour() const {
 	return _ObjectColour;
 }
 
