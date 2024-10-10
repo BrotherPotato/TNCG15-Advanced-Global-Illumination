@@ -1,31 +1,31 @@
-#include "./include/CustomColour.h"
+#include "./include/ColourRGB.h"
 
-CustomColour::CustomColour(double R, double G, double B) {
+ColourRGB::ColourRGB(double R, double G, double B) {
 	_R = std::max(std::min(R, 1.0), 0.0);
 	_G = std::max(std::min(G, 1.0), 0.0);
 	_B = std::max(std::min(B, 1.0), 0.0);
 };
 
-double CustomColour::getR() {
+double ColourRGB::getR() {
 	return _R;
 };
 
-double CustomColour::getG() {
+double ColourRGB::getG() {
 	return _G;
 };
 
-double CustomColour::getB() {
+double ColourRGB::getB() {
 	return _B;
 };
 
-void CustomColour::setR(double R) {
+void ColourRGB::setR(double R) {
 	_R = std::max(std::min(R, 1.0), 0.0);
 };
 
-void CustomColour::setG(double G) {
+void ColourRGB::setG(double G) {
 	_G = std::max(std::min(G, 1.0), 0.0);
 };
 
-void CustomColour::setB(double B) {
+void ColourRGB::setB(double B) {
 	_B = std::max(std::min(B, 1.0), 0.0);
 };

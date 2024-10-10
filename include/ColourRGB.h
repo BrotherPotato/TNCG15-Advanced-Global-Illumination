@@ -2,11 +2,11 @@
 
 #include "algorithm"
 
-class CustomColour {
+class ColourRGB {
 public:
-	CustomColour(double R = 0, double G = 0, double B = 0);
+	ColourRGB(double R = 0, double G = 0, double B = 0);
 
-	~CustomColour() = default;
+	~ColourRGB() = default;
 
 	double getR();
 

@@ -5,7 +5,7 @@ Scene::Scene(){
 }
 
 
-void Scene::createBox(glm::vec3& pos, double width, double length, double height, CustomColour& colour) {
+void Scene::createBox(glm::vec3& pos, double width, double length, double height, ColourRGB& colour) {
 
 	width /= 2;
 	length /= 2;
@@ -50,7 +50,7 @@ void Scene::createBox(glm::vec3& pos, double width, double length, double height
 	_Objects.push_back(new Triangle(t11));
 }
 
-void Scene::createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, CustomColour& colour) {
+void Scene::createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, ColourRGB& colour) {
 	// typ så om y är upp kommer inte ihåg
 	glm::vec3 p0(posBotLeft);
 	glm::vec3 p1(posTopRight.x, posBotLeft.y, posTopRight.z);
@@ -64,6 +64,6 @@ void Scene::createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, CustomCol
 	_Objects.push_back(new Triangle(t1));
 }
 
-void Scene::createSphere(glm::vec3& pos, double radius, CustomColour& colour) {
+void Scene::createSphere(glm::vec3& pos, double radius, ColourRGB& colour) {
 	_Objects.push_back(new Sphere(pos, radius, colour));
 }

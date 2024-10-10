@@ -6,13 +6,13 @@
 #include "glm.hpp"
 #include <iostream>
 
-#include "./include/CustomColour.h"
+#include "./include/ColourRGB.h"
 
 
 class Ray
 {
 public:
-	Ray(glm::vec3 start, glm::vec3 direction, CustomColour colour);
+	Ray(glm::vec3 start, glm::vec3 direction, ColourRGB colour);
 	~Ray();
 	glm::vec3 shadowRay();
 	glm::vec3 bounce();
@@ -20,7 +20,7 @@ public:
 	glm::vec3 getDirection() const;
 	glm::vec3 getStartPos() const;
 	
-	CustomColour getColour() const { return _colour; };
+	ColourRGB getColour() const { return _colour; };
 	    
 private:
 	glm::vec3 _startPos;
@@ -35,7 +35,7 @@ private:
 	int _timeToLive = 25; 
 
 	//slidesen skriver att man ska skapa colourRGB så prob. needs changing later också double precision
-	CustomColour _colour = CustomColour();
+	ColourRGB _colour = ColourRGB();
 
 	std::shared_ptr<glm::vec3> _startingVertexPos;
 

@@ -4,7 +4,7 @@
 #include "./include/Ray.h"
 
 
-Sphere::Sphere(glm::vec3& pos, double radius, CustomColour& colour) {
+Sphere::Sphere(glm::vec3& pos, double radius, ColourRGB& colour) {
 
 }
 
