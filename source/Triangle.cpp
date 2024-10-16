@@ -30,6 +30,19 @@ void Triangle::calcNormal() {
 	_normal = glm::normalize(glm::cross(u, v));
 }
 
+double Triangle::calcArea() { //hintas på i lecture 7 
+	// SSS triangle area calculation 
+	// glm::length() ger skalären/magnitued dvs euklidiska avståndet
+	
+	double a = glm::length(_v1 - _v0);
+	double b = glm::length(_v2 - _v0);
+	double c = glm::length(_v2 - _v1);
+
+	double s = (a + b + c) / 2;
+
+	return sqrt(s * (s - a) * (s - b) * (s - c));
+}
+
 //kanske dåligt namn
 bool Triangle::planeIntersection(Ray& ray) const {
 	//beräkna om ray:n är påväg mot eller iväg från ytan. Lecture 4

@@ -13,6 +13,7 @@ public:
 	Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const Material& material);
 	//~Triangle();
 	void calcNormal();
+	double calcArea();
 
 	bool rayIntersection(Ray& ray) const;
 	bool planeIntersection(Ray& ray) const;
@@ -23,11 +24,12 @@ public:
 
 	Material getMaterial() const;
 
+
 	bool intersect(Ray& ray) const;
 
 private:
 	glm::vec3 _v0, _v1, _v2, _normal;
-	ColourRGB _colour; 
+	ColourRGB _colour{ 0,0,0 };
 	Material _ObjectMaterial;
 };
 

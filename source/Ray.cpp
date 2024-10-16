@@ -21,10 +21,10 @@ glm::vec3 Ray::getStartPos() const {
 
 Ray::~Ray()
 {
-
+	//delete delete?
 }
 
-// smitta av lite färg, mindre för varje bounce... tro mig mannen
+// smitta av lite färg, mindre för varje bounce... tro mig mannen -- vansinne
 void Ray::addColour(ColourRGB colour) {
 	_colour.setR((_colour.getR() + colour.getR()) /bounces);
 	_colour.setG((_colour.getG() + colour.getG()) / bounces);
