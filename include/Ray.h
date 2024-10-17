@@ -7,19 +7,20 @@
 #include <iostream>
 
 #include "./include/ColourRGB.h"
-
+#include "./include/LightSource.h"
 
 class Ray
 {
 public:
 	Ray(glm::vec3 start, glm::vec3 direction, ColourRGB colour);
 	~Ray();
-	glm::vec3 shadowRay();
+	ColourRGB castShadowRay(const LightSource& light);
 
 	glm::vec3 bounce();
 
 	glm::vec3 getDirection() const;
 	glm::vec3 getStartPos() const;
+	glm::vec3 getEndPos() const;
 	
 	ColourRGB getColour() const { return _colour; };
 	void addColour(ColourRGB colour);

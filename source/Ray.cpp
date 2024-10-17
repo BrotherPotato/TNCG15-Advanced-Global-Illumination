@@ -18,6 +18,9 @@ glm::vec3 Ray::getDirection() const{
 glm::vec3 Ray::getStartPos() const {
 	return _startPos;
 }
+glm::vec3 Ray::getEndPos() const {
+	return _endPos;
+}
 
 Ray::~Ray()
 {
@@ -31,6 +34,31 @@ void Ray::addColour(ColourRGB colour) {
 	_colour.setB((_colour.getB() + colour.getB()) / bounces);
 }
 
+ColourRGB Ray::castShadowRay(const LightSource& light) { //maybe list of listsources and objects?
+	ColourRGB shadowColour = ColourRGB(0, 0, 0);
+	
+	glm::vec3 shadowRayDirection = glm::normalize(light.getPosition() - _startPos); //venne om detta är korrekt lol
+	Ray shadowRay(this->getEndPos(), shadowRayDirection, shadowColour );
+
+	double maxDistance = glm::length(light.getPosition() - _startPos); //define the maximum distance the shadow ray can travel
+
+	//for each object in the scene
+	//if the shadow ray intersects with an object
+	//snodde detta. Hitrecord är bara en struct som håller info om vad som träffades. 
+	//HitRecord shadowHit;
+	//if (sceneIntersection(shadowRay, shadowHit)) {
+	//	// If the hit is closer than the light source, the point is in shadow
+	//	if (shadowHit.t < maxDistance) {
+	//		return true; // There is an object between the hit point and the light
+	//	}
+	//}
+	
+
+
+
+
+	return shadowColour;
+}
 
 void Ray::reflect(glm::vec3 start, glm::vec3 direction) {
 
