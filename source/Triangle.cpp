@@ -6,7 +6,7 @@
 
 
 Triangle::Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const Material& material) :
-_v0(v0), _v1(v0), _v2(v0), _ObjectMaterial(material){
+_v0(v0), _v1(v1), _v2(v2), _ObjectMaterial(material){
 	calcNormal();
 }
 

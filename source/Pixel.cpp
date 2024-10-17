@@ -19,6 +19,7 @@ ColourRGB Pixel::getColour() const {
 
 std::ostream& operator<<(std::ostream& write, const Pixel& currentPixel)
 {
+	//static casta kske? Den varnar
 	int R = std::round(currentPixel.getColour().getR() * 255.0);
 	int G = std::round(currentPixel.getColour().getG() * 255.0);
 	int B = std::round(currentPixel.getColour().getB() * 255.0);
