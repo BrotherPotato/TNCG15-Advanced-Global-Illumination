@@ -14,8 +14,9 @@
 
 class Camera {
 public:
-	Camera() {
+	Camera(Scene* scene) {
 		_pixels = {std::vector<std::vector<Pixel>>(_pixelsPerSide, std::vector<Pixel>(_pixelsPerSide))};
+		_scene = scene;
 	};
 
 
@@ -29,6 +30,8 @@ public:
 
 	std::vector<Ray> getRays() { return _rays; };
 
+	Scene* getScene() { return _scene; };
+
 private:
 	int _pixelsPerSide = 800;
 	std::vector<std::vector<Pixel>> _pixels;
@@ -36,4 +39,6 @@ private:
 	int _numberOfRaysPerPixel = 50;
 
 	std::vector<Ray> _rays;
+
+	Scene* _scene;
 };

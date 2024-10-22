@@ -8,7 +8,7 @@ Material::Material(MaterialType material, ColourRGB colour) {
 	_ObjectColour = colour;
 };
 // galen syntax jag vet
-Material::MaterialType Material::getMaterial() const {
+Material::MaterialType Material::getMaterialType() const {
 	return _ObjectMaterial;
 }
 

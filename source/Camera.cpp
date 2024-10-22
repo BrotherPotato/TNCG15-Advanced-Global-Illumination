@@ -81,7 +81,7 @@ void Camera::emitRays() {
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 
-				Ray ray{ _cameraPosition, dir, ColourRGB() };
+				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB() };
 				_pixels[i][j].addColour(ray.getColour()); // l�gg till f�rgen fr�n rayens slutpunkt till pixeln
 			}
 			

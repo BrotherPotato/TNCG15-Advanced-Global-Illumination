@@ -21,7 +21,7 @@ public:
 	void emitPhotons();
 private:
 
-	ColourRGB _lightColour{ 255, 255 ,255 }; //vit default
+	ColourRGB _lightColour{ 1, 1 ,1 }; //vit default
 	double _intensity = 1.0f;
 	glm::vec3 _pos{ 0,0,0 }; //vet inte om denna behövs
 

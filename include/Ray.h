@@ -8,22 +8,34 @@
 
 #include "./include/ColourRGB.h"
 #include "./include/LightSource.h"
+#include "./include/Scene.h"
 
 class Ray
 {
 public:
-	Ray(glm::vec3 start, glm::vec3 direction, ColourRGB colour);
+	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour = ColourRGB(), Ray* prevRay = nullptr);
 	~Ray();
-	ColourRGB castShadowRay(const LightSource& light);
 
-	glm::vec3 bounce();
+	Triangle* rayIntersection(glm::vec3& collisionPoint);
+	
+	ColourRGB castRay();
+	ColourRGB castShadowRay(const LightSource* light);
+
+
+	//glm::vec3 bounce();
+
+	void setNextRay(Ray* nextRay);
 
 	glm::vec3 getDirection() const;
 	glm::vec3 getStartPos() const;
 	glm::vec3 getEndPos() const;
+	int getBounces() const;
+	Scene* getScene() const;
 	
-	ColourRGB getColour() const { return _colour; };
+	ColourRGB getColour() const;
 	void addColour(ColourRGB colour);
+
+
 
 
 	void reflect(glm::vec3 start, glm::vec3 direction);
@@ -48,7 +60,9 @@ private:
 	//använder _ för att visa att det är klassvariabel.
 
 
-	int bounces = 1; // börja på 1 annars dör den
+	int _bounces; // börja på 1 annars dör den, ??? får nu ett värde i Ray()
+
+	Scene* _scene;
 
 };
 

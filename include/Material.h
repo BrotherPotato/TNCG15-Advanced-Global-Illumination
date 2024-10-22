@@ -5,11 +5,11 @@
 class Material {
 public:
 	// använda normal för att bestämma n1 och n2 vid _Transparent
-	enum MaterialType { _LambertianReflector, _MirrorReflection, _Transparent, _LightSource };
+	enum MaterialType { _LambertianReflector, _MirrorReflection, _Transparent, _LightSource }; // Lightsource kanske inte behövs
 
 	Material(MaterialType material = _LambertianReflector, ColourRGB colour = ColourRGB());
 
-	MaterialType getMaterial() const;
+	MaterialType getMaterialType() const;
 
 	ColourRGB getColour() const;
 

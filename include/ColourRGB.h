@@ -1,7 +1,7 @@
 #pragma once
 
 #include "algorithm"
-
+// ColourRGB går mellan 0 och 1
 class ColourRGB {
 public:
 	ColourRGB(double R = 0, double G = 0, double B = 0);

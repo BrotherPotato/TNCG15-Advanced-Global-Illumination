@@ -14,20 +14,20 @@ int main() {
 
 	std::cout << "hello world";
 
-	// skapa kamera
-	Camera a;
-
 	// skapa scen
-	Scene s;
+	Scene scene;
+
+	// skapa kamera
+	Camera camera = Camera(&scene);
 
 	// bygg upp innehållet i scenen, bara en box för tillfället
 	glm::vec3 boxPos{ glm::vec3(0,0,10) };
 	//ColourRGB boxRed{ ColourRGB(0.5,0,0)};
 	Material boxRed{ Material::_LambertianReflector ,ColourRGB(0.5,0,0) };
-	s.createBox(boxPos, 1, 1, 1, boxRed);
+	scene.createBox(boxPos, 1, 1, 1, boxRed);
 
 	// skjut rays
-	a.emitRays();
+	camera.emitRays();
 
 	// rays tillhör kameran, objekten tillhör scenen...
 	// kolla intersektions?
@@ -41,7 +41,7 @@ int main() {
 	
 
 	// render
-	a.writeToPPM();
+	camera.writeToPPM();
 }
 
 // jag såg en skepnad bortom molnen, strålar skjöts ut ur hans ögon, 
