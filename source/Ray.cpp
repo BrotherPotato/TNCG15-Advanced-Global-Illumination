@@ -70,7 +70,7 @@ Triangle* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	return objectHit;
 }
 
-ColourRGB Ray::castRay() { // behöver info från scene om alla object -> inkludera en pointer till scenen?
+ColourRGB Ray::castRay() { 
 	// gör nån check här ifall den ens ska studsa, eller om den bara dör på plats via Russian Roulette
 
 
