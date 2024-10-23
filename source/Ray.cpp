@@ -3,7 +3,7 @@
 // prev and next do not need to be initialized, default nullptr
 Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, Ray* prevRay) {
 	_startPos = start;
-	_direction = direction;
+	_direction = glm::normalize(direction);
 	_colour = colour;
 	_prevRay = prevRay;
 	_scene = scene;
@@ -71,7 +71,10 @@ Triangle* Ray::rayIntersection(glm::vec3& collisionPoint) {
 }
 
 ColourRGB Ray::castRay() { 
-	// gör nån check här ifall den ens ska studsa, eller om den bara dör på plats via Russian Roulette
+
+	// russian roulette
+	double chanceToDie = (double)_bounces / (double)_timeToLive;
+	if ((rand() % 100 + 1) / 100 < chanceToDie) return ColourRGB();
 
 
 	glm::vec3 collisionPoint;
@@ -98,17 +101,41 @@ ColourRGB Ray::castRay() {
 		}
 
 		//return Ray::castShadowRay(); // either a forloop here or add one in casShadowRay and pass the whole array 
+
+
+		// skapa random vec3, om den inte är i samma hemisphere som N, byt riktning på den
+		glm::vec3 randomDirection{ rand(), rand(), rand() };
+		glm::normalize(randomDirection);
+		if (glm::dot(randomDirection, collisionNormal) < 0) randomDirection *= -1.0f;
+
+		Ray::reflect(collisionPoint, randomDirection);
+
 		break;
 	case Material::_MirrorReflection:
 
-		
-		Ray::reflect(this->getDirection(), collisionPoint);
+		// perfect reflection
+		glm::vec3 reflectionDirection = glm::reflect(_direction, collisionNormal);
+		Ray::reflect(collisionPoint, reflectionDirection);
 
 		break;
 	case Material::_Transparent:
 
+		// random 50% chans
+		if ((rand() % 100 + 1) / 100 > 0.5) {
+			glm::vec3 reflectionDirection = glm::reflect(_direction, collisionNormal);
+			Ray::reflect(collisionPoint, reflectionDirection);
+		}
+		else {
+			// helt ärligt vet inte vad 0.5f gör
+			glm::vec3 refractionDirection = glm::refract(_direction, collisionNormal, 0.5f);
+			Ray::reflect(collisionPoint, refractionDirection);
+		}
+
 		break;
 	case Material::_LightSource:
+
+		// om rayen slår ner i en ljuskälla... inga reflections? bara färga av ljuskällans färg?
+		addColour(colour);
 
 		break;
 	default:
@@ -140,15 +167,10 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 	return shadowColour;
 }
 
-void Ray::reflect(glm::vec3 rayInDirection, glm::vec3 collisionPoint) {
-
-	
-	/*_startPos = start;
-	_direction = direction;*/
-	glm::vec3 newDirection;
+void Ray::reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection) {
 
 	// något sånt för att fixa nästa ray
-	Ray* newRay = new Ray(this->getScene(), collisionPoint, newDirection, ColourRGB(), this);
+	Ray* newRay = new Ray(this->getScene(), collisionPoint, reflectionDirection, ColourRGB(), this);
 	this->setNextRay(newRay);
 
 	

@@ -38,7 +38,7 @@ public:
 
 
 
-	void reflect(glm::vec3 start, glm::vec3 direction);
+	void reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection);
 	    
 private:
 	glm::vec3 _startPos;
