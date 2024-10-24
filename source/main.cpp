@@ -5,7 +5,7 @@
 #include "./include/main.h"
 #include "./include/Camera.h"
 #include "./include/Scene.h"
-#include "./include/ColourRGB.h"
+//#include "./include/ColourRGB.h"
 
 
 // camera save to ppm file

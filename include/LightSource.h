@@ -1,15 +1,16 @@
 #pragma once
 
 #include "glm.hpp"
-#include "Triangle.h"
-#include "Material.h"
+#include "./include/Triangle.h"
+//#include "./include/Material.h" in object file
 
+//class Triangle;
 
 class LightSource : Triangle {
 public:
 	LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2);
 
-	glm::vec3 getPosition() const{
+	glm::vec3 getPosition() const {
 		return _pos;
 	}
 

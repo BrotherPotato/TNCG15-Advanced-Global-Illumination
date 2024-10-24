@@ -6,9 +6,14 @@
 #include "glm.hpp"
 #include <iostream>
 
+//#include "./include/Scene.h"
 #include "./include/ColourRGB.h"
 #include "./include/LightSource.h"
-#include "./include/Scene.h"
+
+
+class Scene;
+class Object;
+
 
 class Ray
 {
@@ -16,7 +21,7 @@ public:
 	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour = ColourRGB(), Ray* prevRay = nullptr);
 	~Ray();
 
-	Triangle* rayIntersection(glm::vec3& collisionPoint);
+	Object* rayIntersection(glm::vec3& collisionPoint);
 	
 	ColourRGB castRay();
 	ColourRGB castShadowRay(const LightSource* light);

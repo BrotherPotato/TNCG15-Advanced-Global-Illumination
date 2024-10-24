@@ -1,9 +1,12 @@
 #pragma once
 
 #include "glm.hpp"
-#include "Ray.h"
+
 #include "./include/Object.h"
-#include "./include/Material.h"
+
+#include "./include/Ray.h"
+
+//#include "./include/Material.h" included in object
 
 // �ndra color till material sen
 class Triangle : public Object
@@ -22,7 +25,7 @@ public:
 
 	ColourRGB getColour() const;
 
-	Material getMaterial() const;
+	Material getMaterial() const override;
 
 
 	bool intersect(Ray& ray) const;

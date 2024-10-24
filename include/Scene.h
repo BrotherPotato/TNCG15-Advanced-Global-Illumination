@@ -3,13 +3,22 @@
 // array of objects
 
 // each objects has triangles and a material
-
-#include "Triangle.h"
-#include "Sphere.h"
 #include "vector"
-#include "ColourRGB.h"
-#include "Material.h"
-#include "LightSource.h"
+#include "glm.hpp"
+
+
+
+//#include "./include/ColourRGB.h"
+//#include "./include/Material.h"
+
+//#include "./include/Object.h" 
+// colourrbg -> material -> objects -> triangles -> spheres ->  
+
+//#include "./include/Triangle.h"
+#include "./include/LightSource.h"
+#include "./include/Sphere.h"
+//class Object;
+//class LightSource;
 
 class Scene {
 public:
@@ -29,7 +38,7 @@ public:
 	std::vector<LightSource*> getLightSources() { return _LightSources; };
 
 private:
-	std::vector<Triangle> a;
+	//std::vector<Triangle> a;
 	std::vector<Object*> _Objects; // innehåller trianglar och sfärer
 	std::vector<LightSource*> _LightSources; // Lightsource är trianglar 
 };

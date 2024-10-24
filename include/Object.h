@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "Ray.h"
+//#include <./include/Ray.h>
+#include <./include/Material.h>
+class Ray; //forward declaraion
 
 class  Object {
 public:
@@ -10,7 +12,8 @@ public:
 	virtual glm::vec3 getNormal() const { return glm::vec3(); };
 	//virtual bool planeIntersection(Ray& ray) const; // tror det är den vi ska ha
 
-	virtual bool rayIntersection(Ray& ray) const { return false; };
+	virtual bool rayIntersection(Ray* ray) const { return false; };
+	virtual Material getMaterial() const { return Material(); };
 private:
 	
 };

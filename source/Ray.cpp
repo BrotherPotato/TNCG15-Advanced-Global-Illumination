@@ -52,19 +52,19 @@ Ray::~Ray() {
 
 // smitta av lite färg, mindre för varje bounce... tro mig mannen -- vansinne
 void Ray::addColour(ColourRGB colour) {
-	_colour.setR((_colour.getR() + colour.getR()) / _bounces);
-	_colour.setG((_colour.getG() + colour.getG()) / _bounces);
-	_colour.setB((_colour.getB() + colour.getB()) / _bounces);
+	//_colour.setR((_colour.getR() + colour.getR()) / _bounces);
+	//_colour.setG((_colour.getG() + colour.getG()) / _bounces);
+	//_colour.setB((_colour.getB() + colour.getB()) / _bounces);
 }
 
 // lite osäker hur man vill strukturera intersection delarna
-Triangle* Ray::rayIntersection(glm::vec3& collisionPoint) {
+Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	// go through each object, check ray intersection
-	Triangle* objectHit;
+	Object* objectHit;
 	for (Object* a : this->getScene()->getObjects()) {
-		/*if (a->rayIntersection(this)) {
-			Triangle = a;
-		}*/
+		if (a->rayIntersection(this)) {
+			objectHit = a;
+		}
 		collisionPoint = glm::vec3();
 	}
 	return objectHit;
@@ -73,17 +73,18 @@ Triangle* Ray::rayIntersection(glm::vec3& collisionPoint) {
 ColourRGB Ray::castRay() { 
 
 	// russian roulette
-	double chanceToDie = (double)_bounces / (double)_timeToLive;
+	double bounces = _bounces;
+	double chanceToDie = bounces / _timeToLive;
 	if ((rand() % 100 + 1) / 100 < chanceToDie) return ColourRGB();
 
 
 	glm::vec3 collisionPoint;
 
-	Triangle* collisionTriangle = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly
+	Object* collisionObject = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly
 
-	Material materialHit = collisionTriangle->getMaterial();
+	Material materialHit = collisionObject->getMaterial();
 
-	glm::vec3 collisionNormal = collisionTriangle->getNormal();
+	glm::vec3 collisionNormal = collisionObject->getNormal();
 
 	ColourRGB colour = materialHit.getColour();
 	
