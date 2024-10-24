@@ -1,12 +1,14 @@
 #pragma once
 
 #include "glm.hpp"
+
+#include "./include/Object.h"
+
 #include "./include/Triangle.h"
-//#include "./include/Material.h" in object file
 
 //class Triangle;
 
-class LightSource : Triangle {
+class LightSource : Triangle { // light ska ha en triangöe inte ärva
 public:
 	LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2);
 

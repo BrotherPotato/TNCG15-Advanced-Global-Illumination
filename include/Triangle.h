@@ -4,9 +4,14 @@
 
 #include "./include/Object.h"
 
+
+
+#include "./include/Material.h" //included in object
+
 #include "./include/Ray.h"
 
-//#include "./include/Material.h" included in object
+class ColourRGB;
+class Material;
 
 // �ndra color till material sen
 class Triangle : public Object
@@ -32,7 +37,7 @@ public:
 
 private:
 	glm::vec3 _v0, _v1, _v2, _normal;
-	ColourRGB _colour{ 0,0,0 };
+	//ColourRGB _colour{ 0,0,0 };
 	Material _ObjectMaterial;
 };
 

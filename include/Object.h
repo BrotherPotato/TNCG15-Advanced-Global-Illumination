@@ -4,6 +4,7 @@
 //#include <./include/Ray.h>
 #include <./include/Material.h>
 class Ray; //forward declaraion
+class Material;
 
 class  Object {
 public:
@@ -13,7 +14,7 @@ public:
 	//virtual bool planeIntersection(Ray& ray) const; // tror det är den vi ska ha
 
 	virtual bool rayIntersection(Ray* ray) const { return false; };
-	virtual Material getMaterial() const { return Material(); };
+	virtual Material getMaterial() const;
 private:
 	
 };

@@ -15,7 +15,7 @@ public:
 	// returnar en normal beroende på inkommande ray
 	glm::vec3 getNormal(Ray* ray) const;
 
-	ColourRGB getColour() const;
+	//ColourRGB getColour() const;
 
 	Material getMaterial() const override;
 

@@ -1,8 +1,8 @@
 #pragma once
 #include "glm.hpp"
 #include "Ray.h"
-#include "./include/Object.h"
-#include "./include/Material.h"
+//#include "./include/Object.h"
+//#include "./include/Material.h"
 
 class Rectangle : public Object
 {

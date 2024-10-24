@@ -17,9 +17,9 @@ glm::vec3 Sphere::getNormal(Ray* ray) const {
 
 }
 
-ColourRGB Sphere::getColour() const {
-	return _ObjectMaterial.getColour();
-}
+//ColourRGB Sphere::getColour() const {
+//	return _ObjectMaterial.getColour();
+//}
 
 Material Sphere::getMaterial() const {
 	return _ObjectMaterial;

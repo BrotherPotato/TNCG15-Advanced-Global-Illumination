@@ -11,14 +11,16 @@
 //#include "./include/ColourRGB.h"
 //#include "./include/Material.h"
 
-//#include "./include/Object.h" 
+#include "./include/Object.h" 
 // colourrbg -> material -> objects -> triangles -> spheres ->  
 
-//#include "./include/Triangle.h"
-#include "./include/LightSource.h"
+#include "./include/Triangle.h"
+//#include "./include/LightSource.h"
 #include "./include/Sphere.h"
-//class Object;
-//class LightSource;
+class Object;
+class Material;
+class Triangle;
+class LightSource;
 
 class Scene {
 public:
