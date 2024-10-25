@@ -20,7 +20,7 @@ public:
 	Material getMaterial() const override;
 
 
-	bool rayIntersection(Ray* ray) const;
+	bool rayIntersection(Ray* ray) const override;
 
 private:
 	glm::vec3 _Position;

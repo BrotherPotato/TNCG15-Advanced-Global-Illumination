@@ -84,7 +84,7 @@ ColourRGB Ray::castRay() {
 		std::cout << "ded\n";
 		return ColourRGB();
 	}
-
+	//if (bounces == 1) return ColourRGB(); //testing because stack over flow
 	
 	glm::vec3 collisionPoint;
 	Object* collisionObject = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly

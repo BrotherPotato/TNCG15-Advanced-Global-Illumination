@@ -78,11 +78,11 @@ bool Rectangle::rayIntersection(Ray& ray) const {
 	Triangle t1(_v0, _v1, _v2, _ObjectMaterial);
 	Triangle t2(_v2, _v3, _v0, _ObjectMaterial);
 
-	if (t1.rayIntersection(ray) || t2.rayIntersection(ray)) {
-		return true;
-	}
-	else return false;
-
+	//if (t1.rayIntersection(ray) || t2.rayIntersection(ray)) {
+	//	return true;
+	//}
+	//else return false;
+	return false;
 }
 
 

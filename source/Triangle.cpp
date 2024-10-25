@@ -55,13 +55,13 @@ bool Triangle::planeIntersection(Ray& ray) const {
 }
 
 //Lecture 4
-bool Triangle::rayIntersection(Ray& ray) const {
+bool Triangle::rayIntersection(Ray* ray) const {
 	//Möller-Trumbore algorithm for triangles
 	
-	glm::vec3 T = ray.getStartPos() - _v0;
+	glm::vec3 T = ray->getStartPos() - _v0;
 	glm::vec3 E1 = _v1 - _v0;
 	glm::vec3 E2 = _v2 - _v0;
-	glm::vec3 D = ray.getDirection();
+	glm::vec3 D = ray->getDirection();
 	glm::vec3 P = glm::cross(D, E2);
 	glm::vec3 Q = glm::cross(T, E1);
 
@@ -71,7 +71,7 @@ bool Triangle::rayIntersection(Ray& ray) const {
 	double v = glm::dot(Q, D) / dotPE1;
 	double t = glm::dot(Q, E2) / dotPE1;
 
-	std::cout << "yippe";
+	//std::cout << "yippe";
 
 	if (u < 0 || v < 0 || t < 0) return false; // når den hit, går den inte vidare
 	else return true;

@@ -23,7 +23,7 @@ public:
 	void calcNormal();
 	double calcArea();
 
-	bool rayIntersection(Ray& ray) const;
+	bool rayIntersection(Ray* ray) const override;
 	bool planeIntersection(Ray& ray) const;
 
 	glm::vec3 getNormal() const;
