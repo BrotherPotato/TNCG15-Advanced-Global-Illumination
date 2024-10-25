@@ -60,7 +60,7 @@ void Ray::addColour(ColourRGB colour) {
 // lite osäker hur man vill strukturera intersection delarna
 Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	// go through each object, check ray intersection
-	Object* objectHit = new Object();
+	Object* objectHit = nullptr;
 	for (Object* a : this->getScene()->getObjects()) {
 		if (a->rayIntersection(this)) {
 			objectHit = a;
@@ -81,6 +81,10 @@ ColourRGB Ray::castRay() {
 	glm::vec3 collisionPoint;
 
 	Object* collisionObject = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly
+
+	if (collisionObject == nullptr) {
+		return ColourRGB();
+	}
 
 	Material materialHit = collisionObject->getMaterial();
 
