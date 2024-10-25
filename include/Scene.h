@@ -13,10 +13,12 @@
 
 #include "./include/Object.h" 
 // colourrbg -> material -> objects -> triangles -> spheres ->  
-
-#include "./include/Triangle.h"
-//#include "./include/LightSource.h"
 #include "./include/Sphere.h"
+#include "./include/Triangle.h"
+
+
+
+//#include "./include/LightSource.h"
 class Object;
 class Material;
 class Triangle;

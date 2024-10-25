@@ -11,7 +11,7 @@
 //#include "./include/LightSource.h"
 #include "./include/Scene.h"
 #include "./include/Material.h"
-#include "./include/LightSource.h"
+//#include "./include/LightSource.h"
 
 
 class Scene;

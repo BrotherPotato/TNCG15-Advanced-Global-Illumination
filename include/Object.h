@@ -14,7 +14,7 @@ public:
 	//virtual bool planeIntersection(Ray& ray) const; // tror det är den vi ska ha
 
 	virtual bool rayIntersection(Ray* ray) const { return false; };
-	virtual Material getMaterial() const;
+	virtual Material getMaterial() const { return Material(); };
 private:
 	
 };
