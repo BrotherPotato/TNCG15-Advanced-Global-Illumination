@@ -67,3 +67,17 @@ void Scene::createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, Material&
 void Scene::createSphere(glm::vec3& pos, double radius, Material& material) {
 	_Objects.push_back(new Sphere(pos, radius, material));
 }
+
+void Scene::createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight) {
+	// z är upp, skiss finns på whiteboard vänster om COORDSYSTEWM
+	glm::vec3 p0(posBotLeft);
+	glm::vec3 p1(posTopRight.x, posTopRight.y, posBotLeft.z);
+	glm::vec3 p2(posBotLeft.x, posBotLeft.y, posTopRight.z);
+	glm::vec3 p3(posTopRight);
+
+	LightSource t0(p0, p3, p1);
+	LightSource t1(p0, p2, p3);
+
+	_LightSources.push_back(new LightSource(t0));
+	_LightSources.push_back(new LightSource(t1));
+}

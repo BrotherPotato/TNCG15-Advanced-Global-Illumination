@@ -69,6 +69,8 @@ void Camera::writeToPPM() {
 
 void Camera::emitRays() {
 
+	int totrays = 0;
+
 	// 800 rader
 	for (int i = 0; i < _pixels.size(); i++) {
 
@@ -81,8 +83,11 @@ void Camera::emitRays() {
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 
+				totrays++;
+
+				//std::cout << "shoot! " << totrays << "\n";
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB() };
-				_pixels[i][j].addColour(ray.getColour()); // l�gg till f�rgen fr�n rayens slutpunkt till pixeln
+				_pixels[i][j].setColour(ray.getColour()); 
 			}
 			
 			// testing testing

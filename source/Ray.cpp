@@ -62,6 +62,9 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	// go through each object, check ray intersection
 	Object* objectHit = nullptr;
 	for (Object* a : this->getScene()->getObjects()) {
+
+		// den kallar alltid på  Object::rayIntersection  som alltid returnar false, 
+		// men vi vill ha  Triangle::rayIntersection  och  Sphere::rayIntersection
 		if (a->rayIntersection(this)) {
 			objectHit = a;
 		}
@@ -75,23 +78,28 @@ ColourRGB Ray::castRay() {
 	// russian roulette
 	double bounces = _bounces;
 	double chanceToDie = bounces / _timeToLive;
-	if ((rand() % 100 + 1) / 100 < chanceToDie) return ColourRGB();
+	if ((rand() % 100 + 1) / 100 < chanceToDie) {
+		// den e dö
 
+		std::cout << "ded\n";
+		return ColourRGB();
+	}
 
+	
 	glm::vec3 collisionPoint;
-
 	Object* collisionObject = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly
 
 	if (collisionObject == nullptr) {
 		return ColourRGB();
 	}
 
+	// den kommer inte förbi den där if-statementet
+
 	Material materialHit = collisionObject->getMaterial();
-
 	glm::vec3 collisionNormal = collisionObject->getNormal();
-
 	ColourRGB colour = materialHit.getColour();
 	
+
 
 	switch (materialHit.getMaterialType())
 	{
@@ -140,7 +148,7 @@ ColourRGB Ray::castRay() {
 	case Material::_LightSource:
 
 		// om rayen slår ner i en ljuskälla... inga reflections? bara färga av ljuskällans färg?
-		addColour(colour);
+		_colour = materialHit.getColour();
 
 		break;
 	default:
@@ -175,7 +183,7 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 void Ray::reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection) {
 
 	// något sånt för att fixa nästa ray
-	Ray* newRay = new Ray(this->getScene(), collisionPoint, reflectionDirection, ColourRGB(), this);
+	Ray* newRay = new Ray(this->getScene(), collisionPoint, reflectionDirection, _colour, this);
 	this->setNextRay(newRay);
 
 	

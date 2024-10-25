@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 #include <vector>
 //#include <./include/Ray.h>
 #include <./include/Material.h>
@@ -8,12 +8,15 @@ class Material;
 
 class  Object {
 public:
-	// fix intersection functions
-	//virtual getMaterial ?
-	virtual glm::vec3 getNormal() const { return glm::vec3(); };
-	//virtual bool planeIntersection(Ray& ray) const; // tror det är den vi ska ha
 
-	virtual bool rayIntersection(Ray* ray) const { return false; };
+
+	virtual glm::vec3 getNormal() const { return glm::vec3(); };
+
+	virtual bool rayIntersection(Ray* ray) const {
+		std::cout << "waaaa"; // test för att se om just denna funktion kallas, när den egentligen aldrig ska användas.
+		return false; 
+	};
+
 	virtual Material getMaterial() const { return Material(); };
 private:
 	

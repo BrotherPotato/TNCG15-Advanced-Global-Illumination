@@ -36,7 +36,7 @@ public:
 	// kallar på spheres konstruktor, och lägger till i objects
 	void createSphere(glm::vec3& pos, double radius, Material& material);
 
-	void createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight, Material& material);
+	void createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight);
 
 	std::vector<Object*> getObjects() { return _Objects; };
 	std::vector<LightSource*> getLightSources() { return _LightSources; };

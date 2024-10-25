@@ -71,23 +71,10 @@ bool Triangle::rayIntersection(Ray& ray) const {
 	double v = glm::dot(Q, D) / dotPE1;
 	double t = glm::dot(Q, E2) / dotPE1;
 
+	std::cout << "yippe";
+
 	if (u < 0 || v < 0 || t < 0) return false; // når den hit, går den inte vidare
-
-	// jag tänker att man här kallar på ray.reflect()
-	// så att ray får en ny startposition och direction, lägger på lite färg från ytan
-
-	// från wikipedia, det är kanske fel variabler
-	glm::vec3 pointOfIntersection = glm::vec3(ray.getStartPos() + ray.getDirection());
-	pointOfIntersection.x *= t;
-	pointOfIntersection.y *= t;
-	pointOfIntersection.z *= t;
-
-	glm::vec3 reflectedDirection;
-	
-	ray.addColour(getMaterial().getColour());
-	ray.reflect(pointOfIntersection, reflectedDirection);
-
-	return true;
+	else return true;
 }
 
 //____________________________NEW CLASS________________________________//
