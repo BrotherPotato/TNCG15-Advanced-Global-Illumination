@@ -60,11 +60,12 @@ void Ray::addColour(ColourRGB colour) {
 // lite osäker hur man vill strukturera intersection delarna
 Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	// go through each object, check ray intersection
-	Object* objectHit = nullptr;
+	Object* objectHit = nullptr; //ksk memory leak då vi lämnar funktionen med en pointer till värdet i funktionen. 
 	for (Object* a : this->getScene()->getObjects()) {
 
 		// den kallar alltid på  Object::rayIntersection  som alltid returnar false, 
 		// men vi vill ha  Triangle::rayIntersection  och  Sphere::rayIntersection
+		// rekursiv funktion får programmet att crasha (Stack overflow) tror jag -- Magnus
 		if (a->rayIntersection(this)) {
 			objectHit = a;
 		}
@@ -78,13 +79,14 @@ ColourRGB Ray::castRay() {
 	// russian roulette
 	double bounces = _bounces;
 	double chanceToDie = bounces / _timeToLive;
+	//rand körs en gång och håller värdet tills programmets slut. 
 	if ((rand() % 100 + 1) / 100 < chanceToDie) {
 		// den e dö
 
 		std::cout << "ded\n";
 		return ColourRGB();
 	}
-	//if (bounces == 1) return ColourRGB(); //testing because stack over flow
+	if (bounces == 1) return ColourRGB(); //testing because stack over flow
 	
 	glm::vec3 collisionPoint;
 	Object* collisionObject = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly
@@ -110,6 +112,7 @@ ColourRGB Ray::castRay() {
 				if (objectHit) {
 					materialHit = a.getMaterial;
 				}*/
+			std::cout << "Skibidi: Lambert reflect";
 			castShadowRay(l);
 		}
 

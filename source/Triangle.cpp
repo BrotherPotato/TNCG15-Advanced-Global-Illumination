@@ -32,7 +32,7 @@ void Triangle::calcNormal() {
 
 double Triangle::calcArea() { //hintas på i lecture 7 
 	// SSS triangle area calculation 
-	// glm::length() ger skalären/magnitued dvs euklidiska avståndet
+	// glm::length() ger skalären/magnitud dvs euklidiska avståndet
 	
 	double a = glm::length(_v1 - _v0);
 	double b = glm::length(_v2 - _v0);

@@ -38,8 +38,8 @@ public:
 
 	void createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight);
 
-	std::vector<Object*> getObjects() { return _Objects; };
-	std::vector<LightSource*> getLightSources() { return _LightSources; };
+	std::vector<Object*>& getObjects() { return _Objects; };
+	std::vector<LightSource*>& getLightSources() { return _LightSources; };
 
 private:
 	//std::vector<Triangle> a;
