@@ -70,6 +70,8 @@ void Camera::writeToPPM() {
 void Camera::emitRays() {
 
 	int totrays = 0;
+	double pixelWidth = 2.0 / (double)_pixelsPerSide; // 0.0025
+	double oneless = 1.0 - (1.0 / (double)_pixelsPerSide); // 0.99875
 
 	// 800 rader
 	for (int i = 0; i < _pixels.size(); i++) {
@@ -77,24 +79,31 @@ void Camera::emitRays() {
 		// 800 kolumner
 		for (int j = 0; j < _pixels[i].size(); j++) {
 
-			glm::vec3 endPos = glm::vec3(0, i * 0.0025 - 0.99875, j * 0.0025 - 0.99875); // lecture 4 slide 8
+			glm::vec3 endPos = glm::vec3(0, i * pixelWidth - oneless, j * pixelWidth - oneless); // lecture 4 slide 8
 			glm::vec3 dir = endPos - _cameraPosition;
+
+			ColourRGB pixelCol;
 
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 
 				totrays++;
+				//std::cout << "\nRay: " << totrays << "\t";
 
-				//std::cout << "shoot! " << totrays << "\n";
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB() };
-				_pixels[i][j].setColour(ray.getColour()); 
+
+				if (k == 0) pixelCol = ray.getColour();
+				else pixelCol.mixColours(ray.getColour());
 			}
-			
+
+			_pixels[i][j].setColour(pixelCol);
+
 			// testing testing
 			//double ig = i / (double)_pixels.size();
 			//double jg = j / (double)_pixels[i].size();
 			////std::cout << "\n" << ig << " : " << jg;
 			//_pixels[i][j].setColour(CustomColour(ig, jg, 0));
 		}
+		std::cout << "Row " << i << " done! \n";
 	}
 }

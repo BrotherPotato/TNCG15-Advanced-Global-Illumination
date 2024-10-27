@@ -21,7 +21,7 @@ class LightSource;
 class Ray
 {
 public:
-	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour = ColourRGB(), Ray* prevRay = nullptr);
+	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour = ColourRGB(), Ray* prevRay = nullptr, bool isShadowRay = false);
 	~Ray();
 
 	Object* rayIntersection(glm::vec3& collisionPoint);
@@ -37,10 +37,11 @@ public:
 	glm::vec3 getDirection() const;
 	glm::vec3 getStartPos() const;
 	glm::vec3 getEndPos() const;
+	void setEndpos(glm::vec3 pos) { _endPos = pos; };
 	int getBounces() const;
 	Scene* getScene() const;
 	
-	ColourRGB getColour() const;
+	ColourRGB getColour();
 	void addColour(ColourRGB colour);
 
 
@@ -50,7 +51,7 @@ public:
 	    
 private:
 	glm::vec3 _startPos;
-	glm::vec3 _endPos;
+	glm::vec3 _endPos; // se Triangle::rayIntersection för att hitta där endPos definieras
 	glm::vec3 _direction;
 
 	//doubly linked list
@@ -71,6 +72,9 @@ private:
 	int _bounces; // börja på 1 annars dör den, ??? får nu ett värde i Ray()
 
 	Scene* _scene;
+
+	bool _isShadowRay;
+	bool _lit = false;
 
 };
 

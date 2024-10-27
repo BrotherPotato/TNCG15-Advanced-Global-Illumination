@@ -1,19 +1,22 @@
 #include "./include/Ray.h"
 
 // prev and next do not need to be initialized, default nullptr
-Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, Ray* prevRay) {
+Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, Ray* prevRay, bool isShadowRay) {
 	_startPos = start;
 	_direction = glm::normalize(direction);
 	_colour = colour;
 	_prevRay = prevRay;
 	_scene = scene;
+	_nextRay = nullptr;
 	if (prevRay == nullptr) {
-		_bounces = 0;
+		_bounces = 1;
 	}
 	else {
 		_bounces = prevRay->getBounces() + 1;
 	}
 	
+	_isShadowRay = isShadowRay;
+
 	// jag tänker att när en ray skapas, kollar den direkt vart den ska sluta och studsa vidare
 	// det blir typ en kedjereaktion(?)
 	// asså om jag skapar en Ray(), ska jag kunna i nästa rad bara kalla på dess slutliga färg
@@ -42,8 +45,23 @@ Scene* Ray::getScene() const {
 	return _scene;
 }
 
-ColourRGB Ray::getColour() const {
-	return _colour; 
+ColourRGB Ray::getColour() {
+
+	// går till sista rayen i ledet och tar dess färg
+	Ray* ptr = this;
+	while (ptr->_nextRay != nullptr) {
+
+		// test för att se om man kan endast rita ut de belysta raysen... fungerar inte... ser inga "o" i konsolen :(((
+		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) {
+			std::cout << "o";
+			return ptr->_colour;
+		}
+
+		ptr = ptr->_nextRay;
+
+	}
+	return ptr->_colour; // oavsett om pixeln är belyst eller ej, visa färgen... orealistiskt men vi får nåt iaf
+	return ColourRGB(); // om pixeln inte är belyst, gör den svart... temporär lösning för att testa lambertian... fungerar inte, bilden blir svart
 }
 
 Ray::~Ray() {
@@ -59,60 +77,73 @@ void Ray::addColour(ColourRGB colour) {
 
 // lite osäker hur man vill strukturera intersection delarna
 Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
+
 	// go through each object, check ray intersection
-	Object* objectHit = nullptr; //ksk memory leak då vi lämnar funktionen med en pointer till värdet i funktionen. 
+	Object* objectHit = nullptr; 
 	for (Object* a : this->getScene()->getObjects()) {
 
-		// den kallar alltid på  Object::rayIntersection  som alltid returnar false, 
-		// men vi vill ha  Triangle::rayIntersection  och  Sphere::rayIntersection
-		// rekursiv funktion får programmet att crasha (Stack overflow) tror jag -- Magnus
 		if (a->rayIntersection(this)) {
-			objectHit = a;
+
+			objectHit = a; // nu skickas bara den senaste intersecting object, men vi vill ha den närmaste
 		}
-		collisionPoint = glm::vec3();
 	}
 	return objectHit;
 }
 
 ColourRGB Ray::castRay() { 
 
-	// russian roulette
-	double bounces = _bounces;
-	double chanceToDie = bounces / _timeToLive;
-	//rand körs en gång och håller värdet tills programmets slut. 
-	if ((rand() % 100 + 1) / 100 < chanceToDie) {
-		// den e dö
+	// Russian Roulette
 
-		std::cout << "ded\n";
+	double chanceToDie = (double)_bounces / (double)_timeToLive;
+	double randNum = (rand() % 100 + 1) / 100.0;
+	//std::cout << " " << randNum << ":" << chanceToDie << " ";
+
+	if ( randNum < chanceToDie) {
+		//std::cout << "dedby" << _bounces << "\n";
 		return ColourRGB();
 	}
-	if (bounces == 1) return ColourRGB(); //testing because stack over flow
+
+	// #############################################################
 	
 	glm::vec3 collisionPoint;
 	Object* collisionObject = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly
 
 	if (collisionObject == nullptr) {
+		//std::cout << "miss\n";
 		return ColourRGB();
 	}
-
 	// den kommer inte förbi den där if-statementet
 
 	Material materialHit = collisionObject->getMaterial();
 	glm::vec3 collisionNormal = collisionObject->getNormal();
 	ColourRGB colour = materialHit.getColour();
 	
+	// dum lösning så att shadowrays inte skapar nya shadowrays
+	if (_isShadowRay) {
+		
+		// shadow rays hittar aldrig light source :(((
 
+		if (materialHit.getMaterialType() == Material::_LightSource) {
+			std::cout << "yippee";
+			_lit = true;
+		}
+
+		return ColourRGB();
+	}
 
 	switch (materialHit.getMaterialType())
 	{
 	case Material::_LambertianReflector:
-		
+		//std::cout << "D";
+
+		_colour = materialHit.getColour();
+
 		for(LightSource* l : this->getScene()->getLightSources()) {
 			/*objectHit = l.rayIntersection(this)
 				if (objectHit) {
 					materialHit = a.getMaterial;
 				}*/
-			std::cout << "Skibidi: Lambert reflect";
+				//std::cout << "!!SHADOW RAY!!";
 			castShadowRay(l);
 		}
 
@@ -128,6 +159,7 @@ ColourRGB Ray::castRay() {
 
 		break;
 	case Material::_MirrorReflection:
+		//std::cout << "S";
 
 		// perfect reflection
 		glm::vec3 reflectionDirection = glm::reflect(_direction, collisionNormal);
@@ -135,6 +167,7 @@ ColourRGB Ray::castRay() {
 
 		break;
 	case Material::_Transparent:
+		//std::cout << "T";
 
 		// random 50% chans
 		if ((rand() % 100 + 1) / 100 > 0.5) {
@@ -149,6 +182,7 @@ ColourRGB Ray::castRay() {
 
 		break;
 	case Material::_LightSource:
+		//std::cout << "LS";
 
 		// om rayen slår ner i en ljuskälla... inga reflections? bara färga av ljuskällans färg?
 		_colour = materialHit.getColour();
@@ -161,10 +195,15 @@ ColourRGB Ray::castRay() {
 }
 
 ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsources and objects? pointer to scene istället kommer få kunna nå alla ljus 
-	ColourRGB shadowColour = ColourRGB(0, 0, 0);
+	ColourRGB shadowColour = ColourRGB(1, 0, 0);
 	
-	glm::vec3 shadowRayDirection = glm::normalize(light->getPosition() - _startPos); //venne om detta är korrekt lol
-	Ray shadowRay(this->getScene(), this->getEndPos(), shadowRayDirection, shadowColour );
+	glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta är korrekt lol
+	Ray shadowRay(this->getScene(), this->getEndPos(), shadowRayDirection, shadowColour, this, true);
+	Ray* ptrRay = &shadowRay;
+	this->setNextRay(ptrRay);
+
+	//std::cout << "LS: " << light->getPosition().x << ":" << light->getPosition().y << ":" << light->getPosition().z << "\n";
+	//std::cout << "SR: " << shadowRay.getEndPos().x << ":" << shadowRay.getEndPos().y << ":" << shadowRay.getEndPos().z << "\n\n";
 
 	double maxDistance = glm::length(light->getPosition() - _startPos); //define the maximum distance the shadow ray can travel
 
@@ -178,7 +217,9 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 	//		return true; // There is an object between the hit point and the light
 	//	}
 	//}
+
 	
+
 
 	return shadowColour;
 }

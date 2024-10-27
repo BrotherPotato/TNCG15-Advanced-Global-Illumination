@@ -4,6 +4,12 @@ Scene::Scene(){
 
 }
 
+void Scene::createTriangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Material& mat) {
+
+	Triangle tri(v0, v1, v2, mat);
+	_Objects.push_back(new Triangle(tri));
+
+}
 
 void Scene::createBox(glm::vec3& pos, double width, double length, double height, Material& material) {
 

@@ -71,16 +71,29 @@ bool Triangle::rayIntersection(Ray* ray) const {
 	double v = glm::dot(Q, D) / dotPE1;
 	double t = glm::dot(Q, E2) / dotPE1;
 
-	//std::cout << "yippe";
-
 	if (u < 0 || v < 0 || t < 0) return false; // når den hit, går den inte vidare
-	else return true;
+
+	// om det finns en intersection, sätt endPoint på rayen
+	
+	double det = glm::dot(E1, glm::cross(ray->getDirection(), E2));
+	double invdet = 1.0 / det;
+	double locOnDir = invdet * glm::dot(ray->getDirection(), Q);
+
+	glm::vec3 tDir = ray->getDirection();
+	tDir.x *= locOnDir;
+	tDir.y *= locOnDir;
+	tDir.z *= locOnDir;
+	glm::vec3 pointOfIntersection = ray->getStartPos() + tDir; // det blir inte rätt... kuben är på x=50 men den här ger alltid ett lågt x
+	ray->setEndpos(pointOfIntersection);
+
+	return true;
 }
 
 //____________________________NEW CLASS________________________________//
 LightSource::LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2) :
 	Triangle(v0, v1, v2, Material(Material::_LightSource)) {
 
+	_pos = glm::vec3( (v0.x + v1.x + v2.x)/3.0 , (v0.y + v1.y + v2.y) / 3.0, (v0.z + v1.z + v2.z) / 3.0);
 }
 
 void LightSource::emitPhotons() {

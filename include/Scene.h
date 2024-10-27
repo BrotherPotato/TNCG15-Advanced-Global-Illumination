@@ -31,6 +31,8 @@ public:
 	// istället för att definiera 12 trianglar... lägger också till i objects
 	void createBox(glm::vec3& pos, double width, double length, double height, Material& material);
 
+	void createTriangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Material& mat);
+
 	void createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, Material& material);
 
 	// kallar på spheres konstruktor, och lägger till i objects

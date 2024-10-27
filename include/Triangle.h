@@ -61,7 +61,7 @@ private:
 
 	ColourRGB _lightColour{ 1, 1 ,1 }; //vit default
 	double _intensity = 1.0f;
-	glm::vec3 _pos{ 0,0,0 }; //vet inte om denna behövs
+	glm::vec3 _pos; 
 
 	//glm::vec3 _v0, _v1, _v2, _normal;
 	//Material _ObjectMaterial = Material::_LightSource;
