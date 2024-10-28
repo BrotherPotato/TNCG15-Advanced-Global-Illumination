@@ -110,7 +110,7 @@ ColourRGB Ray::castRay() {
 	//std::cout << " " << randNum << ":" << chanceToDie << " ";
 
 	if ( randNum < chanceToDie) {
-		std::cout << "dedby" << _bounces << "\n";
+		//std::cout << "dedby" << _bounces << "\n";
 		return ColourRGB();
 	}
 
