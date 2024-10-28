@@ -102,8 +102,8 @@ int main() {
 	//scene.createBox(boxPos, 1, 1, 1, lamRed);
 
 	glm::vec3 spherePos{ 5,0,0 };
-	Material purpel{ Material::_Transparent, ColourRGB(1,0,1) };
-	scene.createSphere(spherePos, 3, purpel);
+	Material purpel{ Material::_LambertianReflector, ColourRGB(1,1,1) };
+	scene.createSphere(spherePos, 1, purpel);
 
 	// Only lightsource
 	glm::vec3 L0(1, 1, 1);

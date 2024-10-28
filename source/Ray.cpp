@@ -103,6 +103,7 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 
 ColourRGB Ray::castRay() { 
 
+
 	// Russian Roulette
 
 	double chanceToDie = (double)_bounces / (double)_timeToLive;
@@ -137,7 +138,7 @@ ColourRGB Ray::castRay() {
 		// shadow rays hittar aldrig light source :(((
 
 		if (materialHit.getMaterialType() == Material::_LightSource) {
-			//std::cout << "yippee";
+			std::cout << "yippee";
 			_lit = true;
 		}
 
