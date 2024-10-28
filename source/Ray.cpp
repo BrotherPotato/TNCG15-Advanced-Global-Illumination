@@ -53,14 +53,14 @@ ColourRGB Ray::getColour() {
 
 		// test för att se om man kan endast rita ut de belysta raysen... fungerar inte... ser inga "o" i konsolen :(((
 		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) {
-			std::cout << "o";
+			//std::cout << "o";
 			return ptr->_colour;
 		}
 
 		ptr = ptr->_nextRay;
 
 	}
-	return ptr->_colour; // oavsett om pixeln är belyst eller ej, visa färgen... orealistiskt men vi får nåt iaf
+	//return ptr->_colour; // oavsett om pixeln är belyst eller ej, visa färgen... orealistiskt men vi får nåt iaf
 	return ColourRGB(); // om pixeln inte är belyst, gör den svart... temporär lösning för att testa lambertian... fungerar inte, bilden blir svart
 }
 
@@ -80,13 +80,24 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 
 	// go through each object, check ray intersection
 	Object* objectHit = nullptr; 
+	double closestDist = 1000.0;
+	double minDist = 1.0;
+	glm::vec3 distance;
 	for (Object* a : this->getScene()->getObjects()) {
 
 		if (a->rayIntersection(this)) {
 
-			objectHit = a; // nu skickas bara den senaste intersecting object, men vi vill ha den närmaste
+			distance = glm::vec3(getEndPos() - getStartPos());
+			
+			if (glm::length(distance) < closestDist && glm::length(distance) > minDist) {
+				closestDist = glm::length(distance);
+				//std::cout << closestDist << " ";
+				objectHit = a;
+			}
+			//objectHit = a; // nu skickas bara den senaste intersecting object, men vi vill ha den närmaste
 		}
 	}
+	if (objectHit != nullptr) objectHit->rayIntersection(this); // för att få tillbaka rätt endPos
 	return objectHit;
 }
 
@@ -99,7 +110,7 @@ ColourRGB Ray::castRay() {
 	//std::cout << " " << randNum << ":" << chanceToDie << " ";
 
 	if ( randNum < chanceToDie) {
-		//std::cout << "dedby" << _bounces << "\n";
+		std::cout << "dedby" << _bounces << "\n";
 		return ColourRGB();
 	}
 
@@ -114,6 +125,8 @@ ColourRGB Ray::castRay() {
 	}
 	// den kommer inte förbi den där if-statementet
 
+	//std::cout << "Endpos: " << getEndPos().x << " : " << getEndPos().y << " : " << getEndPos().z << "\n";
+
 	Material materialHit = collisionObject->getMaterial();
 	glm::vec3 collisionNormal = collisionObject->getNormal();
 	ColourRGB colour = materialHit.getColour();
@@ -124,7 +137,7 @@ ColourRGB Ray::castRay() {
 		// shadow rays hittar aldrig light source :(((
 
 		if (materialHit.getMaterialType() == Material::_LightSource) {
-			std::cout << "yippee";
+			//std::cout << "yippee";
 			_lit = true;
 		}
 
@@ -155,7 +168,7 @@ ColourRGB Ray::castRay() {
 		glm::normalize(randomDirection);
 		if (glm::dot(randomDirection, collisionNormal) < 0) randomDirection *= -1.0f;
 
-		Ray::reflect(collisionPoint, randomDirection);
+		//Ray::reflect(collisionPoint, randomDirection);
 
 		break;
 	case Material::_MirrorReflection:
@@ -199,6 +212,7 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 	
 	glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta är korrekt lol
 	Ray shadowRay(this->getScene(), this->getEndPos(), shadowRayDirection, shadowColour, this, true);
+
 	Ray* ptrRay = &shadowRay;
 	this->setNextRay(ptrRay);
 
@@ -227,7 +241,7 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 void Ray::reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection) {
 
 	// något sånt för att fixa nästa ray
-	Ray* newRay = new Ray(this->getScene(), collisionPoint, reflectionDirection, _colour, this);
+	Ray* newRay = new Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
 	this->setNextRay(newRay);
 
 	

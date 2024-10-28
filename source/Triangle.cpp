@@ -71,18 +71,14 @@ bool Triangle::rayIntersection(Ray* ray) const {
 	double v = glm::dot(Q, D) / dotPE1;
 	double t = glm::dot(Q, E2) / dotPE1;
 
-	if (u < 0 || v < 0 || t < 0) return false; // når den hit, går den inte vidare
+	if (u < 0 || u>1 || v < 0 || u+v>1 || t < 0) return false; // når den hit, går den inte vidare
 
 	// om det finns en intersection, sätt endPoint på rayen
-	
-	double det = glm::dot(E1, glm::cross(ray->getDirection(), E2));
-	double invdet = 1.0 / det;
-	double locOnDir = invdet * glm::dot(ray->getDirection(), Q);
 
 	glm::vec3 tDir = ray->getDirection();
-	tDir.x *= locOnDir;
-	tDir.y *= locOnDir;
-	tDir.z *= locOnDir;
+	tDir.x *= t;
+	tDir.y *= t;
+	tDir.z *= t;
 	glm::vec3 pointOfIntersection = ray->getStartPos() + tDir; // det blir inte rätt... kuben är på x=50 men den här ger alltid ett lågt x
 	ray->setEndpos(pointOfIntersection);
 

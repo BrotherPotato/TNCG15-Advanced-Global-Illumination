@@ -74,6 +74,10 @@ bool Sphere::rayIntersection(Ray* ray) const {
 	}
 
 	if (d < 0) return false; //intersection behind the object 
-	
+
+	//std::cout << "SPHERE";
+	ray->setEndpos(intersection);
+
+	return true;
 	//osäker vad vi vill ha returnerat
 }

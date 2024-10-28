@@ -13,6 +13,7 @@
 #include "./include/Material.h"
 //#include "./include/LightSource.h"
 
+#include <random>
 
 class Scene;
 class Object;
@@ -75,6 +76,11 @@ private:
 
 	bool _isShadowRay;
 	bool _lit = false;
+
+	//std::mt19937 _gen;
+	//std::uniform_real_distribution<float> _rng;
+
+
 
 };
 
