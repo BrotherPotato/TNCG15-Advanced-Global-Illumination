@@ -26,7 +26,7 @@ public:
 	bool rayIntersection(Ray* ray) const override;
 	bool planeIntersection(Ray& ray) const;
 
-	glm::vec3 getNormal() const;
+	glm::vec3 getNormal(Ray* ray) const override;
 
 	ColourRGB getColour() const;
 

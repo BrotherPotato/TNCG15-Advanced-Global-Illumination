@@ -62,7 +62,7 @@ private:
 	Ray* _nextRay;
 
 	// om vi vill kunnda döda en ray efter x antal studsar
-	int _timeToLive = 3; 
+	int _timeToLive = 10; 
 
 	//slidesen skriver att man ska skapa colourRGB så prob. needs changing later också double precision
 	ColourRGB _colour = ColourRGB();

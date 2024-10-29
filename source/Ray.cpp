@@ -12,7 +12,7 @@ Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, R
 		_bounces = 1;
 	}
 	else {
-		_bounces = prevRay->getBounces() + 1;
+		_bounces = prevRay->getBounces() + 1; // ändra så att den endast ökar på lambertian surfaces
 	}
 	
 	_isShadowRay = isShadowRay;
@@ -51,11 +51,9 @@ ColourRGB Ray::getColour() {
 	Ray* ptr = this;
 	while (ptr != nullptr && ptr->_nextRay != nullptr) {
 		
-		//std::cout << " ";
-		
 		// test för att se om man kan endast rita ut de belysta raysen... fungerar inte... ser inga "o" i konsolen :(((
 		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) {
-			//std::cout << " THIS PIXEL HAS COLOUR " << ptr->_colour.getR() << ":" << ptr->_colour.getG() << ":" << ptr->_colour.getB() << "\n\n";
+
 			return ptr->_colour;
 		}
 
@@ -63,7 +61,7 @@ ColourRGB Ray::getColour() {
 
 	}
 	
-	return ColourRGB(); // om pixeln inte är belyst, gör den svart... temporär lösning för att testa lambertian... fungerar inte, bilden blir svart
+	return ColourRGB(); 
 }
 
 Ray::~Ray() {
@@ -83,11 +81,14 @@ ColourRGB Ray::sumColours() {
 	bool isLit = false;
 	int counter = 0;
 	while (ptr->_nextRay != nullptr) {
+
 		colourSum.mixColours(ptr->_colour);
 		counter++;
+
 		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) {
-			//std::cout << "o";
+
 			isLit = ptr->_nextRay->_lit;
+			//return ptr->getColour();
 		}
 		ptr = ptr->_nextRay;
 	}
@@ -97,7 +98,6 @@ ColourRGB Ray::sumColours() {
 		return colourSum;
 	}
 
-	//return ptr->_colour; // oavsett om pixeln är belyst eller ej, visa färgen... orealistiskt men vi får nåt iaf
 	return ColourRGB();
 }
 
@@ -107,15 +107,13 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	// go through each object, check ray intersection
 	Object* objectHit = nullptr; 
 	double closestDist = 1000.0;
-	double minDist = 1.0;
+	double minDist = 0.001;
 	glm::vec3 distance;
 
 	// går igenom alla objects
 	for (Object* a : this->getScene()->getObjects()) {
 
 		if (a->rayIntersection(this)) {
-
-			
 
 			distance = glm::vec3(getEndPos() - getStartPos());
 			
@@ -125,8 +123,6 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 			}
 		}
 	}
-
-	
 
 	if (objectHit != nullptr) {
 		//if (objectHit->getMaterial().getMaterialType() == Material::_LightSource) std::cout << "hooray!";
@@ -154,32 +150,34 @@ ColourRGB Ray::castRay() {
 	// den kommer inte förbi den där if-statementet
 
 	Material materialHit = collisionObject->getMaterial();
-	glm::vec3 collisionNormal = collisionObject->getNormal();
+	glm::vec3 collisionNormal = collisionObject->getNormal(this);
 	ColourRGB colour = materialHit.getColour();
 	
 	// dum lösning så att shadowrays inte skapar nya shadowrays
 	if (_isShadowRay) {
 		
-		// shadow rays hittar aldrig light source :(((
 		if (materialHit.getMaterialType() == Material::_LightSource) {
-			//std::cout << "YIPPEE \n";
 			_lit = true;
 		}
-		else {
-			//std::cout << "unlit \n";
-		}
-
 		return ColourRGB(); // bara så att den inte fortsätter till switch-case delen
 	}
 
 	// #################################################################
+
+	ColourRGB colourFromBounce = materialHit.getColour();
 
 	switch (materialHit.getMaterialType())
 	{
 	case Material::_LambertianReflector:
 		//std::cout << "D ";
 
-		_colour = materialHit.getColour();
+		colourFromBounce.divideColour(_bounces);
+
+		//_colour.setR((_colour.getR() + colourFromBounce.getR())/2.0);
+		//_colour.setG((_colour.getG() + colourFromBounce.getG())/2.0);
+		//_colour.setB((_colour.getB() + colourFromBounce.getB())/2.0);
+
+		_colour = colourFromBounce;
 
 		// Russian Roulette
 		if (randNum < chanceToDie) {
@@ -211,7 +209,7 @@ ColourRGB Ray::castRay() {
 		//std::cout << "T ";
 
 		// random 50% chans
-		if ((rand() % 100 + 1) / 100 > 0.5) {
+		if (randNum > 0.5) {
 			glm::vec3 reflectionDirection = glm::reflect(_direction, collisionNormal);
 			Ray::reflect(collisionPoint, reflectionDirection);
 		}

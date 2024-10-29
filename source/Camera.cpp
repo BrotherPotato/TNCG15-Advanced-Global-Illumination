@@ -93,6 +93,9 @@ void Camera::emitRays() {
 			glm::vec3 dir = endPos - _cameraPosition;
 
 			ColourRGB pixelCol;
+			//double red = 0.0;
+			//double green = 0.0;
+			//double blue = 0.0;
 
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
@@ -101,22 +104,24 @@ void Camera::emitRays() {
 				//std::cout << "\nRay: " << totrays << "\t";
 
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB() };
-				
+
+				//red += ray.getColour().getR();
+				//green += ray.getColour().getG();
+				//blue += ray.getColour().getB();
+
 
 				if (k == 0) pixelCol = ray.sumColours();
 				else pixelCol.mixColours(ray.sumColours());
 			}
-			//std::cout << pixelCol.getR();
 			pixelCol.divideColour(_numberOfRaysPerPixel);
-			//std::cout << pixelCol.getR() << std::endl;
 
+			//red /= _numberOfRaysPerPixel;
+			//green /= _numberOfRaysPerPixel;
+			//blue /= _numberOfRaysPerPixel;
+
+			//_pixels[i][j].setColour(ColourRGB(red,green,blue));
 			_pixels[i][j].setColour(pixelCol);
 
-			// testing testing
-			//double ig = i / (double)_pixels.size();
-			//double jg = j / (double)_pixels[i].size();
-			////std::cout << "\n" << ig << " : " << jg;
-			//_pixels[i][j].setColour(CustomColour(ig, jg, 0));
 
 			if (counter >= onePercentage) {
 				counter = 0;
@@ -132,7 +137,7 @@ void Camera::emitRays() {
 	this->normalizePixelColours();
 }
 
-// gör inte så mycket då största kommer va 1
+// gï¿½r inte sï¿½ mycket dï¿½ stï¿½rsta kommer va 1
 void Camera::normalizePixelColours() {
 	double maxRGBValue = 0;
 	// 800 rader

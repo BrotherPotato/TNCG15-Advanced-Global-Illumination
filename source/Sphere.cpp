@@ -12,8 +12,10 @@ Sphere::Sphere(glm::vec3& pos, double radius, Material& material) {
 
 glm::vec3 Sphere::getNormal(Ray* ray) const {
 
+	glm::vec3 norm = ray->getEndPos() - _Position;
+	glm::normalize(norm);
 
-	return glm::vec3();
+	return norm;
 
 }
 

@@ -101,9 +101,13 @@ int main() {
 	//Material lamRed{ Material::_Transparent ,ColourRGB(1,0,0) };
 	//scene.createBox(boxPos, 1, 1, 1, lamRed);
 
-	glm::vec3 spherePos{ 5,0,0 };
-	Material purpel{ Material::_LambertianReflector, ColourRGB(0,0,0) };
-	scene.createSphere(spherePos, 1, purpel);
+	glm::vec3 spherePos1{ 5, 2,0 };
+	Material mirr{ Material::_MirrorReflection, ColourRGB(1,1,1) };
+	scene.createSphere(spherePos1, 1.5, mirr);
+
+	glm::vec3 spherePos2{ 5,-2,0 };
+	Material purpel{ Material::_Transparent, ColourRGB(1,1,1) };
+	scene.createSphere(spherePos2, 1.5, purpel);
 
 	// Only lightsource
 	glm::vec3 L0(1, 1, 1);

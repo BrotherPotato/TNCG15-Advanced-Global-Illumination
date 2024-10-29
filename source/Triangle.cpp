@@ -10,7 +10,7 @@ _v0(v0), _v1(v1), _v2(v2), _ObjectMaterial(material){
 	calcNormal();
 }
 
-glm::vec3 Triangle::getNormal() const {
+glm::vec3 Triangle::getNormal(Ray* ray) const {
 	return _normal;
 }
 

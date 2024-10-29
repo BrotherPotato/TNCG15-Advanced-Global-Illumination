@@ -38,7 +38,7 @@ private:
 	const unsigned _pixelsPerSide = 800;
 	std::vector<std::vector<Pixel>> _pixels;
 	const glm::vec3 _cameraPosition = glm::vec3(-1.0,0.0,0); // eye poisition enligt slides
-	const unsigned _numberOfRaysPerPixel = 20;
+	const unsigned _numberOfRaysPerPixel = 50;
 
 	std::vector<Ray> _rays;
 

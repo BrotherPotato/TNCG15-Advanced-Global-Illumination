@@ -13,7 +13,7 @@ public:
 	Sphere(glm::vec3& pos, double radius, Material& material);
 
 	// returnar en normal beroende på inkommande ray
-	glm::vec3 getNormal(Ray* ray) const;
+	glm::vec3 getNormal(Ray* ray) const override;
 
 	//ColourRGB getColour() const;
 

@@ -10,7 +10,10 @@ class  Object {
 public:
 
 
-	virtual glm::vec3 getNormal() const { return glm::vec3(); };
+	virtual glm::vec3 getNormal(Ray* ray) const {
+		std::cout << "waa ";
+		return glm::vec3();
+	}
 
 	virtual bool rayIntersection(Ray* ray) const {
 		std::cout << "waaaa"; // test för att se om just denna funktion kallas, när den egentligen aldrig ska användas.
