@@ -39,20 +39,22 @@ void Camera::writeToPPM() {
 	render << _pixelsPerSide << " " << _pixelsPerSide << std::endl;
 	render << "255" << std::endl;
 
-	std::cout << _pixels.size();
+	std::cout << "Image size:" << _pixels.size() << "x";
 	std::cout << _pixels[0].size() << std::endl;
 
 	int counter = 0;
 	int onePercentage = 800 * 800 / 100;
-
+	std::cout << "Writing to file:\n";
 	std::cout << "<" << std::setw(100) << ">" << std::endl;
 	std::cout << "<";
 
-	for (std::vector<Pixel>& pixelRow : _pixels)
-	{
-		for (Pixel& currentPixel : pixelRow) {
 
-			render << currentPixel;
+	for (int i = 0; i < _pixels.size(); i++) {
+
+		// 800 kolumner
+		for (int j = 0; j < _pixels[i].size(); j++) {
+			// flips the image
+			render << _pixels[_pixels[i].size() - j - 1][_pixels.size() - i - 1];
 			//std::cout << std::setprecision(15) << currentPixel.getColour().getR();
 			if (counter >= onePercentage) {
 				counter = 0;
@@ -61,7 +63,9 @@ void Camera::writeToPPM() {
 
 			counter++;
 		}
+	
 	}
+
 	std::cout << ">";
 
 	render.close();
@@ -72,6 +76,12 @@ void Camera::emitRays() {
 	int totrays = 0;
 	double pixelWidth = 2.0 / (double)_pixelsPerSide; // 0.0025
 	double oneless = 1.0 - (1.0 / (double)_pixelsPerSide); // 0.99875
+
+	int counter = 0;
+	int onePercentage = 800 * 800 / 100;
+	std::cout << "Emitting rays:\n";
+	std::cout << "<" << std::setw(100) << ">" << std::endl;
+	std::cout << "<";
 
 	// 800 rader
 	for (int i = 0; i < _pixels.size(); i++) {
@@ -103,7 +113,17 @@ void Camera::emitRays() {
 			//double jg = j / (double)_pixels[i].size();
 			////std::cout << "\n" << ig << " : " << jg;
 			//_pixels[i][j].setColour(CustomColour(ig, jg, 0));
+
+			if (counter >= onePercentage) {
+				counter = 0;
+				std::cout << "-";
+			}
+
+			counter++;
 		}
-		std::cout << "Row " << i << " done! \n";
+		//std::cout << "Row " << i << " done! \n";
+		
 	}
+	std::cout << ">" << std::endl;
+
 }

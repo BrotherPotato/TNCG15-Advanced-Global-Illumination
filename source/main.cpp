@@ -12,7 +12,7 @@
 
 int main() {
 
-	std::cout << "hello world";
+	std::cout << "hello world\n";
 
 	// skapa scen
 	Scene scene;
