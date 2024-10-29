@@ -33,10 +33,10 @@ public:
 	Scene* getScene() { return _scene; };
 
 private:
-	int _pixelsPerSide = 800;
+	const unsigned _pixelsPerSide = 800;
 	std::vector<std::vector<Pixel>> _pixels;
-	glm::vec3 _cameraPosition = glm::vec3(-1.0,0.0,0); // eye poisition enligt slides
-	int _numberOfRaysPerPixel = 2;
+	const glm::vec3 _cameraPosition = glm::vec3(-1.0,0.0,0); // eye poisition enligt slides
+	const unsigned _numberOfRaysPerPixel = 2;
 
 	std::vector<Ray> _rays;
 

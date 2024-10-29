@@ -81,7 +81,7 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	// go through each object, check ray intersection
 	Object* objectHit = nullptr; 
 	double closestDist = 1000.0;
-	double minDist = 1.0;
+	double minDist = 0.0001;
 	glm::vec3 distance;
 	for (Object* a : this->getScene()->getObjects()) {
 
