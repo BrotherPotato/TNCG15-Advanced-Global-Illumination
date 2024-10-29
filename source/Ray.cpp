@@ -75,6 +75,30 @@ void Ray::addColour(ColourRGB colour) {
 	//_colour.setB((_colour.getB() + colour.getB()) / _bounces);
 }
 
+ColourRGB Ray::sumColours() {
+	Ray* ptr = this;
+	ColourRGB colourSum = ColourRGB();
+	bool isLit = false;
+	int counter = 0;
+	while (ptr->_nextRay != nullptr) {
+		colourSum.mixColours(ptr->_colour);
+		counter++;
+		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) {
+			//std::cout << "o";
+			isLit = ptr->_nextRay->_lit;
+		}
+		ptr = ptr->_nextRay;
+	}
+
+	if (counter != 0) { // isLit && 
+		colourSum.divideColour(counter);
+		return colourSum;
+	}
+
+	//return ptr->_colour; // oavsett om pixeln är belyst eller ej, visa färgen... orealistiskt men vi får nåt iaf
+	return ColourRGB();
+}
+
 // lite osäker hur man vill strukturera intersection delarna
 Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 
@@ -205,7 +229,7 @@ ColourRGB Ray::castRay() {
 	default:
 		return ColourRGB();
 	}
-	
+	return _colour;
 }
 
 ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsources and objects? pointer to scene istället kommer få kunna nå alla ljus 

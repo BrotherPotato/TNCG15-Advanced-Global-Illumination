@@ -45,6 +45,8 @@ public:
 	ColourRGB getColour();
 	void addColour(ColourRGB colour);
 
+	ColourRGB sumColours();
+
 
 
 

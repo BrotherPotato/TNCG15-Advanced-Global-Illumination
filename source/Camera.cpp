@@ -101,10 +101,12 @@ void Camera::emitRays() {
 				//std::cout << "\nRay: " << totrays << "\t";
 
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB() };
+				
 
-				if (k == 0) pixelCol = ray.getColour();
-				else pixelCol.mixColours(ray.getColour());
+				if (k == 0) pixelCol = ray.sumColours();
+				else pixelCol.mixColours(ray.sumColours());
 			}
+			pixelCol.divideColour(_numberOfRaysPerPixel);
 
 			_pixels[i][j].setColour(pixelCol);
 
@@ -125,5 +127,33 @@ void Camera::emitRays() {
 		
 	}
 	std::cout << ">" << std::endl;
+	this->normalizePixelColours();
+}
 
+void Camera::normalizePixelColours() {
+	int maxRGBValue = 0;
+	// 800 rader
+	for (int i = 0; i < _pixels.size(); i++) {
+
+		// 800 kolumner
+		for (int j = 0; j < _pixels[i].size(); j++) {
+			if (_pixels[i][j].getColour().getR() > maxRGBValue) {
+				maxRGBValue = _pixels[i][j].getColour().getR();
+			}
+			if (_pixels[i][j].getColour().getG() > maxRGBValue) {
+				maxRGBValue = _pixels[i][j].getColour().getG();
+			}
+			if (_pixels[i][j].getColour().getB() > maxRGBValue) {
+				maxRGBValue = _pixels[i][j].getColour().getB();
+			}		
+		}
+	}
+	// 800 rader
+	for (int i = 0; i < _pixels.size(); i++) {
+
+		// 800 kolumner
+		for (int j = 0; j < _pixels[i].size(); j++) {
+			_pixels[i][j].getColour().divideColour(maxRGBValue);
+		}
+	}
 }

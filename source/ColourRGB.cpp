@@ -30,10 +30,14 @@ void ColourRGB::setB(double B) {
 	_B = std::max(std::min(B, 1.0), 0.0);
 };
 
+void ColourRGB::divideColour(int amountOfSamples) {
+	setR(getR() / amountOfSamples);
+	setG(getG() / amountOfSamples);
+	setB(getB() / amountOfSamples);
+}
+
 void ColourRGB::mixColours(ColourRGB newColour) {
-
-	setR((getR() + newColour.getR()) / 2.0);
-	setG((getG() + newColour.getG()) / 2.0);
-	setB((getB() + newColour.getB()) / 2.0);
-
+	setR(getR() + newColour.getR());
+	setG(getG() + newColour.getG());
+	setB(getB() + newColour.getB());
 }
