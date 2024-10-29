@@ -16,6 +16,7 @@ public:
 	void setColour(ColourRGB colour);
 	void addColour(ColourRGB colour);
 	ColourRGB getColour() const;
+	void validateColour();
 
 	friend std::ostream& operator<< (std::ostream&, const Pixel& currentPixel);
 

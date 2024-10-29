@@ -20,7 +20,9 @@ public:
 
 	void setB(double B);
 
-	void divideColour(int amountOfSamples);
+	ColourRGB divideColour(int amountOfSamples);
+
+	
 
 	// blandar färger så att alla raysperpixel kan klumpa samman till en slutfärg per pixel
 	void mixColours(ColourRGB newColour);

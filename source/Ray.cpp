@@ -92,7 +92,7 @@ ColourRGB Ray::sumColours() {
 		ptr = ptr->_nextRay;
 	}
 
-	if (counter != 0) { // isLit && 
+	if (isLit && counter != 0) {
 		colourSum.divideColour(counter);
 		return colourSum;
 	}

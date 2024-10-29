@@ -19,21 +19,26 @@ double ColourRGB::getB() {
 };
 
 void ColourRGB::setR(double R) {
-	_R = std::max(std::min(R, 1.0), 0.0);
+	//_R = std::max(std::min(R, 1.0), 0.0);
+	_R = R;
 };
 
 void ColourRGB::setG(double G) {
-	_G = std::max(std::min(G, 1.0), 0.0);
+	//_G = std::max(std::min(G, 1.0), 0.0);
+	_G = G;
 };
 
 void ColourRGB::setB(double B) {
-	_B = std::max(std::min(B, 1.0), 0.0);
+	//_B = std::max(std::min(B, 1.0), 0.0);
+	_B = B;
 };
 
-void ColourRGB::divideColour(int amountOfSamples) {
-	setR(getR() / amountOfSamples);
-	setG(getG() / amountOfSamples);
-	setB(getB() / amountOfSamples);
+ColourRGB ColourRGB::divideColour(int amountOfSamples) {
+	ColourRGB temp;
+	temp.setR(getR() / amountOfSamples);
+	temp.setG(getG() / amountOfSamples);
+	temp.setB(getB() / amountOfSamples);
+	return temp;
 }
 
 void ColourRGB::mixColours(ColourRGB newColour) {
