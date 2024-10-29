@@ -89,6 +89,10 @@ bool Triangle::rayIntersection(Ray* ray) const {
 LightSource::LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2) :
 	Triangle(v0, v1, v2, Material(Material::_LightSource)) {
 
+	_v0 = v0;
+	_v1 = v1;
+	_v2 = v2;
+
 	_pos = glm::vec3( (v0.x + v1.x + v2.x)/3.0 , (v0.y + v1.y + v2.y) / 3.0, (v0.z + v1.z + v2.z) / 3.0);
 }
 
@@ -97,4 +101,35 @@ void LightSource::emitPhotons() {
 	// shoot em mfs
 }
 
+
+//Lecture 4
+bool LightSource::rayIntersection(Ray* ray) const {
+	//Möller-Trumbore algorithm for triangles
+
+	glm::vec3 T = ray->getStartPos() - _v0;
+	glm::vec3 E1 = _v1 - _v0;
+	glm::vec3 E2 = _v2 - _v0;
+	glm::vec3 D = ray->getDirection();
+	glm::vec3 P = glm::cross(D, E2);
+	glm::vec3 Q = glm::cross(T, E1);
+
+	//might need epsilon if bit flips tihii :))
+	double dotPE1 = glm::dot(P, E1);
+	double u = glm::dot(P, T) / dotPE1;
+	double v = glm::dot(Q, D) / dotPE1;
+	double t = glm::dot(Q, E2) / dotPE1;
+
+	if (u < 0 || u>1 || v < 0 || u + v>1 || t < 0) return false; // når den hit, går den inte vidare
+
+	// om det finns en intersection, sätt endPoint på rayen
+
+	glm::vec3 tDir = ray->getDirection();
+	tDir.x *= t;
+	tDir.y *= t;
+	tDir.z *= t;
+	glm::vec3 pointOfIntersection = ray->getStartPos() + tDir; // det blir inte rätt... kuben är på x=50 men den här ger alltid ett lågt x
+	ray->setEndpos(pointOfIntersection);
+
+	return true;
+}
 

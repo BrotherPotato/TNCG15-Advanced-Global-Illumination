@@ -86,4 +86,20 @@ void Scene::createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight) {
 
 	_LightSources.push_back(new LightSource(t0));
 	_LightSources.push_back(new LightSource(t1));
+
+	_Objects.push_back(new LightSource(t0));
+	_Objects.push_back(new LightSource(t1));
+}
+
+std::vector<Object*>& Scene::getOALS() {
+
+	std::vector<Object*> objs = _Objects;
+
+	for (LightSource* l : _LightSources) {
+		
+		objs.push_back(l);
+	}
+
+	return objs;
+
 }

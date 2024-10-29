@@ -43,7 +43,7 @@ private:
 
 //____________________________NEW CLASS________________________________//
 
-class LightSource : Triangle { // light ska ha en triangöe inte ärva
+class LightSource : public Triangle { // light ska ha en triangöe inte ärva
 public:
 	LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2);
 
@@ -55,10 +55,12 @@ public:
 		return _intensity;
 	}
 
+	bool rayIntersection(Ray* ray) const override;
 
 	void emitPhotons();
 private:
 
+	glm::vec3 _v0, _v1, _v2, _normal;
 	ColourRGB _lightColour{ 1, 1 ,1 }; //vit default
 	double _intensity = 1.0f;
 	glm::vec3 _pos; 
