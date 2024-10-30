@@ -55,7 +55,7 @@ bool Triangle::planeIntersection(Ray& ray) const {
 }
 
 //Lecture 4
-bool Triangle::rayIntersection(Ray* ray) const {
+bool Triangle::rayIntersection(Ray* ray) {
 	//Möller-Trumbore algorithm for triangles
 	
 	glm::vec3 T = ray->getStartPos() - _v0;
@@ -87,7 +87,7 @@ bool Triangle::rayIntersection(Ray* ray) const {
 
 //____________________________NEW CLASS________________________________//
 LightSource::LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2) :
-	Triangle(v0, v1, v2, Material(Material::_LightSource)) {
+	Triangle(v0, v1, v2, Material(Material::_LightSource, ColourRGB(1,1,1))) {
 
 	_v0 = v0;
 	_v1 = v1;
@@ -103,7 +103,7 @@ void LightSource::emitPhotons() {
 
 
 //Lecture 4
-bool LightSource::rayIntersection(Ray* ray) const {
+bool LightSource::rayIntersection(Ray* ray) {
 	//Möller-Trumbore algorithm for triangles
 
 	glm::vec3 T = ray->getStartPos() - _v0;

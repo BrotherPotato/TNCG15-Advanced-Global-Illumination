@@ -23,7 +23,7 @@ public:
 	void calcNormal();
 	double calcArea();
 
-	bool rayIntersection(Ray* ray) const override;
+	bool rayIntersection(Ray* ray) override;
 	bool planeIntersection(Ray& ray) const;
 
 	glm::vec3 getNormal(Ray* ray) const override;
@@ -55,7 +55,7 @@ public:
 		return _intensity;
 	}
 
-	bool rayIntersection(Ray* ray) const override;
+	bool rayIntersection(Ray* ray) override;
 
 	void emitPhotons();
 private:

@@ -15,7 +15,7 @@ public:
 		return glm::vec3();
 	}
 
-	virtual bool rayIntersection(Ray* ray) const {
+	virtual bool rayIntersection(Ray* ray) {
 		std::cout << "waaaa"; // test för att se om just denna funktion kallas, när den egentligen aldrig ska användas.
 		return false; 
 	};

@@ -60,10 +60,10 @@ int main() {
 
 	//Roof
 	Material RoofBlue{ Material::_LambertianReflector ,ColourRGB(0,0,1) };
-	scene.createTriangle(T6, T8, T10, RoofBlue); // green in whiteboard
-	scene.createTriangle(T8, T2, T10, RoofBlue); // blue in whiteboard
-	scene.createTriangle(T2, T4, T10, RoofBlue); // orange in whiteboard
-	scene.createTriangle(T2, T0, T4, RoofBlue); // red in whiteboard
+	scene.createTriangle(T10, T8, T6, RoofBlue); // green in whiteboard
+	scene.createTriangle(T10, T2, T8, RoofBlue); // blue in whiteboard
+	scene.createTriangle(T10, T4, T2, RoofBlue); // orange in whiteboard
+	scene.createTriangle(T4, T0, T2, RoofBlue); // red in whiteboard
 
 	//Floor
 	Material FloorGrey{ Material::_LambertianReflector ,ColourRGB(0.3,0.3,0.3) };
@@ -73,7 +73,7 @@ int main() {
 	scene.createTriangle(T3, T1, T5, FloorGrey); // red in whiteboard
 
 	// Wall behind camera
-	Material WallBehindBlack{ Material::_LambertianReflector ,ColourRGB(0,0,0) };
+	Material WallBehindBlack{ Material::_LambertianReflector ,ColourRGB(0,1,0) };
 	scene.createTriangle(T10, T7, T11, WallBehindBlack); // green in whiteboard
 	scene.createTriangle(T10, T6, T7, WallBehindBlack); // blue in whiteboard
 	scene.createTriangle(T7, T6, T8, WallBehindBlack); // orange in whiteboard

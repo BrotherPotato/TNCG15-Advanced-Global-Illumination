@@ -73,7 +73,6 @@ void Camera::writeToPPM() {
 
 void Camera::emitRays() {
 
-	int totrays = 0;
 	double pixelWidth = 2.0 / (double)_pixelsPerSide; // 0.0025
 	double oneless = 1.0 - (1.0 / (double)_pixelsPerSide); // 0.99875
 
@@ -93,34 +92,35 @@ void Camera::emitRays() {
 			glm::vec3 dir = endPos - _cameraPosition;
 
 			ColourRGB pixelCol;
-			//double red = 0.0;
-			//double green = 0.0;
-			//double blue = 0.0;
+			double red = 0.0;
+			double green = 0.0;
+			double blue = 0.0;
 
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 
-				totrays++;
-				//std::cout << "\nRay: " << totrays << "\t";
-
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB() };
 
-				//red += ray.getColour().getR();
-				//green += ray.getColour().getG();
-				//blue += ray.getColour().getB();
+				pixelCol = ray.getColour();
 
 
-				if (k == 0) pixelCol = ray.sumColours();
-				else pixelCol.mixColours(ray.sumColours());
+				red += pixelCol.getR();
+				green += pixelCol.getG();
+				blue += pixelCol.getB();
+
+
+				//if (k == 0) pixelCol = ray.sumColours();
+				//else pixelCol.mixColours(ray.sumColours());
 			}
-			pixelCol.divideColour(_numberOfRaysPerPixel);
 
-			//red /= _numberOfRaysPerPixel;
-			//green /= _numberOfRaysPerPixel;
-			//blue /= _numberOfRaysPerPixel;
+			//pixelCol.divideColour(_numberOfRaysPerPixel);
+			//_pixels[i][j].setColour(pixelCol);
 
-			//_pixels[i][j].setColour(ColourRGB(red,green,blue));
-			_pixels[i][j].setColour(pixelCol);
+			red /= _numberOfRaysPerPixel;
+			green /= _numberOfRaysPerPixel;
+			blue /= _numberOfRaysPerPixel;
+			_pixels[i][j].setColour(ColourRGB(red,green,blue));
+			
 
 
 			if (counter >= onePercentage) {
@@ -134,7 +134,7 @@ void Camera::emitRays() {
 		
 	}
 	std::cout << ">" << std::endl;
-	this->normalizePixelColours();
+	//this->normalizePixelColours();
 }
 
 // g�r inte s� mycket d� st�rsta kommer va 1

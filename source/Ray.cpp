@@ -8,6 +8,7 @@ Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, R
 	_prevRay = prevRay;
 	_scene = scene;
 	_nextRay = nullptr;
+
 	if (prevRay == nullptr) {
 		_bounces = 1;
 	}
@@ -49,16 +50,18 @@ ColourRGB Ray::getColour() {
 
 	// går till sista rayen i ledet och tar dess färg
 	Ray* ptr = this;
+
+	// när man kollar direkt på ljuskällan
+	if (ptr->_lit) return ptr->_colour;
+
+	// resterande rays
 	while (ptr != nullptr && ptr->_nextRay != nullptr) {
 		
-		// test för att se om man kan endast rita ut de belysta raysen... fungerar inte... ser inga "o" i konsolen :(((
-		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) {
-
-			return ptr->_colour;
-		}
-
+		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) return ptr->_colour;
 		ptr = ptr->_nextRay;
 
+		// när man kollar direkt på ljuskällan
+		if (ptr->_lit) return ptr->_colour;
 	}
 	
 	return ColourRGB(); 
@@ -138,6 +141,8 @@ ColourRGB Ray::castRay() {
 	// Russian Roulette, används för Lambertian studs eller shadowray
 	double chanceToDie = (double)_bounces / (double)_timeToLive;
 	double randNum = (rand() % 100 + 1) / 100.0;
+	bool ded = false;
+	if (randNum < chanceToDie) ded = true;
 
 	// #############################################################
 	
@@ -157,6 +162,7 @@ ColourRGB Ray::castRay() {
 	if (_isShadowRay) {
 		
 		if (materialHit.getMaterialType() == Material::_LightSource) {
+
 			_lit = true;
 		}
 		return ColourRGB(); // bara så att den inte fortsätter till switch-case delen
@@ -165,22 +171,23 @@ ColourRGB Ray::castRay() {
 	// #################################################################
 
 	ColourRGB colourFromBounce = materialHit.getColour();
+	colourFromBounce = colourFromBounce.divideColour(_bounces);
 
 	switch (materialHit.getMaterialType())
 	{
 	case Material::_LambertianReflector:
 		//std::cout << "D ";
 
-		colourFromBounce.divideColour(_bounces);
+		
+		//_colour = colourFromBounce;
 
 		//_colour.setR((_colour.getR() + colourFromBounce.getR())/2.0);
 		//_colour.setG((_colour.getG() + colourFromBounce.getG())/2.0);
 		//_colour.setB((_colour.getB() + colourFromBounce.getB())/2.0);
-
-		_colour = colourFromBounce;
+		_colour.mixColours(colourFromBounce);
 
 		// Russian Roulette
-		if (randNum < chanceToDie) {
+		if (ded) {
 
 			for (LightSource* l : this->getScene()->getLightSources()) {
 				castShadowRay(l);
@@ -200,6 +207,8 @@ ColourRGB Ray::castRay() {
 	case Material::_MirrorReflection:
 		//std::cout << "S ";
 
+		if (ded) return ColourRGB();
+
 		// perfect reflection
 		glm::vec3 reflectionDirection = glm::reflect(_direction, collisionNormal);
 		Ray::reflect(collisionPoint, reflectionDirection);
@@ -207,6 +216,8 @@ ColourRGB Ray::castRay() {
 		break;
 	case Material::_Transparent:
 		//std::cout << "T ";
+
+		if (ded) return ColourRGB();
 
 		// random 50% chans
 		if (randNum > 0.5) {
@@ -223,10 +234,11 @@ ColourRGB Ray::castRay() {
 	case Material::_LightSource:
 		//std::cout << "LS ";
 
+		if (ded) return ColourRGB();
+
 		// om rayen slår ner i en ljuskälla... inga reflections? bara färga av ljuskällans färg?
-		_colour = materialHit.getColour();
-
-
+		_colour = ColourRGB(1,1,1);
+		_lit = true;
 
 		break;
 	default:

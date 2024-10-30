@@ -12,10 +12,9 @@ Sphere::Sphere(glm::vec3& pos, double radius, Material& material) {
 
 glm::vec3 Sphere::getNormal(Ray* ray) const {
 
-	glm::vec3 norm = ray->getEndPos() - _Position;
-	glm::normalize(norm);
+	glm::normalize(_normal);
 
-	return norm;
+	return _normal;
 
 }
 
@@ -28,7 +27,7 @@ Material Sphere::getMaterial() const {
 }
 
 
-bool Sphere::rayIntersection(Ray* ray) const {
+bool Sphere::rayIntersection(Ray* ray) {
 
 	glm::vec3 rayStart{ ray->getStartPos() };
 	glm::vec3 rayEnd{ ray->getEndPos() };
@@ -70,15 +69,18 @@ bool Sphere::rayIntersection(Ray* ray) const {
 		intersection.y - _Position.y,
 		intersection.z - _Position.z });
 
+
 	// Flip normal if intersecting from inside object
 	if (isInside) {
 		intersectionPointNormal *= -1.0;
 	}
 
+
 	if (d < 0) return false; //intersection behind the object 
 
 	//std::cout << "SPHERE";
 	ray->setEndpos(intersection);
+	setNormal(intersectionPointNormal);
 
 	return true;
 	//osäker vad vi vill ha returnerat
