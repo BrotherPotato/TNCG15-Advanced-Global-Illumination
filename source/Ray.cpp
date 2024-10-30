@@ -107,6 +107,7 @@ ColourRGB Ray::sumColours() {
 // lite osäker hur man vill strukturera intersection delarna
 Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 
+
 	// go through each object, check ray intersection
 	Object* objectHit = nullptr; 
 	double closestDist = 1000.0;
@@ -137,10 +138,13 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 
 ColourRGB Ray::castRay() { 
 
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution dis(0.0, 1.0);
 
 	// Russian Roulette, används för Lambertian studs eller shadowray
 	double chanceToDie = (double)_bounces / (double)_timeToLive;
-	double randNum = (rand() % 100 + 1) / 100.0;
+	double randNum = dis(gen);
 	bool ded = false;
 	if (randNum < chanceToDie) ded = true;
 
@@ -196,7 +200,7 @@ ColourRGB Ray::castRay() {
 		else {
 
 			// skapa random vec3, om den inte är i samma hemisphere som N, byt riktning på den
-			glm::vec3 randomDirection{ rand(), rand(), rand() };
+			glm::vec3 randomDirection{ dis(gen), dis(gen), dis(gen) };
 			glm::normalize(randomDirection);
 			if (glm::dot(randomDirection, collisionNormal) < 0) randomDirection *= -1.0f;
 			Ray::reflect(collisionPoint, randomDirection);
