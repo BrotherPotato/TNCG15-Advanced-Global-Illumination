@@ -69,6 +69,7 @@ bool Sphere::rayIntersection(Ray* ray) {
 		intersection.y - _Position.y,
 		intersection.z - _Position.z });
 
+	setNormal(intersectionPointNormal);
 
 	// Flip normal if intersecting from inside object
 	if (isInside) {
@@ -80,7 +81,7 @@ bool Sphere::rayIntersection(Ray* ray) {
 
 	//std::cout << "SPHERE";
 	ray->setEndpos(intersection);
-	setNormal(intersectionPointNormal);
+	
 
 	return true;
 	//osäker vad vi vill ha returnerat

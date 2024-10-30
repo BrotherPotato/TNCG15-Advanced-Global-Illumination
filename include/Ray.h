@@ -82,31 +82,33 @@ public:
 	const glm::mat3 toGlobalCoord(glm::vec3 normal) {
 		return glm::inverse(toLocalCoord(normal));
 	}
+	void mirrorReflect(glm::vec3 direction, glm::vec3 normal);
+	void transparentRefract(glm::vec3 direction, glm::vec3 normal, float R);
 
 
 	void reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection);
 	    
 private:
 	glm::vec3 _startPos;
-	glm::vec3 _endPos; // se Triangle::rayIntersection för att hitta där endPos definieras
+	glm::vec3 _endPos; // se Triangle::rayIntersection fï¿½r att hitta dï¿½r endPos definieras
 	glm::vec3 _direction;
 
 	//doubly linked list
 	Ray* _prevRay;
 	Ray* _nextRay;
 
-	// om vi vill kunnda döda en ray efter x antal studsar
-	int _timeToLive = 10; 
+	// om vi vill kunnda dï¿½da en ray efter x antal studsar
+	int _timeToLive = 5; 
 
-	//slidesen skriver att man ska skapa colourRGB så prob. needs changing later också double precision
+	//slidesen skriver att man ska skapa colourRGB sï¿½ prob. needs changing later ocksï¿½ double precision
 	ColourRGB _colour = ColourRGB();
 
 	std::shared_ptr<glm::vec3> _startingVertexPos;
 
-	//använder _ för att visa att det är klassvariabel.
+	//anvï¿½nder _ fï¿½r att visa att det ï¿½r klassvariabel.
 
 
-	int _bounces; // börja på 1 annars dör den, ??? får nu ett värde i Ray()
+	int _bounces; // bï¿½rja pï¿½ 1 annars dï¿½r den, ??? fï¿½r nu ett vï¿½rde i Ray()
 
 	Scene* _scene;
 
@@ -116,7 +118,8 @@ private:
 	//std::mt19937 _gen;
 	//std::uniform_real_distribution<float> _rng;
 
-
+	const float _airRefractiveIndex = 1.0f;
+	const float _glassRefractiveIndex = 1.5f;
 
 };
 

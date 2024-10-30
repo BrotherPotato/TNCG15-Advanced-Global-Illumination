@@ -14,14 +14,14 @@ Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, R
 		_bounces = 1;
 	}
 	else {
-		_bounces = prevRay->getBounces() + 1; // ändra så att den endast ökar på lambertian surfaces
+		_bounces = prevRay->getBounces() + 1; // ï¿½ndra sï¿½ att den endast ï¿½kar pï¿½ lambertian surfaces
 	}
 	
 	_isShadowRay = isShadowRay;
 
-	// jag tänker att när en ray skapas, kollar den direkt vart den ska sluta och studsa vidare
+	// jag tï¿½nker att nï¿½r en ray skapas, kollar den direkt vart den ska sluta och studsa vidare
 	// det blir typ en kedjereaktion(?)
-	// asså om jag skapar en Ray(), ska jag kunna i nästa rad bara kalla på dess slutliga färg
+	// assï¿½ om jag skapar en Ray(), ska jag kunna i nï¿½sta rad bara kalla pï¿½ dess slutliga fï¿½rg
 	castRay();
 }
 
@@ -49,10 +49,10 @@ Scene* Ray::getScene() const {
 
 ColourRGB Ray::getColour() {
 
-	// går till sista rayen i ledet och tar dess färg
+	// gï¿½r till sista rayen i ledet och tar dess fï¿½rg
 	Ray* ptr = this;
 
-	// när man kollar direkt på ljuskällan
+	// nï¿½r man kollar direkt pï¿½ ljuskï¿½llan
 	if (ptr->_lit) return ptr->_colour;
 
 	// resterande rays
@@ -61,7 +61,7 @@ ColourRGB Ray::getColour() {
 		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) return ptr->_colour;
 		ptr = ptr->_nextRay;
 
-		// när man kollar direkt på ljuskällan
+		// nï¿½r man kollar direkt pï¿½ ljuskï¿½llan
 		if (ptr->_lit) return ptr->_colour;
 	}
 	
@@ -72,7 +72,7 @@ Ray::~Ray() {
 	//delete delete?
 }
 
-// smitta av lite färg, mindre för varje bounce... tro mig mannen -- vansinne
+// smitta av lite fï¿½rg, mindre fï¿½r varje bounce... tro mig mannen -- vansinne
 void Ray::addColour(ColourRGB colour) {
 	//_colour.setR((_colour.getR() + colour.getR()) / _bounces);
 	//_colour.setG((_colour.getG() + colour.getG()) / _bounces);
@@ -105,7 +105,7 @@ ColourRGB Ray::sumColours() {
 	return ColourRGB();
 }
 
-// lite osäker hur man vill strukturera intersection delarna
+// lite osï¿½ker hur man vill strukturera intersection delarna
 Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 
 
@@ -115,7 +115,7 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 	double minDist = 0.001;
 	glm::vec3 distance;
 
-	// går igenom alla objects
+	// gï¿½r igenom alla objects
 	for (Object* a : this->getScene()->getObjects()) {
 
 		if (a->rayIntersection(this)) {
@@ -131,7 +131,7 @@ Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
 
 	if (objectHit != nullptr) {
 		//if (objectHit->getMaterial().getMaterialType() == Material::_LightSource) std::cout << "hooray!";
-		objectHit->rayIntersection(this); // för att få tillbaka rätt endPos
+		objectHit->rayIntersection(this); // fï¿½r att fï¿½ tillbaka rï¿½tt endPos
 	}
 
 	return objectHit;
@@ -143,7 +143,7 @@ ColourRGB Ray::castRay() {
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution dis(0.0, 1.0);
 
-	// Russian Roulette, används för Lambertian studs eller shadowray
+	// Russian Roulette, anvï¿½nds fï¿½r Lambertian studs eller shadowray
 	double chanceToDie = (double)_bounces / (double)_timeToLive;
 	double randNum = dis(gen);
 	bool ded = false;
@@ -165,20 +165,20 @@ ColourRGB Ray::castRay() {
 	if (collisionObject == nullptr) {
 		return ColourRGB();
 	}
-	// den kommer inte förbi den där if-statementet
+	// den kommer inte fï¿½rbi den dï¿½r if-statementet
 
 	Material materialHit = collisionObject->getMaterial();
 	glm::vec3 collisionNormal = collisionObject->getNormal(this);
 	ColourRGB colour = materialHit.getColour();
 	
-	// dum lösning så att shadowrays inte skapar nya shadowrays
+	// dum lï¿½sning sï¿½ att shadowrays inte skapar nya shadowrays
 	if (_isShadowRay) {
 		
 		if (materialHit.getMaterialType() == Material::_LightSource) {
 
 			_lit = true;
 		}
-		return ColourRGB(); // bara så att den inte fortsätter till switch-case delen
+		return ColourRGB(); // bara sï¿½ att den inte fortsï¿½tter till switch-case delen
 	}
 
 	// #################################################################
@@ -186,13 +186,25 @@ ColourRGB Ray::castRay() {
 	ColourRGB colourFromBounce = materialHit.getColour();
 	colourFromBounce = colourFromBounce.divideColour(_bounces);
 
+	bool insideObject = glm::dot(_direction, collisionNormal) < 0;
+	float n1 = insideObject ? _glassRefractiveIndex : _airRefractiveIndex;
+	float n2 = insideObject ? _airRefractiveIndex : _glassRefractiveIndex;
+	float R = n1 / n2;
+
+	float Omega = acos(glm::dot(_direction, collisionNormal));
+
 	switch (materialHit.getMaterialType())
 	{
 	case Material::_LambertianReflector:
 
+		//_colour = colourFromBounce;
+		//_colour.setR((_colour.getR() + colourFromBounce.getR())/2.0);
+		//_colour.setG((_colour.getG() + colourFromBounce.getG())/2.0);
+		//_colour.setB((_colour.getB() + colourFromBounce.getB())/2.0);
+
 		_colour.mixColours(colourFromBounce);
 
-		// Russian Roulette, används för Lambertian studs eller shadowray
+		// Russian Roulette, anvï¿½nds fï¿½r Lambertian studs eller shadowray
 		
 		// lec 9 slide 8
 
@@ -206,7 +218,7 @@ ColourRGB Ray::castRay() {
 
 		// Russian Roulette
 		if (redefAzimuth <= 2.0f * PI) {
-			// skapa random vec3, om den inte är i samma hemisphere som N, byt riktning på den
+			// skapa random vec3, om den inte ï¿½r i samma hemisphere som N, byt riktning pï¿½ den
 			/*glm::vec3 randomDirection{ dis(gen), dis(gen), dis(gen) };
 			glm::normalize(randomDirection);
 			if (glm::dot(randomDirection, collisionNormal) < 0) randomDirection *= -1.0f;*/
@@ -231,42 +243,41 @@ ColourRGB Ray::castRay() {
 				castShadowRay(l);
 			}
 		}
-		
 
 		break;
 	case Material::_MirrorReflection:
 		//std::cout << "S ";
 
-		if (ded) return ColourRGB();
-
-		// perfect reflection
-		glm::vec3 reflectionDirection = glm::reflect(_direction, collisionNormal);
-		Ray::reflect(collisionPoint, reflectionDirection);
+		_bounces--; // gï¿½r sï¿½ att fï¿½rgerna inte mï¿½rknas
+		mirrorReflect(_direction, collisionNormal);
 
 		break;
 	case Material::_Transparent:
 		//std::cout << "T ";
 
-		if (ded) return ColourRGB();
+		_bounces--;
+		
+		// Bï¿½de reflection och refraction
+		if (sin(Omega) * (R) <= 1) {
 
-		// random 50% chans
-		if (randNum > 0.5) {
-			glm::vec3 reflectionDirection = glm::reflect(_direction, collisionNormal);
-			Ray::reflect(collisionPoint, reflectionDirection);
+			// Antingen eller, fï¿½r vi kan inte faktiskt ha bï¿½da samtidigt.
+			if (randNum > 1.0) {
+				mirrorReflect(_direction, collisionNormal);
+			}
+			else {
+				transparentRefract(_direction, collisionNormal, R);
+			}
 		}
+		// Bara reflection
 		else {
-			// helt ärligt vet inte vad 0.5f gör
-			glm::vec3 refractionDirection = glm::refract(_direction, collisionNormal, 0.5f);
-			Ray::reflect(collisionPoint, refractionDirection);
+			transparentRefract(_direction, collisionNormal, R);
 		}
 
 		break;
 	case Material::_LightSource:
 		//std::cout << "LS ";
 
-		if (ded) return ColourRGB();
-
-		// om rayen slår ner i en ljuskälla... inga reflections? bara färga av ljuskällans färg?
+		// om rayen slï¿½r ner i en ljuskï¿½lla... inga reflections? bara fï¿½rga av ljuskï¿½llans fï¿½rg?
 		_colour = ColourRGB(1,1,1);
 		_lit = true;
 
@@ -277,9 +288,9 @@ ColourRGB Ray::castRay() {
 	return _colour;
 }
 
-ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsources and objects? pointer to scene istället kommer få kunna nå alla ljus 
+ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsources and objects? pointer to scene istï¿½llet kommer fï¿½ kunna nï¿½ alla ljus 
 	
-	glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta är korrekt lol
+	glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta ï¿½r korrekt lol
 	Ray shadowRay(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), this, true);
 
 	Ray* ptrRay = &shadowRay;
@@ -290,12 +301,39 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 
 void Ray::reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection) {
 
-	// något sånt för att fixa nästa ray
+	// nï¿½got sï¿½nt fï¿½r att fixa nï¿½sta ray
 	Ray newRay = Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
 
 	Ray* newRayPtr = &newRay;
 	this->setNextRay(newRayPtr);
 
 	
+
+}
+
+
+void Ray::mirrorReflect(glm::vec3 direction, glm::vec3 normal) {
+
+	// Lecture 5, Mirror Reflection
+	glm::vec3 Di = glm::normalize(direction);
+	glm::vec3 N = glm::normalize(normal);
+	glm::vec3 Do = Di - (2.0f * glm::dot(Di, N) * N);
+	reflect(getEndPos(), Do);
+}
+
+void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R) {
+
+	// Lecture 5, Transparent Refraction
+	glm::vec3 Do = glm::normalize(direction);
+	glm::vec3 N = glm::normalize(normal);
+
+	float theSquare = 0.0f; // fï¿½rhindra imaginï¿½ra tal
+	if ((1.0 - pow(R, 2.0) * pow((1.0 - glm::dot(N, Do)), 2.0)) > 0.0) {
+		theSquare = sqrt(1.0 - (pow(R, 2.0) * pow((1.0 - glm::dot(N, Do)), 2.0)));
+	}
+	//std::cout << theSquare << "\n";
+
+	glm::vec3 Dref = (R * Do) + (N * (-R * glm::dot(N, Do) - theSquare));
+	reflect(getEndPos(), Dref);
 
 }
