@@ -21,7 +21,7 @@ public:
 	void setB(double B);
 
 	ColourRGB divideColour(int amountOfSamples);
-
+	ColourRGB calcFinalIntenisty(float intensity);
 	
 
 	// blandar färger så att alla raysperpixel kan klumpa samman till en slutfärg per pixel

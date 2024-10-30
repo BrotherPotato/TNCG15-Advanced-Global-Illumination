@@ -45,6 +45,7 @@ public:
 	ColourRGB getColour();
 	void addColour(ColourRGB colour);
 
+	float calcIntensity();
 	ColourRGB sumColours();
 
 
@@ -79,8 +80,7 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	//std::mt19937 _gen;
-	//std::uniform_real_distribution<float> _rng;
+	double _intensity = 1.0;
 
 
 

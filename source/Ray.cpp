@@ -78,26 +78,75 @@ void Ray::addColour(ColourRGB colour) {
 	//_colour.setB((_colour.getB() + colour.getB()) / _bounces);
 }
 
+float Ray::calcIntensity() { //hit a lightsource
+	Ray* ptr = this; 
+	ptr->_intensity = 1.0;
+	float length = 0.0;
+	float finalLength = 0.0;
+	
+	//read access violation here but I dont know why
+	while (ptr) { // goes from lightsource to camera
+		glm::vec3 startPoint = ptr->getStartPos();
+		glm::vec3 endPoint = ptr->getEndPos(); //lightsource
+		glm::vec3 direction = glm::vec3(endPoint - startPoint);
+		length = glm::length(direction);
+		finalLength += length;
+
+		//length = length* length; // squared length
+
+		if (length < 1.0) length += 1; //if very very close
+		//ptr->_intensity = ptr->_intensity / length;
+
+		if (ptr->_prevRay) {
+			ptr = ptr->_prevRay;
+			//if (ptr == nullptr) break;
+		}
+		else {
+			break;
+		}
+		//std::cout << "\tlength: " << length << std::endl;
+
+		//std::cout << "should be 1: "<< ptr->_intensity << "\nLength: " << length << "\t" << finalLength;
+	}
+	finalLength = finalLength * finalLength;
+	if (!ptr->_prevRay && !ptr->_nextRay) {
+		std::cout << " KYS ";
+		return 1.0; // 1.0
+	}
+	//std::cout << "\nskibidi: " << ptr->_intensity / finalLength;
+
+	return (ptr->_intensity / finalLength) ;
+}
+
 ColourRGB Ray::sumColours() {
+
+	
 	Ray* ptr = this;
 	ColourRGB colourSum = ColourRGB();
 	bool isLit = false;
 	int counter = 0;
-	while (ptr->_nextRay != nullptr) {
+	while (ptr != nullptr && !isLit) {
 
 		colourSum.mixColours(ptr->_colour);
 		counter++;
 
-		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) {
+		if (ptr->_lit) { // ptr->_nextRay->_isShadowRay && 
 
-			isLit = ptr->_nextRay->_lit;
+			isLit = ptr->_lit;
 			//return ptr->getColour();
 		}
-		ptr = ptr->_nextRay;
+		else {
+			ptr = ptr->_nextRay;	
+		}
 	}
 
-	if (isLit && counter != 0) {
-		colourSum.divideColour(counter);
+	if (isLit && counter != 0 && ptr) {
+
+		
+		//std::cout << "hoo hooo";
+		//run intensity 
+		float pixelIntensity = ptr->calcIntensity();
+		colourSum.calcFinalIntenisty(pixelIntensity);
 		return colourSum;
 	}
 
@@ -254,10 +303,10 @@ ColourRGB Ray::castRay() {
 ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsources and objects? pointer to scene istället kommer få kunna nå alla ljus 
 	
 	glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta är korrekt lol
-	Ray shadowRay(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), this, true);
+	Ray* shadowRay = new Ray(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), this, true);
 
-	Ray* ptrRay = &shadowRay;
-	this->setNextRay(ptrRay);
+	//Ray* ptrRay = &shadowRay;
+	this->setNextRay(shadowRay);
 
 	return ColourRGB();
 }
@@ -265,10 +314,10 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 void Ray::reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection) {
 
 	// något sånt för att fixa nästa ray
-	Ray newRay = Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
+	Ray* newRay = new Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
 
-	Ray* newRayPtr = &newRay;
-	this->setNextRay(newRayPtr);
+	//Ray* newRayPtr = &newRay;
+	this->setNextRay(newRay);
 
 	
 
