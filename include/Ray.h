@@ -15,6 +15,7 @@
 
 #include <random>
 
+
 class Scene;
 class Object;
 class LightSource;
@@ -48,7 +49,40 @@ public:
 	float calcIntensity();
 	ColourRGB sumColours();
 
+	const glm::mat3 toLocalCoord(glm::vec3 normal) {
+		//const glm::vec3 Z{ normal };
+		//const glm::vec3 X = glm::normalize(_direction - glm::dot(_direction, Z) * Z);
+		//const glm::vec3 Y = glm::cross(-X, Z);
 
+		// lec 2 slide 13
+		glm::vec3 x_L = glm::normalize(-_direction + glm::dot(normal, _direction) * normal);
+		glm::vec3 z_L = glm::normalize(normal);
+
+		glm::vec3 y_L = glm::cross(z_L, x_L);
+
+		return glm::mat3{
+			x_L.x, y_L.x, z_L.x,
+			x_L.y, y_L.y, z_L.y,
+			x_L.z, y_L.z, z_L.z,
+		};
+
+		/*return (glm::mat4{
+		x_L.x, y_L.x, z_L.x, 0.f,
+		x_L.y, y_L.y, z_L.y, 0.f,
+		x_L.z, y_L.z, z_L.z, 0.f,
+		0.f, 0.f, 0.f, 1.f } *
+		glm::mat4{
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 1.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		-collisionPoint.x, -collisionPoint.y, -collisionPoint.z, 1.f
+			});*/
+	}
+		
+
+	const glm::mat3 toGlobalCoord(glm::vec3 normal) {
+		return glm::inverse(toLocalCoord(normal));
+	}
 
 
 	void reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection);
