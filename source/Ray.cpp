@@ -1,5 +1,6 @@
 #include "./include/Ray.h"
 
+
 // prev and next do not need to be initialized, default nullptr
 Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, Ray* prevRay, bool isShadowRay) {
 	_startPos = start;
@@ -148,6 +149,14 @@ ColourRGB Ray::castRay() {
 	bool ded = false;
 	if (randNum < chanceToDie) ded = true;
 
+
+	double yi = dis(gen);
+	float Ps = 0.8f; // chance to survive
+	double PI = 3.14159265358979323846;
+	float randAzimuth;
+	float randInclination;
+	float redefAzimuth;
+
 	// #############################################################
 	
 	glm::vec3 collisionPoint;
@@ -180,30 +189,47 @@ ColourRGB Ray::castRay() {
 	switch (materialHit.getMaterialType())
 	{
 	case Material::_LambertianReflector:
-		//std::cout << "D ";
 
-		
-		//_colour = colourFromBounce;
-
-		//_colour.setR((_colour.getR() + colourFromBounce.getR())/2.0);
-		//_colour.setG((_colour.getG() + colourFromBounce.getG())/2.0);
-		//_colour.setB((_colour.getB() + colourFromBounce.getB())/2.0);
 		_colour.mixColours(colourFromBounce);
 
-		// Russian Roulette
-		if (ded) {
+		// Russian Roulette, används för Lambertian studs eller shadowray
+		
+		// lec 9 slide 8
 
+		randAzimuth = 2.0f * PI * yi;
+		randInclination = glm::acos(glm::sqrt(1 - yi));
+
+		
+
+		redefAzimuth = randAzimuth / Ps;
+		
+
+		// Russian Roulette
+		if (redefAzimuth <= 2.0f * PI) {
+			// skapa random vec3, om den inte är i samma hemisphere som N, byt riktning på den
+			/*glm::vec3 randomDirection{ dis(gen), dis(gen), dis(gen) };
+			glm::normalize(randomDirection);
+			if (glm::dot(randomDirection, collisionNormal) < 0) randomDirection *= -1.0f;*/
+
+			// to cartesian
+			const float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
+			const float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
+			const float randomZ = glm::cos(randInclination);
+
+			glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
+			//glm::vec4 randomDirectionLocal = glm::vec4(randomX, randomY, randomZ, 1);
+
+
+			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
+			//glm::vec4 randomDirectionGlobal = toGlobalCoord(collisionNormal, collisionPoint) * randomDirectionLocal;
+
+			Ray::reflect(collisionPoint, randomDirectionGlobal);
+			
+		}
+		else {
 			for (LightSource* l : this->getScene()->getLightSources()) {
 				castShadowRay(l);
 			}
-		}
-		else {
-
-			// skapa random vec3, om den inte är i samma hemisphere som N, byt riktning på den
-			glm::vec3 randomDirection{ dis(gen), dis(gen), dis(gen) };
-			glm::normalize(randomDirection);
-			if (glm::dot(randomDirection, collisionNormal) < 0) randomDirection *= -1.0f;
-			Ray::reflect(collisionPoint, randomDirection);
 		}
 		
 
