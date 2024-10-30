@@ -46,6 +46,7 @@ public:
 	ColourRGB getColour();
 	void addColour(ColourRGB colour);
 
+	float calcIntensity();
 	ColourRGB sumColours();
 
 	const glm::mat3 toLocalCoord(glm::vec3 normal) {
@@ -115,8 +116,7 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	//std::mt19937 _gen;
-	//std::uniform_real_distribution<float> _rng;
+	double _intensity = 1.0;
 
 	const float _airRefractiveIndex = 1.0f;
 	const float _glassRefractiveIndex = 1.5f;

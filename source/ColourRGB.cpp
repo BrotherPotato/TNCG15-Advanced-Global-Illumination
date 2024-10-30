@@ -1,4 +1,5 @@
 #include "./include/ColourRGB.h"
+#include <iostream>
 
 ColourRGB::ColourRGB(double R, double G, double B) {
 	_R = std::max(std::min(R, 1.0), 0.0);
@@ -38,6 +39,14 @@ ColourRGB ColourRGB::divideColour(int amountOfSamples) {
 	temp.setR(getR() / amountOfSamples);
 	temp.setG(getG() / amountOfSamples);
 	temp.setB(getB() / amountOfSamples);
+	return temp;
+}
+
+ColourRGB ColourRGB::calcFinalIntenisty(float intensity) {
+	ColourRGB temp;
+	temp.setR(getR() * intensity);
+	temp.setG(getG() * intensity);
+	temp.setB(getB() * intensity);
 	return temp;
 }
 
