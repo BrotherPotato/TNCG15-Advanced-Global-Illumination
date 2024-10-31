@@ -25,7 +25,7 @@ public:
 	
 
 	// blandar färger så att alla raysperpixel kan klumpa samman till en slutfärg per pixel
-	void mixColours(ColourRGB newColour);
+	void addColour(ColourRGB newColour);
 
 private:
 	double _R, _G, _B;

@@ -72,51 +72,37 @@ Ray::~Ray() {
 	//delete delete?
 }
 
-// smitta av lite f�rg, mindre f�r varje bounce... tro mig mannen -- vansinne
-void Ray::addColour(ColourRGB colour) {
-	//_colour.setR((_colour.getR() + colour.getR()) / _bounces);
-	//_colour.setG((_colour.getG() + colour.getG()) / _bounces);
-	//_colour.setB((_colour.getB() + colour.getB()) / _bounces);
-}
-
 float Ray::calcIntensity() { //hit a lightsource
 	Ray* ptr = this; 
-	ptr->_intensity = 1.0;
 	float length = 0.0;
 	float finalLength = 0.0;
+
+	glm::vec3 startPoint;
+	glm::vec3 endPoint;
+	glm::vec3 direction;
 	
 	//read access violation here but I dont know why
 	while (ptr) { // goes from lightsource to camera
-		glm::vec3 startPoint = ptr->getStartPos();
-		glm::vec3 endPoint = ptr->getEndPos(); //lightsource
-		glm::vec3 direction = glm::vec3(endPoint - startPoint);
+		startPoint = ptr->getStartPos();
+		endPoint = ptr->getEndPos(); //lightsource
+		direction = glm::vec3(endPoint - startPoint);
 		length = glm::length(direction);
 		finalLength += length;
 
-		//length = length* length; // squared length
-
 		if (length < 1.0) length += 1; //if very very close
-		//ptr->_intensity = ptr->_intensity / length;
 
 		if (ptr->_prevRay) {
 			ptr = ptr->_prevRay;
-			//if (ptr == nullptr) break;
 		}
 		else {
 			break;
 		}
-		//std::cout << "\tlength: " << length << std::endl;
-
-		//std::cout << "should be 1: "<< ptr->_intensity << "\nLength: " << length << "\t" << finalLength;
 	}
 	finalLength = finalLength * finalLength;
-	if (!ptr->_prevRay && !ptr->_nextRay) {
-		std::cout << " KYS ";
-		return 1.0; // 1.0
-	}
-	//std::cout << "\nskibidi: " << ptr->_intensity / finalLength;
+	
+	//std::cout << "skibidi: " << ptr->_intensity << "dididid " << finalLength << "asdasdasd " << (ptr->_intensity / finalLength) << "\n";
 
-	return (ptr->_intensity / finalLength) ;
+	return glm::clamp((ptr->_intensity / finalLength), 0.0, 1.0);
 }
 
 ColourRGB Ray::sumColours() {
@@ -125,11 +111,11 @@ ColourRGB Ray::sumColours() {
 	Ray* ptr = this;
 	ColourRGB colourSum = ColourRGB();
 	bool isLit = false;
-	int counter = 0;
+	int counter = 1;
 	while (ptr != nullptr && !isLit) {
 
-		colourSum.mixColours(ptr->_colour);
-		counter++;
+		colourSum.addColour(ptr->_colour);
+		
 
 		if (ptr->_lit) { // ptr->_nextRay->_isShadowRay && 
 
@@ -138,8 +124,12 @@ ColourRGB Ray::sumColours() {
 		}
 		else {
 			ptr = ptr->_nextRay;	
+			counter++;
 		}
 	}
+
+	colourSum.divideColour(counter);
+	
 
 	if (isLit && counter != 0 && ptr) {
 
@@ -147,6 +137,7 @@ ColourRGB Ray::sumColours() {
 		//std::cout << "hoo hooo";
 		//run intensity 
 		float pixelIntensity = ptr->calcIntensity();
+		//std::cout << "pixelIntensity: " << pixelIntensity;
 		colourSum.calcFinalIntenisty(pixelIntensity);
 		return colourSum;
 	}
@@ -251,7 +242,7 @@ ColourRGB Ray::castRay() {
 		//_colour.setG((_colour.getG() + colourFromBounce.getG())/2.0);
 		//_colour.setB((_colour.getB() + colourFromBounce.getB())/2.0);
 
-		_colour.mixColours(colourFromBounce);
+		_colour.addColour(colourFromBounce);
 
 		// Russian Roulette, anv�nds f�r Lambertian studs eller shadowray
 		

@@ -44,7 +44,6 @@ public:
 	Scene* getScene() const;
 	
 	ColourRGB getColour();
-	void addColour(ColourRGB colour);
 
 	float calcIntensity();
 	ColourRGB sumColours();
@@ -116,7 +115,7 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	double _intensity = 1.0;
+	double _intensity = 1000.0;
 
 	const float _airRefractiveIndex = 1.0f;
 	const float _glassRefractiveIndex = 1.5f;

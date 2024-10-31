@@ -109,9 +109,9 @@ void Camera::emitRays() {
 
 
 				if (k == 0) pixelCol = ray.sumColours();
-				else pixelCol.mixColours(ray.sumColours());
+				else pixelCol.addColour(ray.sumColours());
 			}
-
+			//std::cout << "red: " << pixelCol.getR() << std::endl;
 			pixelCol.divideColour(_numberOfRaysPerPixel);
 			_pixels[i][j].setColour(pixelCol);
 
@@ -155,15 +155,15 @@ void Camera::normalizePixelColours() {
 			}		
 		}
 	}
-	//std::cout << maxRGBValue;
+	std::cout << "normalizePixelColours: " << maxRGBValue << std::endl;
 	// 800 rader
 	for (int i = 0; i < _pixels.size(); i++) {
 
 		// 800 kolumner
 		for (int j = 0; j < _pixels[i].size(); j++) {
 			//std::cout << _pixels[i][j].getColour().getR() << " ";
-			//_pixels[i][j].getColour().divideColour(maxRGBValue);
-			_pixels[i][j].setColour(_pixels[i][j].getColour().divideColour(maxRGBValue));
+			_pixels[i][j].getColour().divideColour(maxRGBValue);
+			//_pixels[i][j].setColour(_pixels[i][j].getColour().divideColour(maxRGBValue));
 			//std::cout << _pixels[i][j].getColour().getR() << std::endl;
 			_pixels[i][j].validateColour();
 		}

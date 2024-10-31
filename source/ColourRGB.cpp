@@ -39,6 +39,11 @@ ColourRGB ColourRGB::divideColour(int amountOfSamples) {
 	temp.setR(getR() / amountOfSamples);
 	temp.setG(getG() / amountOfSamples);
 	temp.setB(getB() / amountOfSamples);
+
+	setR(getR() / amountOfSamples);
+	setG(getG() / amountOfSamples);
+	setB(getB() / amountOfSamples);
+
 	return temp;
 }
 
@@ -47,10 +52,15 @@ ColourRGB ColourRGB::calcFinalIntenisty(float intensity) {
 	temp.setR(getR() * intensity);
 	temp.setG(getG() * intensity);
 	temp.setB(getB() * intensity);
+
+	setR(getR() * intensity);
+	setG(getG() * intensity);
+	setB(getB() * intensity);
+
 	return temp;
 }
 
-void ColourRGB::mixColours(ColourRGB newColour) {
+void ColourRGB::addColour(ColourRGB newColour) {
 	setR(getR() + newColour.getR());
 	setG(getG() + newColour.getG());
 	setB(getB() + newColour.getB());
