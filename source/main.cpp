@@ -114,11 +114,12 @@ int main() {
 	glm::vec3 oldL1(2, 2, 2);
 	scene.createLightSource(oldL0, oldL1);*/
 
+	double distanceFromCenter = 1;
 
-	glm::vec3 L0(7, 2, 4.9);
-	glm::vec3 L1(3, 2, 4.9);
-	glm::vec3 L2(3, -2, 4.9);
-	glm::vec3 L3(7, -2, 4.9);
+	glm::vec3 L0(5 + distanceFromCenter, distanceFromCenter, 4.9);
+	glm::vec3 L1(5 - distanceFromCenter, distanceFromCenter, 4.9);
+	glm::vec3 L2(5 - distanceFromCenter, -distanceFromCenter, 4.9);
+	glm::vec3 L3(5 + distanceFromCenter, -distanceFromCenter, 4.9);
 
 	scene.createLightSourceTriangle(L1, L0, L3);
 	scene.createLightSourceTriangle(L3, L2, L1);

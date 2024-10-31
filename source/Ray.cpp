@@ -191,7 +191,7 @@ ColourRGB Ray::castRay() {
 
 
 	double yi = dis(gen);
-	float Ps = 0.8f; // chance to survive
+	
 	double PI = 3.14159265358979323846;
 	float randAzimuth;
 	float randInclination;
@@ -253,7 +253,7 @@ ColourRGB Ray::castRay() {
 
 		
 
-		redefAzimuth = randAzimuth / Ps;
+		redefAzimuth = randAzimuth / _ps;
 		
 
 		// Russian Roulette

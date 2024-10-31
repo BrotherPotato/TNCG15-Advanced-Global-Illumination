@@ -1,6 +1,7 @@
 #pragma once
 
 #include "algorithm"
+#include "glm.hpp"
 // ColourRGB går mellan 0 och 1
 class ColourRGB {
 public:

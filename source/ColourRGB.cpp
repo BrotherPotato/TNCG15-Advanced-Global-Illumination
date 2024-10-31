@@ -49,13 +49,15 @@ ColourRGB ColourRGB::divideColour(int amountOfSamples) {
 
 ColourRGB ColourRGB::calcFinalIntenisty(float intensity) {
 	ColourRGB temp;
-	temp.setR(getR() * intensity);
-	temp.setG(getG() * intensity);
-	temp.setB(getB() * intensity);
+	temp.setR(glm::clamp(getR() * intensity, 0.0, 1.0));
+	temp.setG(glm::clamp(getG() * intensity, 0.0, 1.0));
+	temp.setB(glm::clamp(getB() * intensity, 0.0, 1.0));
 
-	setR(getR() * intensity);
-	setG(getG() * intensity);
-	setB(getB() * intensity);
+	setR(glm::clamp(getR() * intensity, 0.0, 1.0));
+	setG(glm::clamp(getG() * intensity, 0.0, 1.0));
+	setB(glm::clamp(getB() * intensity, 0.0, 1.0));
+
+	
 
 	return temp;
 }

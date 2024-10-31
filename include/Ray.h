@@ -115,10 +115,10 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	double _intensity = 1000.0;
-
-	const float _airRefractiveIndex = 1.0f;
-	const float _glassRefractiveIndex = 1.5f;
+	static constexpr double _intensity = 1000.0;
+	static constexpr float _ps = 0.5f; // chance to survive
+	static constexpr float _airRefractiveIndex = 1.0f;
+	static constexpr float _glassRefractiveIndex = 1.5f;
 
 };
 
