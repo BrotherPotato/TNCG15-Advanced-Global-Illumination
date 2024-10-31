@@ -26,7 +26,7 @@ public:
 	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour = ColourRGB(), Ray* prevRay = nullptr, bool isShadowRay = false);
 	~Ray();
 
-	Object* rayIntersection(glm::vec3& collisionPoint);
+	Object* rayIntersection();
 	
 	ColourRGB castRay();
 	ColourRGB castShadowRay(const LightSource* light);
@@ -43,9 +43,10 @@ public:
 	int getBounces() const;
 	Scene* getScene() const;
 	
-	ColourRGB getColour();
+	//ColourRGB getColour();
 
-	float calcIntensity();
+	float calcIntensity() const;
+	float oldCalcIntensity();
 	ColourRGB sumColours();
 
 	const glm::mat3 toLocalCoord(glm::vec3 normal) {
@@ -86,7 +87,7 @@ public:
 	void transparentRefract(glm::vec3 direction, glm::vec3 normal, float R);
 
 
-	void reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection);
+	void reflect(glm::vec3 reflectionDirection);
 	    
 private:
 	glm::vec3 _startPos;
@@ -115,8 +116,9 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	static constexpr double _intensity = 1000.0;
-	static constexpr float _ps = 0.5f; // chance to survive
+	static constexpr double _intensity = 100.0;
+	static constexpr float _ps = 0.7f; // chance to survive
+	static constexpr int _shadowRaysPerRay = 3;
 	static constexpr float _airRefractiveIndex = 1.0f;
 	static constexpr float _glassRefractiveIndex = 1.5f;
 

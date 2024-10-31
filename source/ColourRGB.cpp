@@ -1,10 +1,17 @@
 #include "./include/ColourRGB.h"
 #include <iostream>
 
+
+ColourRGB::ColourRGB(double intensity) {
+	_R = glm::clamp(intensity, 0.0, 1.0);
+	_G = glm::clamp(intensity, 0.0, 1.0);
+	_B = glm::clamp(intensity, 0.0, 1.0);
+}
+
 ColourRGB::ColourRGB(double R, double G, double B) {
-	_R = std::max(std::min(R, 1.0), 0.0);
-	_G = std::max(std::min(G, 1.0), 0.0);
-	_B = std::max(std::min(B, 1.0), 0.0);
+	_R = glm::clamp(R, 0.0, 1.0);
+	_G = glm::clamp(G, 0.0, 1.0);
+	_B = glm::clamp(B, 0.0, 1.0);
 };
 
 double ColourRGB::getR() {
@@ -43,6 +50,19 @@ ColourRGB ColourRGB::divideColour(int amountOfSamples) {
 	setR(getR() / amountOfSamples);
 	setG(getG() / amountOfSamples);
 	setB(getB() / amountOfSamples);
+
+	return temp;
+}
+
+ColourRGB ColourRGB::componentMult(ColourRGB otherColour) {
+	ColourRGB temp;
+	temp.setR(getR() * otherColour.getR());
+	temp.setG(getG() * otherColour.getG());
+	temp.setB(getB() * otherColour.getB());
+
+	setR(getR() * otherColour.getR());
+	setG(getG() * otherColour.getG());
+	setB(getB() * otherColour.getB());
 
 	return temp;
 }

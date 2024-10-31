@@ -10,6 +10,8 @@
 
 #include "./include/Ray.h"
 
+#include <random>
+
 class ColourRGB;
 class Material;
 
@@ -50,12 +52,39 @@ public:
 	glm::vec3 getPosition() const {
 		return _pos;
 	}
+	// generate a random point on the triangle
+	glm::vec3 getRandomPosition() const {
+		// go to local coordinate system
+		glm::vec3 E1 = _v1 - _v0;
+		glm::vec3 E2 = _v2 - _v0;
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution dis(0.0, 1.0);
+		// randomize two points s and t
+		float s = dis(gen);
+		float t = dis(gen);
+		// check if the point is inside the triangle
+		bool insideTriangle = s + t <= 1;
+
+		glm::vec3 randomPoint;
+
+		if (insideTriangle) {
+			randomPoint = s * E1 + t * E2;
+		}
+		else {
+			randomPoint = (1 - s) * E1 + (1 - t) * E2;
+		}
+		// to world
+		return (randomPoint + _v0);
+
+	}
 
 	double getIntensity() {
 		return _intensity;
 	}
 
-	bool rayIntersection(Ray* ray) override;
+	bool rayIntersection(Ray* ray) override; // fixa med normal
 
 	void emitPhotons();
 private:

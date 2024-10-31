@@ -14,7 +14,7 @@ Ray::Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, R
 		_bounces = 1;
 	}
 	else {
-		_bounces = prevRay->getBounces() + 1; // �ndra s� att den endast �kar p� lambertian surfaces
+		_bounces = prevRay->_bounces + 1; // �ndra s� att den endast �kar p� lambertian surfaces
 	}
 	
 	_isShadowRay = isShadowRay;
@@ -47,32 +47,41 @@ Scene* Ray::getScene() const {
 	return _scene;
 }
 
-ColourRGB Ray::getColour() {
-
-	// g�r till sista rayen i ledet och tar dess f�rg
-	Ray* ptr = this;
-
-	// n�r man kollar direkt p� ljusk�llan
-	if (ptr->_lit) return ptr->_colour;
-
-	// resterande rays
-	while (ptr != nullptr && ptr->_nextRay != nullptr) {
-		
-		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) return ptr->_colour;
-		ptr = ptr->_nextRay;
-
-		// n�r man kollar direkt p� ljusk�llan
-		if (ptr->_lit) return ptr->_colour;
-	}
-	
-	return ColourRGB(); 
-}
+//ColourRGB Ray::getColour() {
+//
+//	// g�r till sista rayen i ledet och tar dess f�rg
+//	Ray* ptr = this;
+//
+//	// n�r man kollar direkt p� ljusk�llan
+//	if (ptr->_lit) return ptr->_colour;
+//
+//	// resterande rays
+//	while (ptr != nullptr && ptr->_nextRay != nullptr) {
+//		
+//		if (ptr->_nextRay->_isShadowRay && ptr->_nextRay->_lit) return ptr->_colour;
+//		ptr = ptr->_nextRay;
+//
+//		// n�r man kollar direkt p� ljusk�llan
+//		if (ptr->_lit) return ptr->_colour;
+//	}
+//	
+//	return ColourRGB(); 
+//}
 
 Ray::~Ray() {
-	//delete delete?
+	Ray* current = this;
+	// make sure no shadow rays are pointing to a deleted object
+	while (current->_nextRay) {
+		Ray* next = current->_nextRay;
+		current->_nextRay = nullptr;
+		next->_prevRay = nullptr;
+		//delete current;
+		current = next;
+	}
+	
 }
 
-float Ray::calcIntensity() { //hit a lightsource
+float Ray::oldCalcIntensity() { //hit a lightsource
 	Ray* ptr = this; 
 	float length = 0.0;
 	float finalLength = 0.0;
@@ -105,48 +114,61 @@ float Ray::calcIntensity() { //hit a lightsource
 	return glm::clamp((ptr->_intensity / finalLength), 0.0, 1.0);
 }
 
+float Ray::calcIntensity() const {
+	glm::vec3 startPoint = getStartPos();
+	glm::vec3 endPoint = getEndPos(); //lightsource
+	glm::vec3 direction = glm::vec3(endPoint - startPoint);
+	float length = glm::length(direction);
+	float finalLength = length * length;
+	return (_intensity / finalLength);				//glm::clamp((_intensity / finalLength), 0.0, 1.0);
+}
+
 ColourRGB Ray::sumColours() {
 
-	
 	Ray* ptr = this;
 	ColourRGB colourSum = ColourRGB();
-	bool isLit = false;
+	//bool isLit = false;
 	int counter = 1;
-	while (ptr != nullptr && !isLit) {
+	// step all the way through 
+	while (ptr != nullptr) {
 
-		colourSum.addColour(ptr->_colour);
+		colourSum.addColour(ptr->_colour.divideColour(counter));
 		
-
-		if (ptr->_lit) { // ptr->_nextRay->_isShadowRay && 
-
-			isLit = ptr->_lit;
-			//return ptr->getColour();
-		}
-		else {
+		//if (ptr->_lit) { // ptr->_nextRay->_isShadowRay && 
+		//
+		//	isLit = ptr->_lit;
+		//	//return ptr->getColour();
+		//}
+		if (ptr->_nextRay) {
 			ptr = ptr->_nextRay;	
 			counter++;
 		}
+		else {
+			break;
+		}
 	}
-
+	// divide by the last rays number of bounces, reflective objects do not add to the number of bounces since they just pass the radiance over
 	colourSum.divideColour(counter);
+
+	return colourSum;
 	
 
-	if (isLit && counter != 0 && ptr) {
-
-		
-		//std::cout << "hoo hooo";
-		//run intensity 
-		float pixelIntensity = ptr->calcIntensity();
-		//std::cout << "pixelIntensity: " << pixelIntensity;
-		colourSum.calcFinalIntenisty(pixelIntensity);
-		return colourSum;
-	}
-
-	return ColourRGB();
+	//if (counter != 0 && ptr) {
+	//
+	//	
+	//	//std::cout << "hoo hooo";
+	//	//run intensity 
+	//	float pixelIntensity = ptr->calcIntensity();
+	//	//std::cout << "pixelIntensity: " << pixelIntensity;
+	//	colourSum.calcFinalIntenisty(pixelIntensity);
+	//	return colourSum;
+	//}
+	//
+	//return ColourRGB();
 }
 
 // lite os�ker hur man vill strukturera intersection delarna
-Object* Ray::rayIntersection(glm::vec3& collisionPoint) {
+Object* Ray::rayIntersection() {
 
 
 	// go through each object, check ray intersection
@@ -199,8 +221,8 @@ ColourRGB Ray::castRay() {
 
 	// #############################################################
 	
-	glm::vec3 collisionPoint;
-	Object* collisionObject = this->rayIntersection(collisionPoint); // collisionPoint sent in as reference so we can change the value directly
+	//glm::vec3 collisionPoint;
+	Object* collisionObject = this->rayIntersection(); // collisionPoint sent in as reference so we can change the value directly
 
 	if (collisionObject == nullptr) {
 		return ColourRGB();
@@ -210,6 +232,7 @@ ColourRGB Ray::castRay() {
 	Material materialHit = collisionObject->getMaterial();
 	glm::vec3 collisionNormal = collisionObject->getNormal(this);
 	ColourRGB colour = materialHit.getColour();
+	ColourRGB shadowRayLightContribution = ColourRGB();
 	
 	// dum l�sning s� att shadowrays inte skapar nya shadowrays
 	if (_isShadowRay) {
@@ -275,14 +298,24 @@ ColourRGB Ray::castRay() {
 			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
 			//glm::vec4 randomDirectionGlobal = toGlobalCoord(collisionNormal, collisionPoint) * randomDirectionLocal;
 
-			Ray::reflect(collisionPoint, randomDirectionGlobal);
+			Ray::reflect(randomDirectionGlobal);
 			
 		}
 		else {
+			
+		}
+		// regardless of termination or not, we send x shadow rays to each light source
+		
+		for (int i = 0; i < _shadowRaysPerRay; i++)
+		{
 			for (LightSource* l : this->getScene()->getLightSources()) {
-				castShadowRay(l);
+				shadowRayLightContribution.addColour(castShadowRay(l));
 			}
 		}
+		//std::cout << "Before: " << shadowRayLightContribution.getR();
+		shadowRayLightContribution.divideColour(_shadowRaysPerRay * std::size(getScene()->getLightSources()));
+		//std::cout << "After: " << shadowRayLightContribution.getR() << std::endl;
+		_colour.componentMult(shadowRayLightContribution);
 
 		break;
 	case Material::_MirrorReflection:
@@ -330,16 +363,34 @@ ColourRGB Ray::castRay() {
 
 ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsources and objects? pointer to scene ist�llet kommer f� kunna n� alla ljus 
 	
-	glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta �r korrekt lol
-	Ray* shadowRay = new Ray(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), this, true);
 
-	//Ray* ptrRay = &shadowRay;
-	this->setNextRay(shadowRay);
 
+	//glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta �r korrekt lol
+	//Ray* shadowRay = new Ray(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), this, true);
+	//
+	////Ray* ptrRay = &shadowRay;
+	//this->setNextRay(shadowRay);
+	//
+	//return ColourRGB();
+
+
+	glm::vec3 shadowRayDirection = light->getRandomPosition() - this->getEndPos();
+	Ray* shadowRay = new Ray(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), nullptr, true);
+	// _lit is true if the shadow ray hit the lightsource
+	if (shadowRay->_lit) {
+		//std::cout << "HIT";
+		double intensity = shadowRay->calcIntensity();
+		delete shadowRay;
+		return ColourRGB(intensity);
+	}
+	
+	delete shadowRay;
 	return ColourRGB();
+
+
 }
 
-void Ray::reflect(glm::vec3 collisionPoint, glm::vec3 reflectionDirection) {
+void Ray::reflect(glm::vec3 reflectionDirection) {
 
 	// n�got s�nt f�r att fixa n�sta ray
 	Ray* newRay = new Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
@@ -358,7 +409,7 @@ void Ray::mirrorReflect(glm::vec3 direction, glm::vec3 normal) {
 	glm::vec3 Di = glm::normalize(direction);
 	glm::vec3 N = glm::normalize(normal);
 	glm::vec3 Do = Di - (2.0f * glm::dot(Di, N) * N);
-	reflect(getEndPos(), Do);
+	reflect(Do);
 }
 
 void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R) {
@@ -374,6 +425,6 @@ void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R) {
 	//std::cout << theSquare << "\n";
 
 	glm::vec3 Dref = (R * Do) + (N * (-R * glm::dot(N, Do) - theSquare));
-	reflect(getEndPos(), Dref);
+	reflect(Dref);
 
 }

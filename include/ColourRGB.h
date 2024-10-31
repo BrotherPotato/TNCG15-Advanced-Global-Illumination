@@ -1,11 +1,12 @@
 #pragma once
 
-#include "algorithm"
+//#include "algorithm"
 #include "glm.hpp"
 // ColourRGB går mellan 0 och 1
 class ColourRGB {
 public:
-	ColourRGB(double R = 0, double G = 0, double B = 0);
+	ColourRGB(double intensity = 0);
+	ColourRGB(double R, double G, double B);
 
 	~ColourRGB() = default;
 
@@ -22,6 +23,7 @@ public:
 	void setB(double B);
 
 	ColourRGB divideColour(int amountOfSamples);
+	ColourRGB componentMult(ColourRGB otherColour);
 	ColourRGB calcFinalIntenisty(float intensity);
 	
 
