@@ -84,10 +84,10 @@ public:
 		return glm::inverse(toLocalCoord(normal));
 	}
 	void mirrorReflect(glm::vec3 direction, glm::vec3 normal);
-	void transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega);
+	void transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega, float R_Omega_Schlicks);
 
 
-	void reflect(glm::vec3 reflectionDirection);
+	void createReflectedRay(glm::vec3 reflectionDirection);
 	    
 private:
 	glm::vec3 _startPos;

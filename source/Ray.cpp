@@ -174,7 +174,7 @@ Object* Ray::rayIntersection() {
 	// go through each object, check ray intersection
 	Object* objectHit = nullptr; 
 	double closestDist = 1000.0;
-	double minDist = 0.001;
+	float minDist = 0.001;
 	glm::vec3 distance;
 
 	// g�r igenom alla objects
@@ -260,15 +260,17 @@ ColourRGB Ray::castRay() {
 	float Omega = acos(glm::dot(_direction, collisionNormal));
 	if (insideObject) Omega = acos(glm::dot(_direction, -collisionNormal));
 
+	float R0_Schlicks = pow(((n1 - n2) / (n1 + n2)), 2);
+	float R_Omega_Schlicks = R0_Schlicks + (1 - R0_Schlicks) * pow(1 - cos(Omega), 5);
+	/*if (materialHit.getMaterialType() == Material::_Transparent) {
+		std::cout << R_Omega_Schlicks << " ";
+	}*/
+	
+	
+
 	switch (materialHit.getMaterialType())
 	{
-	case Material::_LambertianReflector:
-
-		//_colour = colourFromBounce;
-		//_colour.setR((_colour.getR() + colourFromBounce.getR())/2.0);
-		//_colour.setG((_colour.getG() + colourFromBounce.getG())/2.0);
-		//_colour.setB((_colour.getB() + colourFromBounce.getB())/2.0);
-
+	case Material::_LambertianReflector:	
 		_colour.addColour(colourFromBounce);
 
 		// Russian Roulette, anv�nds f�r Lambertian studs eller shadowray
@@ -285,11 +287,6 @@ ColourRGB Ray::castRay() {
 
 		// Russian Roulette
 		if (redefAzimuth <= 2.0f * PI) {
-			// skapa random vec3, om den inte �r i samma hemisphere som N, byt riktning p� den
-			/*glm::vec3 randomDirection{ dis(gen), dis(gen), dis(gen) };
-			glm::normalize(randomDirection);
-			if (glm::dot(randomDirection, collisionNormal) < 0) randomDirection *= -1.0f;*/
-
 			// to cartesian
 			const float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
 			const float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
@@ -298,15 +295,10 @@ ColourRGB Ray::castRay() {
 			glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
 			//glm::vec4 randomDirectionLocal = glm::vec4(randomX, randomY, randomZ, 1);
 
-
 			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
 			//glm::vec4 randomDirectionGlobal = toGlobalCoord(collisionNormal, collisionPoint) * randomDirectionLocal;
 
-			Ray::reflect(randomDirectionGlobal);
-			
-		}
-		else {
-			
+			Ray::createReflectedRay(randomDirectionGlobal);	
 		}
 		// regardless of termination or not, we send x shadow rays to each light source
 		
@@ -334,8 +326,8 @@ ColourRGB Ray::castRay() {
 
 		_bounces--;
 
-		if (insideObject) transparentRefract(_direction, -collisionNormal, R, Omega);
-		else transparentRefract(_direction, collisionNormal, R, Omega);
+		if (insideObject) transparentRefract(_direction, -collisionNormal, R, Omega, R_Omega_Schlicks);
+		else transparentRefract(_direction, collisionNormal, R, Omega, R_Omega_Schlicks);
 
 		break;
 	case Material::_LightSource:
@@ -381,7 +373,7 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 
 }
 
-void Ray::reflect(glm::vec3 reflectionDirection) {
+void Ray::createReflectedRay(glm::vec3 reflectionDirection) {
 
 	// n�got s�nt f�r att fixa n�sta ray
 	Ray* newRay = new Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
@@ -398,10 +390,10 @@ void Ray::mirrorReflect(glm::vec3 direction, glm::vec3 normal) {
 
 	// Lecture 5, Mirror Reflection
 	glm::vec3 Dref = direction - (2.0f * glm::dot(direction, normal) * normal);
-	reflect(Dref);
+	createReflectedRay(Dref);
 }
 
-void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega) {
+void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega, float R_Omega_Schlicks) {
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -414,14 +406,15 @@ void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, flo
 	if (k >= 0.0) {
 		// ringen av sfärens kontur
 		glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
-		reflect(Dref);
+		createReflectedRay(Dref);
 	}
 	else {
 		// mitten av sfären
-		if (randNum < 0.8) {
+		// lecture 9 slide 14
+		if (randNum < R_Omega_Schlicks) {
 			k *= -1.0f;
 			glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
-			reflect(Dref);
+			createReflectedRay(Dref);
 		}
 		else {
 			mirrorReflect(direction, normal);
