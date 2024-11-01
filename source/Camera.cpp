@@ -78,7 +78,7 @@ void Camera::emitRays() {
 
 	int counter = 0;
 	int onePercentage = 800 * 800 / 100;
-	std::cout << "Emitting rays:\n";
+	std::cout << "Emitting " << _pixelsPerSide * _pixelsPerSide * _numberOfRaysPerPixel << " rays:\n";
 	std::cout << "<" << std::setw(100) << ">" << std::endl;
 	std::cout << "<";
 

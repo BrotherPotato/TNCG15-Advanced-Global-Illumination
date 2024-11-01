@@ -249,12 +249,16 @@ ColourRGB Ray::castRay() {
 	ColourRGB colourFromBounce = materialHit.getColour();
 	colourFromBounce = colourFromBounce.divideColour(_bounces);
 
-	bool insideObject = glm::dot(_direction, collisionNormal) < 0;
+	// Eftersom objekts normaler alltid pekar utåt, 
+	// kan man avgöra om rayen är inuti ett objekt genom att se om dess direction är parallell med normalen.
+	bool insideObject = glm::dot(_direction, collisionNormal) > 0;
 	float n1 = insideObject ? _glassRefractiveIndex : _airRefractiveIndex;
 	float n2 = insideObject ? _airRefractiveIndex : _glassRefractiveIndex;
 	float R = n1 / n2;
 
+	// Dock måste normalen vändas när den används i beräkningar.
 	float Omega = acos(glm::dot(_direction, collisionNormal));
+	if (insideObject) Omega = acos(glm::dot(_direction, -collisionNormal));
 
 	switch (materialHit.getMaterialType())
 	{
@@ -329,22 +333,9 @@ ColourRGB Ray::castRay() {
 		//std::cout << "T ";
 
 		_bounces--;
-		
-		// B�de reflection och refraction
-		if (sin(Omega) * (R) <= 1) {
 
-			// Antingen eller, f�r vi kan inte faktiskt ha b�da samtidigt.
-			if (randNum > 1.0) {
-				mirrorReflect(_direction, collisionNormal);
-			}
-			else {
-				transparentRefract(_direction, collisionNormal, R);
-			}
-		}
-		// Bara reflection
-		else {
-			transparentRefract(_direction, collisionNormal, R);
-		}
+		if (insideObject) transparentRefract(_direction, -collisionNormal, R, Omega);
+		else transparentRefract(_direction, collisionNormal, R, Omega);
 
 		break;
 	case Material::_LightSource:
@@ -406,25 +397,34 @@ void Ray::reflect(glm::vec3 reflectionDirection) {
 void Ray::mirrorReflect(glm::vec3 direction, glm::vec3 normal) {
 
 	// Lecture 5, Mirror Reflection
-	glm::vec3 Di = glm::normalize(direction);
-	glm::vec3 N = glm::normalize(normal);
-	glm::vec3 Do = Di - (2.0f * glm::dot(Di, N) * N);
-	reflect(Do);
+	glm::vec3 Dref = direction - (2.0f * glm::dot(direction, normal) * normal);
+	reflect(Dref);
 }
 
-void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R) {
+void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega) {
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution dis(0.0, 1.0);
+	double randNum = dis(gen);
 
 	// Lecture 5, Transparent Refraction
-	glm::vec3 Do = glm::normalize(direction);
-	glm::vec3 N = glm::normalize(normal);
 
-	float theSquare = 0.0f; // f�rhindra imagin�ra tal
-	if ((1.0 - pow(R, 2.0) * pow((1.0 - glm::dot(N, Do)), 2.0)) > 0.0) {
-		theSquare = sqrt(1.0 - (pow(R, 2.0) * pow((1.0 - glm::dot(N, Do)), 2.0)));
+	float k = (1.0 - pow(R, 2.0) * pow((1.0 - glm::dot(normal, direction)), 2.0));
+	if (k >= 0.0) {
+		// ringen av sfärens kontur
+		glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
+		reflect(Dref);
 	}
-	//std::cout << theSquare << "\n";
-
-	glm::vec3 Dref = (R * Do) + (N * (-R * glm::dot(N, Do) - theSquare));
-	reflect(Dref);
-
+	else {
+		// mitten av sfären
+		if (randNum < 0.8) {
+			k *= -1.0f;
+			glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
+			reflect(Dref);
+		}
+		else {
+			mirrorReflect(direction, normal);
+		}
+	}
 }

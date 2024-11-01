@@ -84,7 +84,7 @@ public:
 		return glm::inverse(toLocalCoord(normal));
 	}
 	void mirrorReflect(glm::vec3 direction, glm::vec3 normal);
-	void transparentRefract(glm::vec3 direction, glm::vec3 normal, float R);
+	void transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega);
 
 
 	void reflect(glm::vec3 reflectionDirection);
