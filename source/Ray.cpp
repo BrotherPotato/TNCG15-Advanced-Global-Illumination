@@ -258,10 +258,11 @@ ColourRGB Ray::castRay() {
 
 	// Dock måste normalen vändas när den används i beräkningar.
 	float Omega = acos(glm::dot(_direction, collisionNormal));
-	if (insideObject) Omega = acos(glm::dot(_direction, -collisionNormal));
+	//if (insideObject) Omega = acos(glm::dot(_direction, -collisionNormal));
 
 	float R0_Schlicks = pow(((n1 - n2) / (n1 + n2)), 2);
-	float R_Omega_Schlicks = R0_Schlicks + (1 - R0_Schlicks) * pow(1 - cos(Omega), 5);
+	//std::cout << Omega << " ";
+	float R_Omega_Schlicks = R0_Schlicks + (1 - R0_Schlicks) * pow(1 - abs(cos(Omega)), 5); // TODO kör abs nu, försök fixa senare när sphere är rätt
 	/*if (materialHit.getMaterialType() == Material::_Transparent) {
 		std::cout << R_Omega_Schlicks << " ";
 	}*/
@@ -280,8 +281,6 @@ ColourRGB Ray::castRay() {
 		randAzimuth = 2.0f * PI * yi;
 		randInclination = glm::acos(glm::sqrt(1 - yi));
 
-		
-
 		redefAzimuth = randAzimuth / _ps;
 		
 
@@ -298,7 +297,7 @@ ColourRGB Ray::castRay() {
 			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
 			//glm::vec4 randomDirectionGlobal = toGlobalCoord(collisionNormal, collisionPoint) * randomDirectionLocal;
 
-			Ray::createReflectedRay(randomDirectionGlobal);	
+			Ray::createNewRay(randomDirectionGlobal);	
 		}
 		// regardless of termination or not, we send x shadow rays to each light source
 		
@@ -326,8 +325,10 @@ ColourRGB Ray::castRay() {
 
 		_bounces--;
 
-		if (insideObject) transparentRefract(_direction, -collisionNormal, R, Omega, R_Omega_Schlicks);
-		else transparentRefract(_direction, collisionNormal, R, Omega, R_Omega_Schlicks);
+		transparentRefract(_direction, collisionNormal, R, Omega, R_Omega_Schlicks);
+
+		/*if (insideObject) transparentRefract(_direction, -collisionNormal, R, Omega, R_Omega_Schlicks);
+		else transparentRefract(_direction, collisionNormal, R, Omega, R_Omega_Schlicks);*/
 
 		break;
 	case Material::_LightSource:
@@ -345,9 +346,6 @@ ColourRGB Ray::castRay() {
 }
 
 ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsources and objects? pointer to scene ist�llet kommer f� kunna n� alla ljus 
-	
-
-
 	//glm::vec3 shadowRayDirection = light->getPosition() - this->getEndPos(); //venne om detta �r korrekt lol
 	//Ray* shadowRay = new Ray(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), this, true);
 	//
@@ -355,7 +353,6 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 	//this->setNextRay(shadowRay);
 	//
 	//return ColourRGB();
-
 
 	glm::vec3 shadowRayDirection = light->getRandomPosition() - this->getEndPos();
 	Ray* shadowRay = new Ray(this->getScene(), this->getEndPos(), shadowRayDirection, ColourRGB(), nullptr, true);
@@ -373,24 +370,21 @@ ColourRGB Ray::castShadowRay(const LightSource* light) { //maybe list of listsou
 
 }
 
-void Ray::createReflectedRay(glm::vec3 reflectionDirection) {
+void Ray::createNewRay(glm::vec3 reflectionDirection) {
 
 	// n�got s�nt f�r att fixa n�sta ray
 	Ray* newRay = new Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
 
 	//Ray* newRayPtr = &newRay;
 	this->setNextRay(newRay);
-
-	
-
 }
 
-
 void Ray::mirrorReflect(glm::vec3 direction, glm::vec3 normal) {
+	direction = -direction;
 
 	// Lecture 5, Mirror Reflection
-	glm::vec3 Dref = direction - (2.0f * glm::dot(direction, normal) * normal);
-	createReflectedRay(Dref);
+	glm::vec3 Drefl = direction - (2.0f * glm::dot(direction, normal) * normal);
+	createNewRay(-Drefl);
 }
 
 void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega, float R_Omega_Schlicks) {
@@ -399,25 +393,56 @@ void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, flo
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution dis(0.0, 1.0);
 	double randNum = dis(gen);
-
+	//std::cout << (randNum < R_Omega_Schlicks) << " ";
+	// 
+	direction = -direction;
+	//std::cout << length(normal) << " ";
 	// Lecture 5, Transparent Refraction
-
 	float k = (1.0 - pow(R, 2.0) * pow((1.0 - glm::dot(normal, direction)), 2.0));
-	if (k >= 0.0) {
-		// ringen av sfärens kontur
-		glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
-		createReflectedRay(Dref);
-	}
-	else {
-		// mitten av sfären
-		// lecture 9 slide 14
-		if (randNum < R_Omega_Schlicks) {
-			k *= -1.0f;
-			glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
-			createReflectedRay(Dref);
+	// Lecture 9, slide 15
+	
+	//if (sin(Omega) * R > 1) {
+	//	// ringen av sfärens kontur
+	//	// lec 5 slide 12
+	//	//std::cout << sin(Omega) * R << " ";
+	//	glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
+	//	createNewRay(Dref);
+	//}
+	//else {
+	//	// mitten av sfären
+	//	// lecture 9 slide 14
+	//	if (randNum < R_Omega_Schlicks) {
+	//		// left case reflection
+	//		mirrorReflect(direction, normal);
+	//	}
+	//	else {
+	//		// left case refraction
+	//		k *= -1.0f;
+	//		glm::vec3 Dref = (R * direction) - (normal * (R * cos(Omega) + sqrt(k)));
+	//		createNewRay(Dref);
+	//	}
+	//}
+	
+	//std::cout << sin(Omega) * R << " ";
+	if (sin(Omega) * R <= 1) {
+		//std::cout << R_Omega_Schlicks << " ";
+		//mirrorReflect(-direction, normal);
+		if (randNum <= R_Omega_Schlicks) { // BRDF
+			// left case reflection
+			//std::cout << "ADSD";
+			mirrorReflect(-direction, normal);
 		}
 		else {
-			mirrorReflect(direction, normal);
+			//std::cout << "IOJOIJ";
+			// left case refraction
+			//k *= -1.0f;
+			glm::vec3 Drefr = (R * direction) + (normal * (-R * glm::dot(normal, direction) - sqrt(k)));
+
+			createNewRay(Drefr);
 		}
+	}
+	else {
+		//std::cout << "YIPPR";
+		mirrorReflect(-direction, -normal);
 	}
 }

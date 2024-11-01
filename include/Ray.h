@@ -87,7 +87,7 @@ public:
 	void transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, float Omega, float R_Omega_Schlicks);
 
 
-	void createReflectedRay(glm::vec3 reflectionDirection);
+	void createNewRay(glm::vec3 reflectionDirection);
 	    
 private:
 	glm::vec3 _startPos;
