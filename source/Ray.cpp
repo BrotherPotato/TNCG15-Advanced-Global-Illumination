@@ -131,9 +131,12 @@ ColourRGB Ray::sumColours() {
 	int counter = 1;
 	// step all the way through 
 	while (ptr != nullptr) {
-
-		colourSum.addColour(ptr->_colour.divideColour(counter));
-		
+		if (_bounces != 0) {
+			colourSum.addColour(ptr->_colour.divideColour(_bounces));
+		}
+		else {
+			colourSum.addColour(ptr->_colour);
+		}
 		//if (ptr->_lit) { // ptr->_nextRay->_isShadowRay && 
 		//
 		//	isLit = ptr->_lit;
@@ -147,8 +150,12 @@ ColourRGB Ray::sumColours() {
 			break;
 		}
 	}
-	// divide by the last rays number of bounces, reflective objects do not add to the number of bounces since they just pass the radiance over
-	colourSum.divideColour(counter);
+
+	if (ptr->_bounces != 0) {
+		// divide by the last rays number of bounces, reflective objects do not add to the number of bounces since they just pass the radiance over
+		colourSum.divideColour(ptr->_bounces);
+	}
+	
 
 	return colourSum;
 	

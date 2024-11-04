@@ -99,7 +99,7 @@ private:
 	Ray* _nextRay;
 
 	// om vi vill kunnda d�da en ray efter x antal studsar
-	int _timeToLive = 5; 
+	int _timeToLive = 10; 
 
 	//slidesen skriver att man ska skapa colourRGB s� prob. needs changing later ocks� double precision
 	ColourRGB _colour = ColourRGB();
@@ -117,8 +117,8 @@ private:
 	bool _lit = false;
 
 	static constexpr double _intensity = 100.0;
-	static constexpr float _ps = 0.7f; // chance to survive
-	static constexpr int _shadowRaysPerRay = 3;
+	static constexpr float _ps = 0.6f; // chance to survive
+	static constexpr int _shadowRaysPerRay = 5;
 	static constexpr float _airRefractiveIndex = 1.0f;
 	static constexpr float _glassRefractiveIndex = 1.5f;
 
