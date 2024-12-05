@@ -116,9 +116,9 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	static constexpr double _intensity = 100.0;
+	static constexpr double _intensity = 5.0;
 	static constexpr float _ps = 0.6f; // chance to survive
-	static constexpr int _shadowRaysPerRay = 5;
+	static constexpr int _shadowRaysPerRay = 2;
 	static constexpr float _airRefractiveIndex = 1.0f;
 	static constexpr float _glassRefractiveIndex = 1.5f;
 

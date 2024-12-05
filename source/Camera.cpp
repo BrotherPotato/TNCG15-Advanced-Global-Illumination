@@ -107,15 +107,11 @@ void Camera::emitRays() {
 				//green += pixelCol.getG();
 				//blue += pixelCol.getB();
 
-
 				if (k == 0) pixelCol = ray.sumColours();
 				else pixelCol.addColour(ray.sumColours());
 			}
-			//std::cout << "red: " << pixelCol.getR() << std::endl;
+
 			pixelCol.divideColour(_numberOfRaysPerPixel);
-			/*if (pixelCol.getR() >= 1) {
-				std::cout << "red: " << pixelCol.getR() << std::endl;
-			}*/
 			_pixels[i][j].setColour(pixelCol);
 
 			/*red /= _numberOfRaysPerPixel;

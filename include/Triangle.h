@@ -75,6 +75,7 @@ public:
 		else {
 			randomPoint = (1 - s) * E1 + (1 - t) * E2;
 		}
+
 		// to world
 		return (randomPoint + _v0);
 
