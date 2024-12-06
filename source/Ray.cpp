@@ -232,7 +232,10 @@ ColourRGB Ray::castRay() {
 
 		// FÄRGLÄGG OCH BERÄKNA INTENSITY
 
+		//_colour = colourFromBounce;
 		_colour.addColour(colourFromBounce);
+		//_colour.divideColour(2);
+
 		for (int i = 0; i < _shadowRaysPerRay; i++)
 		{
 			for (LightSource* l : this->getScene()->getLightSources()) {
@@ -250,14 +253,15 @@ ColourRGB Ray::castRay() {
 		// I.e. the brighter the surface, the higher survival probability. 
 		// Antingen använder vi konstanten _ps eller variabeln rho (som beror på ytans belysning)
 		rho = shadowRayLightContribution.getR();
+
 		redefAzimuth = randAzimuth / _ps;		// ger mer brus och typ caustics (idk men det ser bra ut), dock tar det lång tid
 		//redefAzimuth = randAzimuth / rho;		// ger slätare färgläggning och är MYCKET snabbare (5min vs 12min), men skapar skumma skuggor 
-		
+
 		// Russian Roulette
 		if (redefAzimuth <= 2.0f * PI) {
 			// to cartesian
-			const float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
-			const float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
+			const float randomX = glm::cos(randAzimuth) * glm::sin(randInclination);
+			const float randomY = glm::sin(randAzimuth) * glm::sin(randInclination);
 			const float randomZ = glm::cos(randInclination);
 			glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
 			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
