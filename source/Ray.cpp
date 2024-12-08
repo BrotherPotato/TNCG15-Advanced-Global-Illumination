@@ -365,7 +365,6 @@ void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, flo
 			mirrorReflect(-direction, normal);
 		}
 		else {
-			_bounces--;
 			// left case refraction
 			glm::vec3 Drefr = (R * direction) + (normal * (-R * glm::dot(normal, direction) - sqrt(k)));
 			std::swap(_n1, _n2); // vi går igenom mediet, alltså byts n1 och n2
