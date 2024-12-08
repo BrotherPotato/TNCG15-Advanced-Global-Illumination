@@ -29,7 +29,7 @@ public:
 	Object* rayIntersection();
 	
 	ColourRGB castRay();
-	ColourRGB castShadowRay(const LightSource* light);
+	ColourRGB castShadowRay(LightSource* light);
 
 
 	//glm::vec3 bounce();
@@ -45,7 +45,7 @@ public:
 	
 	//ColourRGB getColour();
 
-	float calcIntensity() const;
+	float calcIntensity(LightSource* light) const;
 	float oldCalcIntensity();
 	ColourRGB sumColours();
 
@@ -116,11 +116,12 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	static constexpr double _intensity = 5.0;
-	static constexpr float _ps = 0.6f; // chance to survive
 	static constexpr int _shadowRaysPerRay = 2;
 	static constexpr float _airRefractiveIndex = 1.0f;
 	static constexpr float _glassRefractiveIndex = 1.5f;
+
+	float _n1 = 1.0f;
+	float _n2 = 1.5f;
 
 };
 

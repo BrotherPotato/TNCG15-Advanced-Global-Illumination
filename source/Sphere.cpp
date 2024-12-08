@@ -29,113 +29,58 @@ Material Sphere::getMaterial() const {
 
 bool Sphere::rayIntersection(Ray* ray) {
 
-	glm::vec3 rayStart{ ray->getStartPos() };
-	glm::vec3 rayEnd{ ray->getEndPos() };
-	glm::vec3 rayDirectionNormalised = glm::normalize(rayEnd - rayStart);
-	
-	glm::vec3 oc = rayStart - glm::vec3(_Position.x, _Position.y, _Position.z);
-	
-	double a = glm::dot(rayDirectionNormalised, rayDirectionNormalised);
-	double b = glm::dot(oc, rayDirectionNormalised * 2.0f);
-	double c = glm::dot(oc, oc) - _Radius * _Radius;
-	double d = 0.0;
-	
-	bool isInside = false;
-	
-	double expInSqrt = glm::pow(b / 2, 2) - a * c;
-	
-	if (expInSqrt < 0) { //not intersected
-		return false;
-	}
-	else if (expInSqrt > -0 && expInSqrt < 0) {// one intersection
-		d = (-b) / 2;
-	}
-	else //two intersections
-	{
-	
-		// Pick the intersection that is closest to the starting point of the ray, while givning a positive d
-		d = ((-b) / 2) - glm::sqrt(expInSqrt);
-		double otherPossible = ((-b) / 2) + glm::sqrt(expInSqrt);
-		if (d < 0 && otherPossible > 0) //intersection ray is coming from inside the object
-		{
-			d = otherPossible;
-			isInside = true; 
-		}
-	}
-	
-	glm::vec3 intersection = rayStart + rayDirectionNormalised.operator*=(d);
-	glm::vec3 intersectionPointNormal = glm::normalize(glm::vec3{
-		intersection.x - _Position.x,
-		intersection.y - _Position.y,
-		intersection.z - _Position.z });
-	
-	
-	
-	// Flip normal if intersecting from inside object
-	if (isInside) {
-		intersectionPointNormal *= -1.0;
-	}
-
-	setNormal(intersectionPointNormal);
-
-	if (d < 0) return false; //intersection behind the object 
-	
-	//std::cout << "SPHERE";
-	ray->setEndpos(intersection);
-	
-
-	return true;
-	//osäker vad vi vill ha returnerat
-
-
-
-
 	// ny kod som faktiskt följer föreläsningarna
 	// lec 8 slide 6
 
-	//glm::vec3 rayEnd{ ray->getEndPos() };
+	glm::vec3 S = ray->getStartPos();	// rayens ursprungspunkt
+	glm::vec3 D = ray->getDirection();	// den nya linjens riktning
+	glm::vec3 C = _Position; // sfärens mittpunkt
+	float r = _Radius;
 
-	//glm::vec3 S{ ray->getStartPos() };
-	//glm::vec3 tempVec = rayEnd - S;
-	//glm::vec3 D = glm::normalize(tempVec);
-	//if (D.r) {
-	//	return false;
-	//}
-	//glm::vec3 C = _Position;
-	//float r = _Radius;
+	glm::vec3 SsubtractC = S - C;	// linje från ray till sfärens origo
 
-	//glm::vec3 SsubtractC = S - C;
+	float c1 = glm::dot(D, D); // D^2
+	float c2 = 2.0f * glm::dot(D, SsubtractC);
+	float c3 = glm::dot(SsubtractC, SsubtractC) - (r * r);
 
-	//float c1 = glm::dot(D, D);
-	//float c2 = glm::dot(2.0f * D, SsubtractC);
-	//float c3 = glm::dot(SsubtractC, SsubtractC) - r * r;
+	float arg = (c2 * c2) - (4.0f * c1 * c3);
 
-	//float arg = c2 * c2 - 4.0f * c1 * c3;
+	float tmin = 0;
+	float t1 = 0;
+	float t2 = 0;
+	const float epsilon = 0.000001;
+	
+	//no solution, ray miss, Abs < 0
+	if (arg < 0) {
+		//std::cout << "tjabba";
+		return false;
+	}
 
-	//float tmin = 0;
-	//const float epsilon = 0.000001;
-	////no solution, ray miss, Abs < 0
-	//if (arg < -epsilon) {
-	//	return false;
-	//}
-	////one solution, ray touches sphere, Abs = 0
-	//if (abs(arg) <= epsilon) {
-	//	tmin = -c2 / (2 * c1);
-	//}
-	////two solutions, Abs > 0
-	//if (abs(arg) > epsilon) {
-	//	// we use the lowest value of tmin - before sqrt
-	//	tmin = (-c2 - std::sqrt(arg)) / (2.0f * c1);
-	//}
-	////std::cout << tmin;
-	//glm::vec3 xr = S + D * tmin;
+	//one solution, ray touches sphere, Abs = 0
+	if (arg == 0) {
+		//std::cout << "tjena";
+		tmin = -c2 / (2 * c1);
+	}
 
-	//if (tmin <= epsilon || tmin > 1000.0f) {
-	//	return false;
-	//}
+	//two solutions, Abs > 0
+	if (arg > 0) {
+		//std::cout << "hallå";
+		// we use the lowest value of tmin - before sqrt
+		t1 = (-c2 - std::sqrt(arg)) / (2.0f * c1);
+		t2 = (-c2 + std::sqrt(arg)) / (2.0f * c1);
 
-	//ray->setEndpos(xr);
-	//setNormal(glm::normalize(xr-C));
+		if (t1 < t2) tmin = t1;
+		else tmin = t2;
+	}
+	//std::cout << tmin;
+	glm::vec3 xr = S + D * tmin;
 
-	//return true;
+	if (tmin <= epsilon || tmin > 1000.0f) {
+		return false;
+	}
+
+	ray->setEndpos(xr);
+	setNormal(glm::normalize(xr-C));
+
+	return true;
 }

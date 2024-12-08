@@ -91,8 +91,8 @@ void Scene::createLightSource(glm::vec3& posBotLeft, glm::vec3& posTopRight) {
 	_Objects.push_back(new LightSource(t1));
 }
 
-void Scene::createLightSourceTriangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2) {
-	LightSource tri(v0, v1, v2);
+void Scene::createLightSourceTriangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, float intensity) {
+	LightSource tri(v0, v1, v2, intensity);
 	_LightSources.push_back(new LightSource(tri));
 	_Objects.push_back(new LightSource(tri));
 }

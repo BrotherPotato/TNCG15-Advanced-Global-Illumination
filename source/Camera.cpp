@@ -101,11 +101,6 @@ void Camera::emitRays() {
 
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(), nullptr, false };
 
-				//pixelCol = ray.getColour();
-
-				//red += pixelCol.getR();
-				//green += pixelCol.getG();
-				//blue += pixelCol.getB();
 
 				if (k == 0) pixelCol = ray.sumColours();
 				else pixelCol.addColour(ray.sumColours());
@@ -113,11 +108,6 @@ void Camera::emitRays() {
 
 			pixelCol.divideColour(_numberOfRaysPerPixel);
 			_pixels[i][j].setColour(pixelCol);
-
-			/*red /= _numberOfRaysPerPixel;
-			green /= _numberOfRaysPerPixel;
-			blue /= _numberOfRaysPerPixel;*/
-			//_pixels[i][j].setColour(ColourRGB(red,green,blue));
 			
 
 
@@ -161,8 +151,8 @@ void Camera::normalizePixelColours() {
 		// 800 kolumner
 		for (int j = 0; j < _pixels[i].size(); j++) {
 			//std::cout << _pixels[i][j].getColour().getR() << " ";
-			_pixels[i][j].getColour().divideColour(maxRGBValue);
-			//_pixels[i][j].setColour(_pixels[i][j].getColour().divideColour(maxRGBValue));
+			//_pixels[i][j].getColour().divideColour(maxRGBValue);
+			_pixels[i][j].setColour(_pixels[i][j].getColour().divideColour(maxRGBValue));
 			//std::cout << _pixels[i][j].getColour().getR() << std::endl;
 			_pixels[i][j].validateColour();
 		}

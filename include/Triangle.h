@@ -47,13 +47,14 @@ private:
 
 class LightSource : public Triangle { // light ska ha en triangöe inte ärva
 public:
-	LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2);
+	LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, float intensity = 1.0f);
 
 	glm::vec3 getPosition() const {
 		return _pos;
 	}
 	// generate a random point on the triangle
 	glm::vec3 getRandomPosition() const {
+
 		// go to local coordinate system
 		glm::vec3 E1 = _v1 - _v0;
 		glm::vec3 E2 = _v2 - _v0;
@@ -67,21 +68,24 @@ public:
 		// check if the point is inside the triangle
 		bool insideTriangle = s + t <= 1;
 
+		//std::cout << "\ns = " << s << "\nt = " << t << "\n s+t = " << s+t;
+
 		glm::vec3 randomPoint;
 
-		if (insideTriangle) {
-			randomPoint = s * E1 + t * E2;
+		if (!insideTriangle) {
+			s = 1 - s;
+			t = 1 - t;
 		}
-		else {
-			randomPoint = (1 - s) * E1 + (1 - t) * E2;
-		}
+		//std::cout << "\ns = " << s << "\nt = " << t << "\n s+t = " << s+t << "\n";
+
+		randomPoint = (s * E1) + (t * E2);
 
 		// to world
 		return (randomPoint + _v0);
 
 	}
 
-	double getIntensity() {
+	double getIntensity() const {
 		return _intensity;
 	}
 
@@ -92,7 +96,7 @@ private:
 
 	glm::vec3 _v0, _v1, _v2, _normal;
 	ColourRGB _lightColour{ 1, 1 ,1 }; //vit default
-	double _intensity = 1.0f;
+	double _intensity;
 	glm::vec3 _pos; 
 
 	//glm::vec3 _v0, _v1, _v2, _normal;
