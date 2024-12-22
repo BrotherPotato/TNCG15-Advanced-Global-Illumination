@@ -116,17 +116,18 @@ ColourRGB Ray::sumColours() {
 	
 	// Gå till sista rayen i ledet.
 	while (ptr != nullptr) {
-		if (ptr->_bounces != 0) colourSum.addColour(ptr->_colour.divideColour(ptr->_bounces));
-		else colourSum.addColour(ptr->_colour);
+
+		ptr->_colour.componentMult(ptr->_intensity);
+		colourSum.addColour(ptr->_colour);
+
 		if (ptr->_nextRay) ptr = ptr->_nextRay;
 		else break;
 	}
-	counter = ptr->_bounces;
 
-
-	if (counter != 0) {
-		colourSum.divideColour(counter);
-	}
+	//counter = ptr->_bounces;
+	//if (counter != 0) {
+	//	colourSum.divideColour(counter);
+	//}
 
 	return colourSum;
 }
@@ -170,11 +171,14 @@ ColourRGB Ray::castRay() {
 	std::uniform_real_distribution dis(0.0, 1.0);
 
 	double yi = dis(gen);
+	//double yi = (double)rand()/RAND_MAX;
+	//std::cout << "\n" << yi;
 	
 	double PI = 3.14159265358979323846;
 	float randAzimuth;
 	float randInclination;
 	float redefAzimuth;
+	float redefInclination;
 
 	// #############################################################
 	
@@ -235,24 +239,25 @@ ColourRGB Ray::castRay() {
 
 		// FÄRGLÄGG
 
-		_colour = colourFromBounce;
-		_colour.componentMult(shadowRayLightContribution);
+		_colour.componentMult(colourFromBounce);
+		//_colour.componentMult(shadowRayLightContribution);
 		
 
 		// STUDSA VIDARE 
 
 		randAzimuth = 2.0f * PI * yi;
 		randInclination = glm::acos(glm::sqrt(1 - yi));
+		redefInclination = randInclination / (materialHit.getReflectance());
 		redefAzimuth = randAzimuth / (materialHit.getReflectance());
 
 		// (2pi * yi) / rho <= 2pi		yi / rho <= 1		yi <= rho
 
 		// Russian Roulette
-		if (yi <= materialHit.getReflectance()) {
+		if (redefInclination <= 2.0 * PI) {
 			// to cartesian
-			const float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
-			const float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
-			const float randomZ = glm::cos(randInclination);
+			const float randomX = glm::cos(redefInclination) * glm::sin(randAzimuth);
+			const float randomY = glm::sin(redefInclination) * glm::sin(randAzimuth);
+			const float randomZ = glm::cos(randAzimuth);
 			glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
 			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
 			Ray::createNewRay(randomDirectionGlobal);
@@ -278,6 +283,7 @@ ColourRGB Ray::castRay() {
 		//std::cout << "LS ";
 
 		_colour = materialHit.getColour();
+		_intensity = materialHit.getColour().getR();
 
 		break;
 	default:

@@ -65,17 +65,6 @@ public:
 			x_L.z, y_L.z, z_L.z,
 		};
 
-		/*return (glm::mat4{
-		x_L.x, y_L.x, z_L.x, 0.f,
-		x_L.y, y_L.y, z_L.y, 0.f,
-		x_L.z, y_L.z, z_L.z, 0.f,
-		0.f, 0.f, 0.f, 1.f } *
-		glm::mat4{
-		1.f, 0.f, 0.f, 0.f,
-		0.f, 1.f, 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		-collisionPoint.x, -collisionPoint.y, -collisionPoint.z, 1.f
-			});*/
 	}
 		
 

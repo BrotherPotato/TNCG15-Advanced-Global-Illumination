@@ -43,7 +43,7 @@ void Camera::writeToPPM() {
 	std::cout << _pixels[0].size() << std::endl;
 
 	int counter = 0;
-	int onePercentage = 800 * 800 / 100;
+	int onePercentage = _pixelsPerSide * _pixelsPerSide / 100;
 	std::cout << "Writing to file:\n";
 	std::cout << "<" << std::setw(100) << ">" << std::endl;
 	std::cout << "<";
@@ -77,7 +77,7 @@ void Camera::emitRays() {
 	double oneless = 1.0 - (1.0 / (double)_pixelsPerSide); // 0.99875
 
 	int counter = 0;
-	int onePercentage = 800 * 800 / 100;
+	int onePercentage = _pixelsPerSide * _pixelsPerSide / 100;
 	std::cout << "Emitting " << _pixelsPerSide * _pixelsPerSide * _numberOfRaysPerPixel << " rays:\n";
 	std::cout << "<" << std::setw(100) << ">" << std::endl;
 	std::cout << "<";
@@ -97,7 +97,7 @@ void Camera::emitRays() {
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 				
-				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(), nullptr, false};
+				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false};
 				pixelCol = ray.sumColours();
 				cols.push_back(pixelCol);
 			}

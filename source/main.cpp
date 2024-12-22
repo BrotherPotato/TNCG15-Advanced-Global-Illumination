@@ -18,7 +18,7 @@ int main() {
 	Scene scene;
 
 	// skapa kamera
-	Camera camera = Camera(&scene);
+	Camera camera = Camera(&scene, 800);
 
 	// allmän reflektans för diffusa ytor, för hög -> stack overflow, 0.9f är högsta
 	// Ju lägre, ju mer spegelliknande blir ytan. Ju högre, ju fler spiralliknande ljuseffekter kommer på ytorna.
@@ -90,10 +90,11 @@ int main() {
 	scene.createSphere(spherePos2, 1.5, purpel);
 
 	double distanceFromCenter = 1;
-	glm::vec3 L0(5 + distanceFromCenter, distanceFromCenter, 4.9);
-	glm::vec3 L1(5 - distanceFromCenter, distanceFromCenter, 4.9);
-	glm::vec3 L2(5 - distanceFromCenter, -distanceFromCenter, 4.9);
-	glm::vec3 L3(5 + distanceFromCenter, -distanceFromCenter, 4.9);
+	double lightHeight = 4.99;
+	glm::vec3 L0(5 + distanceFromCenter, distanceFromCenter, lightHeight);
+	glm::vec3 L1(5 - distanceFromCenter, distanceFromCenter, lightHeight);
+	glm::vec3 L2(5 - distanceFromCenter, -distanceFromCenter, lightHeight);
+	glm::vec3 L3(5 + distanceFromCenter, -distanceFromCenter, lightHeight);
 
 	scene.createLightSourceTriangle(L3, L0, L1, intensity);
 	scene.createLightSourceTriangle(L1, L2, L3, intensity);
