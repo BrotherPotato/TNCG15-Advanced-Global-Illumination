@@ -91,28 +91,26 @@ void ColourRGB::addColour(ColourRGB newColour) {
 	setB(getB() + newColour.getB());
 }
 
-void ColourRGB::mixColour(ColourRGB newColour) {
+ColourRGB ColourRGB::mixColours(std::vector<ColourRGB> colours) {
 
-	// Detta är det korrekta sättet att blanda två färger.
+	// Detta är det korrekta sättet att blanda två (eller fler) färger.
 	// https://www.youtube.com/watch?v=LKnqECcg6Gw
 
-	double R = getR() * 255.0;
-	double G = getG() * 255.0;
-	double B = getB() * 255.0;
+	double R = 0;
+	double G = 0;
+	double B = 0;
+	
+	for (int i = 0; i < colours.size(); i++) {
 
-	double nR = newColour.getR() * 255;
-	double nG = newColour.getG() * 255;
-	double nB = newColour.getB() * 255;
+		R += pow(colours[i].getR() * 255.0, 2.0);
+		G += pow(colours[i].getG() * 255.0, 2.0);
+		B += pow(colours[i].getB() * 255.0, 2.0);
+	}
 
-	R = sqrt((pow(R, 2.0) + pow(nR, 2.0)) / 2.0);
-	G = sqrt((pow(G, 2.0) + pow(nG, 2.0)) / 2.0);
-	B = sqrt((pow(B, 2.0) + pow(nB, 2.0)) / 2.0);
+	double n = colours.size();
+	R = sqrt(R / n) / 255.0;
+	G = sqrt(G / n) / 255.0;
+	B = sqrt(B / n) / 255.0;
 
-	R /= 255.0;
-	G /= 255.0;
-	B /= 255.0;
-
-	setR(R);
-	setG(G);
-	setB(B);
+	return ColourRGB{R,G,B};
 }

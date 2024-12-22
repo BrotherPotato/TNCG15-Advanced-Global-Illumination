@@ -112,39 +112,21 @@ ColourRGB Ray::sumColours() {
 
 	Ray* ptr = this;
 	ColourRGB colourSum = ColourRGB();
-	//bool isLit = false;
-	int counter = 1;
-
-	// step all the way through 
+	int counter = 0;
+	
+	// Gå till sista rayen i ledet.
 	while (ptr != nullptr) {
-
-		//colourSum.addColour(ptr->_colour.divideColour(counter));
-
-		if (_bounces != 0) {
-			colourSum.addColour(ptr->_colour.divideColour(_bounces));
-		}
-		else {
-			colourSum.addColour(ptr->_colour);
-		}
-		if (ptr->_nextRay) {
-			ptr = ptr->_nextRay;
-		}
-		else {
-			break;
-		}
+		if (ptr->_bounces != 0) colourSum.addColour(ptr->_colour.divideColour(ptr->_bounces));
+		else colourSum.addColour(ptr->_colour);
+		if (ptr->_nextRay) ptr = ptr->_nextRay;
+		else break;
 	}
+	counter = ptr->_bounces;
 
-	if (ptr->_bounces != 0) {
-		// divide by the last rays number of bounces, reflective objects do not add to the number of bounces since they just pass the radiance over
-		colourSum.divideColour(ptr->_bounces);
+
+	if (counter != 0) {
+		colourSum.divideColour(counter);
 	}
-
-	//colourSum = ptr->_colour;
-	//while (ptr->_nextRay != nullptr) {
-
-	//	colourSum.mixColour(ptr->_nextRay->_colour);
-	//	ptr = ptr->_nextRay;
-	//}
 
 	return colourSum;
 }
@@ -176,20 +158,16 @@ Object* Ray::rayIntersection() {
 	if (objectHit != nullptr) {
 		objectHit->rayIntersection(this); // f�r att f� tillbaka r�tt endPos
 	}
-	//std::cout << "\n   " << closestDist << "\n";
 	return objectHit;
 }
 
 ColourRGB Ray::castRay() { 
 
+	if (_bounces > _timeToLive) return ColourRGB();
+
 	std::random_device rd;
-	std::mt19937 gen(rd());
+	static std::mt19937 gen(rd());
 	std::uniform_real_distribution dis(0.0, 1.0);
-
-	// Russian Roulette, anv�nds f�r Lambertian studs eller shadowray
-	double chanceToDie = (double)_bounces / (double)_timeToLive;
-	double randNum = dis(gen);
-
 
 	double yi = dis(gen);
 	
@@ -208,6 +186,7 @@ ColourRGB Ray::castRay() {
 	}
 	// den kommer inte f�rbi den d�r if-statementet
 
+	_objectHit = collisionObject;
 	Material materialHit = collisionObject->getMaterial();
 	glm::vec3 collisionNormal = collisionObject->getNormal(this);
 	ColourRGB colour = materialHit.getColour();
@@ -215,10 +194,10 @@ ColourRGB Ray::castRay() {
 	
 	// dum l�sning s� att shadowrays inte skapar nya shadowrays
 	if (_isShadowRay) {
-		
+
 		// om den träffade ljus
 		if (materialHit.getMaterialType() == Material::_LightSource) {
-			
+
 			_lit = true;
 			return ColourRGB();
 		}
@@ -227,30 +206,23 @@ ColourRGB Ray::castRay() {
 		_lit = false;
 		return ColourRGB();
 	}
-	
-
-	
 
 	// #################################################################
 	ColourRGB colourFromBounce = materialHit.getColour();
+	float luminance = (0.2126 * colourFromBounce.getR()) + (0.7152 * colourFromBounce.getG()) + (0.0722 * colourFromBounce.getB());
 
 	float R = _n1 / _n2;
-
-	// Dock måste normalen vändas när den används i beräkningar.
 	float Omega = glm::acos(glm::dot(glm::normalize(collisionNormal), -glm::normalize(_direction)));
-
 	float R0_Schlicks = glm::pow(((_n1 - _n2) / (_n1 + _n2)), 2.0f);
 	float R_Omega_Schlicks = R0_Schlicks + ((1 - R0_Schlicks) * glm::pow(1 - glm::cos(Omega), 5.0f)); 
 
-	ColourRGB temp;
+	std::vector<ColourRGB> cols;
 
 	switch (materialHit.getMaterialType())
 	{
 	case Material::_LambertianReflector:	
 
-		// FÄRGLÄGG OCH BERÄKNA INTENSITY
-
-		_colour = colourFromBounce;
+		// BERÄKNA BELYSNING
 
 		for (int i = 0; i < _shadowRaysPerRay; i++)
 		{
@@ -259,25 +231,32 @@ ColourRGB Ray::castRay() {
 			}
 		}
 		shadowRayLightContribution.divideColour(_shadowRaysPerRay * std::size(getScene()->getLightSources()));
+		_intensity = shadowRayLightContribution.getR();
+
+		// FÄRGLÄGG
+
+		_colour = colourFromBounce;
 		_colour.componentMult(shadowRayLightContribution);
+		
 
 		// STUDSA VIDARE 
 
 		randAzimuth = 2.0f * PI * yi;
 		randInclination = glm::acos(glm::sqrt(1 - yi));
-		redefAzimuth = randAzimuth / materialHit.getReflectance();
+		redefAzimuth = randAzimuth / (materialHit.getReflectance());
+
+		// (2pi * yi) / rho <= 2pi		yi / rho <= 1		yi <= rho
 
 		// Russian Roulette
-		if (redefAzimuth <= 2.0f * PI) {
+		if (yi <= materialHit.getReflectance()) {
 			// to cartesian
 			const float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
 			const float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
 			const float randomZ = glm::cos(randInclination);
 			glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
 			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
-			Ray::createNewRay(randomDirectionGlobal);	
+			Ray::createNewRay(randomDirectionGlobal);
 		}
-
 		
 
 		break;
@@ -322,16 +301,11 @@ ColourRGB Ray::castShadowRay(LightSource* light) {
 	
 	delete shadowRay;
 	return ColourRGB();
-
-
 }
 
 void Ray::createNewRay(glm::vec3 reflectionDirection) {
 
-	// n�got s�nt f�r att fixa n�sta ray
-	Ray* newRay = new Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this);
-
-	//Ray* newRayPtr = &newRay;
+	Ray* newRay = new Ray(this->getScene(), this->getEndPos(), reflectionDirection, _colour, this, false);
 	this->setNextRay(newRay);
 }
 
@@ -351,7 +325,7 @@ void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, flo
 	double randNum = dis(gen);
 
 	direction = -direction;
-	//std::cout << length(normal) << " ";
+
 	// Lecture 5, Transparent Refraction
 	float k = (1.0 - pow(R, 2.0) * pow((1.0 - glm::dot(normal, direction)), 2.0));
 	// Lecture 9, slide 15
@@ -362,7 +336,7 @@ void Ray::transparentRefract(glm::vec3 direction, glm::vec3 normal, float R, flo
 		if (randNum < R_Omega_Schlicks) { // BRDF
 
 			// left case reflection
-			mirrorReflect(-direction, normal);
+			mirrorReflect(-direction, -normal);
 		}
 		else {
 			// left case refraction

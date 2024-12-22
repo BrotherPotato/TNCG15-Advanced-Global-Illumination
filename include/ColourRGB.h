@@ -2,6 +2,7 @@
 
 //#include "algorithm"
 #include "glm.hpp"
+#include "vector"
 // ColourRGB går mellan 0 och 1
 class ColourRGB {
 public:
@@ -30,7 +31,7 @@ public:
 	// blandar färger så att alla raysperpixel kan klumpa samman till en slutfärg per pixel
 	void addColour(ColourRGB newColour);
 
-	void mixColour(ColourRGB newColour);
+	ColourRGB mixColours(std::vector<ColourRGB> colours);
 
 private:
 	double _R, _G, _B;

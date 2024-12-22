@@ -20,9 +20,12 @@ int main() {
 	// skapa kamera
 	Camera camera = Camera(&scene);
 
-	
-	float reflectance = 0.01f;		// allmän reflektans för diffusa ytor
-	float intensity = 5.0f;		// allmän ljusstyrka för ljuskällorna
+	// allmän reflektans för diffusa ytor, för hög -> stack overflow, 0.9f är högsta
+	// Ju lägre, ju mer spegelliknande blir ytan. Ju högre, ju fler spiralliknande ljuseffekter kommer på ytorna.
+	float reflectance = 0.5f;		
+
+	// allmän ljusstyrka för ljuskällorna
+	float intensity = 10.0f;		
 
 	// Real scene
 	glm::vec3 T0(13, 0, 5);
@@ -47,7 +50,7 @@ int main() {
 	scene.createTriangle(T4, T0, T2, RoofBlue); // red in whiteboard
 
 	//Floor
-	Material FloorGrey{ Material::_LambertianReflector ,ColourRGB(0.3,0.3,0.3), reflectance };
+	Material FloorGrey{ Material::_LambertianReflector ,ColourRGB(1,1,0), reflectance };
 	scene.createTriangle(T7, T9, T11, FloorGrey); // green in whiteboard
 	scene.createTriangle(T9, T3, T11, FloorGrey); // blue in whiteboard
 	scene.createTriangle(T3, T5, T11, FloorGrey); // orange in whiteboard
@@ -61,12 +64,12 @@ int main() {
 	scene.createTriangle(T9, T7, T8, WallBehindBlack); // red in whiteboard
 
 	// Wall left
-	Material WallLeftPurple{ Material::_LambertianReflector ,ColourRGB(0.5,0,0.5), reflectance };
+	Material WallLeftPurple{ Material::_LambertianReflector ,ColourRGB(1,0,1), reflectance };
 	scene.createTriangle(T10, T11, T5, WallLeftPurple); // green in whiteboard
 	scene.createTriangle(T5, T4, T10, WallLeftPurple); // magenta in whiteboard
 
 	// Wall right
-	Material WallRightCyan{ Material::_LambertianReflector ,ColourRGB(0,0.5,0.5), reflectance };
+	Material WallRightCyan{ Material::_LambertianReflector ,ColourRGB(0,1,1), reflectance };
 	scene.createTriangle(T3, T9, T8, WallRightCyan); // green in whiteboard
 	scene.createTriangle(T8, T2, T3, WallRightCyan); // magenta in whiteboard
 
@@ -99,6 +102,7 @@ int main() {
 
 	// skjut rays
 	camera.emitRays();
+	//camera.render(&scene);
 
 	// render
 	camera.writeToPPM();

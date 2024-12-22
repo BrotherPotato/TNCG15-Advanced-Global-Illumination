@@ -4,7 +4,7 @@
 #include "./include/ColourRGB.h"
 #include "./include/Ray.h"
 #include "./include/Camera.h"
-
+#include <thread>
 
 
 
@@ -92,24 +92,19 @@ void Camera::emitRays() {
 			glm::vec3 dir = endPos - _cameraPosition;
 
 			ColourRGB pixelCol;
-			double red = 0.0;
-			double green = 0.0;
-			double blue = 0.0;
+			std::vector<ColourRGB> cols;
 
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
-
-				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(), nullptr, false };
-
-
-				if (k == 0) pixelCol = ray.sumColours();
-				else pixelCol.addColour(ray.sumColours());
+				
+				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(), nullptr, false};
+				pixelCol = ray.sumColours();
+				cols.push_back(pixelCol);
 			}
-
-			pixelCol.divideColour(_numberOfRaysPerPixel);
+			
+			pixelCol = ColourRGB().mixColours(cols);
 			_pixels[i][j].setColour(pixelCol);
 			
-
 
 			if (counter >= onePercentage) {
 				counter = 0;
@@ -118,7 +113,6 @@ void Camera::emitRays() {
 
 			counter++;
 		}
-		//std::cout << "Row " << i << " done! \n";
 		
 	}
 	std::cout << ">" << std::endl;

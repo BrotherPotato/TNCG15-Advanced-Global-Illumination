@@ -23,7 +23,7 @@ class LightSource;
 class Ray
 {
 public:
-	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour = ColourRGB(), Ray* prevRay = nullptr, bool isShadowRay = false);
+	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, Ray* prevRay, bool isShadowRay);
 	~Ray();
 
 	Object* rayIntersection();
@@ -57,7 +57,6 @@ public:
 		// lec 2 slide 13
 		glm::vec3 x_L = glm::normalize(-_direction + glm::dot(normal, _direction) * normal);
 		glm::vec3 z_L = glm::normalize(normal);
-
 		glm::vec3 y_L = glm::cross(z_L, x_L);
 
 		return glm::mat3{
@@ -103,6 +102,8 @@ private:
 
 	//slidesen skriver att man ska skapa colourRGB s� prob. needs changing later ocks� double precision
 	ColourRGB _colour = ColourRGB();
+	float _intensity = 0;
+	Object* _objectHit;
 
 	std::shared_ptr<glm::vec3> _startingVertexPos;
 
@@ -116,7 +117,7 @@ private:
 	bool _isShadowRay;
 	bool _lit = false;
 
-	static constexpr int _shadowRaysPerRay = 2;
+	static constexpr int _shadowRaysPerRay = 1;
 	static constexpr float _airRefractiveIndex = 1.0f;
 	static constexpr float _glassRefractiveIndex = 1.5f;
 
