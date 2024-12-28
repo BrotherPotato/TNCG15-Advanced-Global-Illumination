@@ -108,26 +108,105 @@ float Ray::calcIntensity(LightSource* light) const {
 	return intensity;				//glm::clamp((_intensity / finalLength), 0.0, 1.0);
 }
 
+ColourRGB Ray::pixelRadiance() {
+
+	// Computing the radiance flow to the eye
+
+	Ray* ptr = this;
+
+	// Gå till sista rayen i ledet.
+	while (ptr != nullptr) {
+		if (ptr->_nextRay) ptr = ptr->_nextRay;
+		else break;
+	}
+	if (ptr->_objectHit == nullptr) return ColourRGB();
+
+	// You start at the end of the ray path. 
+	// It must be on a diffuse (Lambertian) reflector or the light source.
+	// The last importance ray becomes the first radiance ray.
+
+	if (ptr->_objectHit->getMaterial().getMaterialType() == Material::_LightSource) {
+
+		// If the endpoint is on a light source, we feed 𝐿𝑒 = (1.0, 1.0, 1.0) of the light source into the ray.
+		// If the end point is on the light source, you give it the radiance RGB of the light source.
+		ptr->_radiance = ptr->_objectHit->getMaterial().getColour(); 
+	} 
+	else if (ptr->_objectHit->getMaterial().getMaterialType() == Material::_LambertianReflector) {
+
+		// If the endpoint is on a Lambertian reflector, we compute the direct light and feed this 𝐿𝐷(lecture 7) into the ray.
+		// If it is on a diffuse reflector, you use the estimator for the direct light (lecture 7) to get the radiance values for the first radiance ray.
+		ptr->_radiance = ptr->_directLight;
+	}
+
+	ColourRGB surfaceColour;
+	ColourRGB directLight;
+
+	// Gå tillbaka mot ögat.
+	while (ptr->_prevRay != nullptr) {
+
+		if (ptr->_prevRay->_objectHit->getMaterial().getMaterialType() == Material::_Transparent ||
+			ptr->_prevRay->_objectHit->getMaterial().getMaterialType() == Material::_MirrorReflection) {
+
+			// If it is a mirror or a transparent object (rays have a pointer to the surface), we copy the radiance into it.
+			// If it is on a mirror or transparent surface, you copy the radiance RGB of the first radiance ray into the second.
+			ptr->_prevRay->_radiance = ptr->_radiance;
+		}
+		else if (ptr->_prevRay->_objectHit->getMaterial().getMaterialType() == Material::_LambertianReflector) {
+
+			// [Lecture 9]
+			// If it is a Lambertian surface, we compute the direct light 𝐿𝐷. 
+			// We multiply the radiance of the incoming ray and the surface color componentwise (access through the surface pointer).
+			// Add the result to 𝐿𝐷 and copy it into the outgoing radiance ray
+
+			// [Summary]
+			// If the surface is a diffuse (Lambertian) reflector, 
+			// You multiply the ratio of the importance of the first radiance ray to the second to the radiance of the first importance ray. [???????????????]
+			// The color radio is the surface color. The BRDF is already absorbed into the random numbers.
+			// You compute direct light (lecture 7) of the intersection point (taking into account the normal and BRDF) 
+			// and add the result to the radiance of the second radiance ray
+
+			surfaceColour = ptr->_prevRay->_objectHit->getMaterial().getColour();
+			directLight = ptr->_prevRay->_directLight;
+
+			surfaceColour.componentMult(ptr->_radiance);
+			directLight.addColour(surfaceColour);
+
+			ptr->_prevRay->_radiance = directLight;
+		}
+
+		// You repeat this until you reach the pixel. 
+		// You copy the radiance into the pixel radiance and proceed with the next ray path.
+
+		if (ptr->_prevRay != nullptr) ptr = ptr->_prevRay;
+		else break;
+	}
+
+	return ptr->_radiance;
+}
+
 ColourRGB Ray::sumColours() {
 
 	Ray* ptr = this;
 	ColourRGB colourSum = ColourRGB();
+	ColourRGB col;
 	int counter = 0;
 	
 	// Gå till sista rayen i ledet.
 	while (ptr != nullptr) {
 
-		ptr->_colour.componentMult(ptr->_intensity);
+		ptr->_colour.mix2Colours(ptr->_directLight);
+		ptr->_colour.componentMult(ptr->_directLight);
+		if (ptr->_bounces != 0) ptr->_colour.divideColour(ptr->_bounces);
 		colourSum.addColour(ptr->_colour);
 
 		if (ptr->_nextRay) ptr = ptr->_nextRay;
 		else break;
 	}
 
-	//counter = ptr->_bounces;
-	//if (counter != 0) {
-	//	colourSum.divideColour(counter);
-	//}
+	counter = ptr->_bounces;
+	if (counter != 0) {
+		colourSum.divideColour(counter);
+	}
 
 	return colourSum;
 }
@@ -164,8 +243,6 @@ Object* Ray::rayIntersection() {
 
 ColourRGB Ray::castRay() { 
 
-	if (_bounces > _timeToLive) return ColourRGB();
-
 	std::random_device rd;
 	static std::mt19937 gen(rd());
 	std::uniform_real_distribution dis(0.0, 1.0);
@@ -184,13 +261,14 @@ ColourRGB Ray::castRay() {
 	
 	//glm::vec3 collisionPoint;
 	Object* collisionObject = this->rayIntersection(); // collisionPoint sent in as reference so we can change the value directly
+	_objectHit = collisionObject;
 
 	if (collisionObject == nullptr) {
 		return ColourRGB();
 	}
 	// den kommer inte f�rbi den d�r if-statementet
 
-	_objectHit = collisionObject;
+	
 	Material materialHit = collisionObject->getMaterial();
 	glm::vec3 collisionNormal = collisionObject->getNormal(this);
 	ColourRGB colour = materialHit.getColour();
@@ -212,13 +290,13 @@ ColourRGB Ray::castRay() {
 	}
 
 	// #################################################################
-	ColourRGB colourFromBounce = materialHit.getColour();
-	float luminance = (0.2126 * colourFromBounce.getR()) + (0.7152 * colourFromBounce.getG()) + (0.0722 * colourFromBounce.getB());
 
 	float R = _n1 / _n2;
 	float Omega = glm::acos(glm::dot(glm::normalize(collisionNormal), -glm::normalize(_direction)));
 	float R0_Schlicks = glm::pow(((_n1 - _n2) / (_n1 + _n2)), 2.0f);
 	float R_Omega_Schlicks = R0_Schlicks + ((1 - R0_Schlicks) * glm::pow(1 - glm::cos(Omega), 5.0f)); 
+
+	float rho = materialHit.getReflectance();
 
 	std::vector<ColourRGB> cols;
 
@@ -235,11 +313,13 @@ ColourRGB Ray::castRay() {
 			}
 		}
 		shadowRayLightContribution.divideColour(_shadowRaysPerRay * std::size(getScene()->getLightSources()));
-		_intensity = shadowRayLightContribution.getR();
+		
 
 		// FÄRGLÄGG
 
-		_colour.componentMult(colourFromBounce);
+		_colour.componentMult(colour);
+		_importance = _colour;
+		_directLight = shadowRayLightContribution;
 		//_colour.componentMult(shadowRayLightContribution);
 		
 
@@ -247,17 +327,17 @@ ColourRGB Ray::castRay() {
 
 		randAzimuth = 2.0f * PI * yi;
 		randInclination = glm::acos(glm::sqrt(1 - yi));
-		redefInclination = randInclination / (materialHit.getReflectance());
-		redefAzimuth = randAzimuth / (materialHit.getReflectance());
+		redefAzimuth = randAzimuth / rho;
 
 		// (2pi * yi) / rho <= 2pi		yi / rho <= 1		yi <= rho
 
 		// Russian Roulette
-		if (redefInclination <= 2.0 * PI) {
+		if (_bounces == 1 || yi <= rho) { // Kan inte dö på första intersectionen
 			// to cartesian
-			const float randomX = glm::cos(redefInclination) * glm::sin(randAzimuth);
-			const float randomY = glm::sin(redefInclination) * glm::sin(randAzimuth);
-			const float randomZ = glm::cos(randAzimuth);
+			float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
+			float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
+			float randomZ = glm::cos(randInclination);
+
 			glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
 			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
 			Ray::createNewRay(randomDirectionGlobal);
@@ -283,7 +363,7 @@ ColourRGB Ray::castRay() {
 		//std::cout << "LS ";
 
 		_colour = materialHit.getColour();
-		_intensity = materialHit.getColour().getR();
+		_directLight = materialHit.getColour();
 
 		break;
 	default:

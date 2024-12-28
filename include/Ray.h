@@ -48,6 +48,7 @@ public:
 	float calcIntensity(LightSource* light) const;
 	float oldCalcIntensity();
 	ColourRGB sumColours();
+	ColourRGB pixelRadiance();
 
 	const glm::mat3 toLocalCoord(glm::vec3 normal) {
 		//const glm::vec3 Z{ normal };
@@ -91,7 +92,9 @@ private:
 
 	//slidesen skriver att man ska skapa colourRGB s� prob. needs changing later ocks� double precision
 	ColourRGB _colour = ColourRGB();
-	float _intensity = 0;
+	ColourRGB _importance = ColourRGB();
+	ColourRGB _radiance = ColourRGB();
+	ColourRGB _directLight = ColourRGB();
 	Object* _objectHit;
 
 	std::shared_ptr<glm::vec3> _startingVertexPos;

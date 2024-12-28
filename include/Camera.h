@@ -35,11 +35,14 @@ public:
 
 	void normalizePixelColours();
 
+	void renderRangeOfColums(Scene* scene, int start_colum, int end_colum, int threads_done, int num_threads);
+	void render(Scene* scene);
+
 private:
 	unsigned _pixelsPerSide = 800;
 	std::vector<std::vector<Pixel>> _pixels;
 	const glm::vec3 _cameraPosition = glm::vec3(-1.0,0.0,0); // eye poisition enligt slides
-	const unsigned _numberOfRaysPerPixel = 10;
+	const unsigned _numberOfRaysPerPixel = 20;
 
 	std::vector<Ray> _rays;
 

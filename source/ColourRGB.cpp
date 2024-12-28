@@ -91,6 +91,7 @@ void ColourRGB::addColour(ColourRGB newColour) {
 	setB(getB() + newColour.getB());
 }
 
+
 ColourRGB ColourRGB::mixColours(std::vector<ColourRGB> colours) {
 
 	// Detta är det korrekta sättet att blanda två (eller fler) färger.
@@ -113,4 +114,14 @@ ColourRGB ColourRGB::mixColours(std::vector<ColourRGB> colours) {
 	B = sqrt(B / n) / 255.0;
 
 	return ColourRGB{R,G,B};
+}
+
+void ColourRGB::mix2Colours(ColourRGB secondCOlour) {
+
+	std::vector<ColourRGB> cols;
+	cols.push_back(*this);
+	cols.push_back(secondCOlour);
+	*this = ColourRGB().mixColours(cols);
+
+	
 }

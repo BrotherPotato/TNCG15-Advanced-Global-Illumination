@@ -10,6 +10,8 @@
 
 void Camera::writeToPPM() {
 
+	this->normalizePixelColours();
+
 	//https://en.wikipedia.org/wiki/Netpbm
 	/* example from wikipedia
 	P3
@@ -97,12 +99,12 @@ void Camera::emitRays() {
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 				
-				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false};
-				pixelCol = ray.sumColours();
-				cols.push_back(pixelCol);
+				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false };
+				pixelCol.addColour(ray.pixelRadiance());
+				cols.push_back(ray.pixelRadiance());
 			}
-			
-			pixelCol = ColourRGB().mixColours(cols);
+			//pixelCol = ColourRGB().mixColours(cols);
+			pixelCol.divideColour(_numberOfRaysPerPixel);
 			_pixels[i][j].setColour(pixelCol);
 			
 
@@ -116,7 +118,6 @@ void Camera::emitRays() {
 		
 	}
 	std::cout << ">" << std::endl;
-	this->normalizePixelColours();
 }
 
 // g�r inte s� mycket d� st�rsta kommer va 1
@@ -151,4 +152,79 @@ void Camera::normalizePixelColours() {
 			_pixels[i][j].validateColour();
 		}
 	}
+}
+
+//##################################################################################################################################################################
+
+
+void Camera::renderRangeOfColums(Scene* scene, int start_colum, int end_colum, int threads_done, int num_threads) {
+
+	double pixelWidth = 2.0 / (double)_pixelsPerSide; // 0.0025
+	double oneless = 1.0 - (pixelWidth / 2.0); // 0.99875
+	
+	glm::vec3 endPos;
+
+	for (int i = start_colum; i < end_colum; i++) {
+
+		// 800 kolumner
+		for (int j = 0; j < _pixels[i].size(); j++) {
+
+			endPos.x = 0;
+			endPos.y = i * pixelWidth - oneless;
+			endPos.z = j * pixelWidth - oneless;
+
+			glm::vec3 dir = endPos - _cameraPosition;
+
+			ColourRGB pixelCol;
+			std::vector<ColourRGB> cols;
+
+			// skjut flera rays genom samma pixel
+			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
+
+				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false };
+				pixelCol = (ray.pixelRadiance());
+				cols.push_back(pixelCol);
+			}
+			pixelCol = ColourRGB().mixColours(cols);
+			_pixels[i][j].setColour(pixelCol);
+
+		}
+	}
+	std::cout << "THREAD " << std::setw(5) << std::fixed << std::setprecision(1) << threads_done+1 << " DONE!\n";
+}
+
+
+void Camera::render(Scene* scene) {
+
+
+	int threads_done = 0;
+
+	//unsigned int num_threads = std::thread::hardware_concurrency()-1;
+	//if (num_threads == 0) num_threads = 1;
+
+	unsigned int num_threads = 10;
+	std::cout << "Rendering using " << num_threads << " threads:\n";
+	std::cout << "STARTING...\n";
+
+	std::vector<std::thread> threads;
+	threads.reserve(num_threads);
+
+	int startCol = 0;
+	int endCol = 0;
+
+	int colums_per_thread = _pixels.size() / num_threads;
+	for (unsigned int i = 0; i < num_threads; i++) {
+
+		startCol = i * colums_per_thread;
+		endCol = (i + 1) * colums_per_thread;
+
+		//if (i == num_threads - 1) endCol = _pixels.size();
+		//else endCol = (i + 1) * colums_per_thread;
+
+		threads.emplace_back(std::thread([=]() {renderRangeOfColums(scene, startCol, endCol, i, num_threads);}));
+	}
+	for (unsigned int i = 0; i < num_threads; i++) {
+		threads[i].join();
+	}
+	std::cout << "Rendering complete!\n";
 }
