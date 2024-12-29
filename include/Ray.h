@@ -92,7 +92,7 @@ private:
 
 	//slidesen skriver att man ska skapa colourRGB s� prob. needs changing later ocks� double precision
 	ColourRGB _colour = ColourRGB();
-	ColourRGB _importance = ColourRGB();
+	ColourRGB _importance = ColourRGB(1);
 	ColourRGB _radiance = ColourRGB();
 	ColourRGB _directLight = ColourRGB();
 	Object* _objectHit;

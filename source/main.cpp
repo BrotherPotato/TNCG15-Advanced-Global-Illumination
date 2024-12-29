@@ -18,14 +18,14 @@ int main() {
 	Scene scene;
 
 	// skapa kamera
-	Camera camera = Camera(&scene, 800);
+	Camera camera = Camera(&scene, 2000);
+	int raysPerPixel = 25;
 
-	// allmän reflektans för diffusa ytor, för hög -> stack overflow, 0.9f är högsta
-	// Ju lägre, ju mer spegelliknande blir ytan. Ju högre, ju fler spiralliknande ljuseffekter kommer på ytorna.
+	// allmän reflektans för diffusa ytor
 	float reflectance = 0.01f;		
 
 	// allmän ljusstyrka för ljuskällorna
-	float intensity = 1.0f;		
+	float intensity = 50.0f;		
 
 	// Real scene
 	glm::vec3 T0(13, 0, 5);
@@ -42,6 +42,7 @@ int main() {
 	glm::vec3 T10(0, 6, 5);
 	glm::vec3 T11(0, 6, -5);
 
+	// Cornell type shit
 	ColourRGB roofColour = ColourRGB(0);
 	ColourRGB floorColour = ColourRGB(1);
 	ColourRGB backColour = ColourRGB(1);
@@ -53,10 +54,9 @@ int main() {
 	roofColour = ColourRGB(0,0,1);
 	floorColour = ColourRGB(1,1,0);
 	backColour = ColourRGB(0,1,0);
-	leftColour = ColourRGB(0,1,1);
-	rightColour = ColourRGB(1,0,1);
+	leftColour = ColourRGB(1,0,1);
+	rightColour = ColourRGB(0,1,1);
 	frontColour = ColourRGB(1,0,0);
-
 
 	//Roof
 	Material RoofBlue{ Material::_LambertianReflector, roofColour, reflectance };
@@ -97,16 +97,21 @@ int main() {
 	scene.createTriangle(T1, T3, T2, WallFrontRed); // red in whiteboard
 
 
-	glm::vec3 spherePos1{ 5, 2,0 };
+	glm::vec3 spherePos1{ 5, 2, 1 };
 	Material mirr{ Material::_MirrorReflection, ColourRGB(1,1,1) };
 	scene.createSphere(spherePos1, 1.5, mirr);
 
-	glm::vec3 spherePos2{ 5,-2,0 };
+	glm::vec3 spherePos2{ 5,-2, 1  };
 	Material purpel{ Material::_Transparent, ColourRGB(1,1,1) };
 	scene.createSphere(spherePos2, 1.5, purpel);
+	scene.createSphere(spherePos2, 0.75, purpel);
 
-	double distanceFromCenter = 1;
-	double lightHeight = 4.99;
+	glm::vec3 spherePos3{ 5, 0, -2 };
+	Material sm3{ Material::_LambertianReflector, ColourRGB(1) };
+	scene.createSphere(spherePos3, 1.5, sm3);
+
+	double distanceFromCenter = 0.5;
+	double lightHeight = 4.9;
 	glm::vec3 L0(5 + distanceFromCenter, distanceFromCenter, lightHeight);
 	glm::vec3 L1(5 - distanceFromCenter, distanceFromCenter, lightHeight);
 	glm::vec3 L2(5 - distanceFromCenter, -distanceFromCenter, lightHeight);
@@ -118,8 +123,8 @@ int main() {
 
 
 	// skjut rays
-	camera.emitRays();			// single thread
-	//camera.render(&scene);	// multi-thread, snabbare men crashar lättare
+	camera.emitRays(raysPerPixel);			// single thread
+	//camera.render(&scene);				// multi-thread, snabbare men crashar lättare
 
 	// render
 	camera.writeToPPM();

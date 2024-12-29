@@ -73,14 +73,24 @@ void Camera::writeToPPM() {
 	render.close();
 };
 
-void Camera::emitRays() {
+void Camera::emitRays(int raysPerPixel) {
+
+	std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution dis(0.0, 1.0);
 
 	double pixelWidth = 2.0 / (double)_pixelsPerSide; // 0.0025
 	double oneless = 1.0 - (1.0 / (double)_pixelsPerSide); // 0.99875
 
+	glm::vec3 endPos = glm::vec3(0,0,0);
+	glm::vec3 dir;
+
+	ColourRGB pixelCol;
+	std::vector<ColourRGB> cols;
+
 	int counter = 0;
 	int onePercentage = _pixelsPerSide * _pixelsPerSide / 100;
-	std::cout << "Emitting " << _pixelsPerSide * _pixelsPerSide * _numberOfRaysPerPixel << " rays:\n";
+	std::cout << "Emitting " << _pixelsPerSide * _pixelsPerSide * raysPerPixel << " rays:\n";
 	std::cout << "<" << std::setw(100) << ">" << std::endl;
 	std::cout << "<";
 
@@ -90,23 +100,25 @@ void Camera::emitRays() {
 		// 800 kolumner
 		for (int j = 0; j < _pixels[i].size(); j++) {
 
-			glm::vec3 endPos = glm::vec3(0, i * pixelWidth - oneless, j * pixelWidth - oneless); // lecture 4 slide 8
-			glm::vec3 dir = endPos - _cameraPosition;
-
-			ColourRGB pixelCol;
-			std::vector<ColourRGB> cols;
-
 			// skjut flera rays genom samma pixel
-			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
+			for (int k = 0; k < raysPerPixel; k++) {
 				
+				// Random position inom pixeln.
+				endPos.y = (i * pixelWidth + dis(gen) * pixelWidth) - oneless;
+				endPos.z = (j * pixelWidth + dis(gen) * pixelWidth) - oneless;
+				dir = endPos - _cameraPosition;
+
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false };
+				//pixelCol = ray.pixelRadiance();
 				pixelCol.addColour(ray.pixelRadiance());
-				cols.push_back(ray.pixelRadiance());
+				//cols.push_back(pixelCol);
 			}
 			//pixelCol = ColourRGB().mixColours(cols);
-			pixelCol.divideColour(_numberOfRaysPerPixel);
+			pixelCol.divideColour(raysPerPixel);
+			//std::cout << "\nR: " << pixelCol.getR() << "\nG: " << pixelCol.getG() << "\nB: " << pixelCol.getB() << "\n";
 			_pixels[i][j].setColour(pixelCol);
-			
+			cols.clear();
+			pixelCol = ColourRGB(0);
 
 			if (counter >= onePercentage) {
 				counter = 0;
@@ -128,6 +140,7 @@ void Camera::normalizePixelColours() {
 
 		// 800 kolumner
 		for (int j = 0; j < _pixels[i].size(); j++) {
+
 			if (_pixels[i][j].getColour().getR() > maxRGBValue) {
 				maxRGBValue = _pixels[i][j].getColour().getR();
 			}
@@ -159,35 +172,41 @@ void Camera::normalizePixelColours() {
 
 void Camera::renderRangeOfColums(Scene* scene, int start_colum, int end_colum, int threads_done, int num_threads) {
 
+	std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution dis(0.0, 1.0);
+
 	double pixelWidth = 2.0 / (double)_pixelsPerSide; // 0.0025
 	double oneless = 1.0 - (pixelWidth / 2.0); // 0.99875
 	
-	glm::vec3 endPos;
+	glm::vec3 endPos = glm::vec3(0, 0, 0);
+	glm::vec3 dir;
+
+	ColourRGB pixelCol;
+	std::vector<ColourRGB> cols;
 
 	for (int i = start_colum; i < end_colum; i++) {
 
 		// 800 kolumner
 		for (int j = 0; j < _pixels[i].size(); j++) {
 
-			endPos.x = 0;
-			endPos.y = i * pixelWidth - oneless;
-			endPos.z = j * pixelWidth - oneless;
-
-			glm::vec3 dir = endPos - _cameraPosition;
-
-			ColourRGB pixelCol;
-			std::vector<ColourRGB> cols;
-
 			// skjut flera rays genom samma pixel
 			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 
-				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false };
-				pixelCol = (ray.pixelRadiance());
-				cols.push_back(pixelCol);
-			}
-			pixelCol = ColourRGB().mixColours(cols);
-			_pixels[i][j].setColour(pixelCol);
+				// Random position inom pixeln.
+				endPos.y = (i * pixelWidth + dis(gen) * pixelWidth) - oneless;
+				endPos.z = (j * pixelWidth + dis(gen) * pixelWidth) - oneless;
+				dir = endPos - _cameraPosition;
 
+				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false };
+				pixelCol.addColour(ray.pixelRadiance());
+				//cols.push_back(pixelCol);
+			}
+			//pixelCol = ColourRGB().mixColours(cols);
+			pixelCol.divideColour(_numberOfRaysPerPixel);
+			_pixels[i][j].setColour(pixelCol);
+			cols.clear();
+			pixelCol = ColourRGB(0);
 		}
 	}
 	std::cout << "THREAD " << std::setw(5) << std::fixed << std::setprecision(1) << threads_done+1 << " DONE!\n";
