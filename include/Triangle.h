@@ -47,7 +47,7 @@ private:
 
 class LightSource : public Triangle { // light ska ha en triangöe inte ärva
 public:
-	LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, float intensity = 1.0f);
+	LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const ColourRGB colour, float intensity = 1.0f);
 
 	glm::vec3 getPosition() const {
 		return _pos;

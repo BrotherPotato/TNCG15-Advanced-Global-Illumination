@@ -86,8 +86,8 @@ bool Triangle::rayIntersection(Ray* ray) {
 }
 
 //____________________________NEW CLASS________________________________//
-LightSource::LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, float intensity) :
-	Triangle(v0, v1, v2, Material(Material::_LightSource, ColourRGB(intensity))) {
+LightSource::LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const ColourRGB colour, float intensity) :
+	Triangle(v0, v1, v2, Material(Material::_LightSource, colour)) {
 
 	_v0 = v0;
 	_v1 = v1;

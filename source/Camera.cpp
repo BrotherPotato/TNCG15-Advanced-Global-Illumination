@@ -73,7 +73,7 @@ void Camera::writeToPPM() {
 	render.close();
 };
 
-void Camera::emitRays(int raysPerPixel) {
+void Camera::emitRays() {
 
 	std::random_device rd;
 	static std::mt19937 gen(rd());
@@ -90,7 +90,7 @@ void Camera::emitRays(int raysPerPixel) {
 
 	int counter = 0;
 	int onePercentage = _pixelsPerSide * _pixelsPerSide / 100;
-	std::cout << "Emitting " << _pixelsPerSide * _pixelsPerSide * raysPerPixel << " rays:\n";
+	std::cout << "Emitting " << _pixelsPerSide * _pixelsPerSide * _numberOfRaysPerPixel << " rays:\n";
 	std::cout << "<" << std::setw(100) << ">" << std::endl;
 	std::cout << "<";
 
@@ -101,7 +101,7 @@ void Camera::emitRays(int raysPerPixel) {
 		for (int j = 0; j < _pixels[i].size(); j++) {
 
 			// skjut flera rays genom samma pixel
-			for (int k = 0; k < raysPerPixel; k++) {
+			for (int k = 0; k < _numberOfRaysPerPixel; k++) {
 				
 				// Random position inom pixeln.
 				endPos.y = (i * pixelWidth + dis(gen) * pixelWidth) - oneless;
@@ -109,15 +109,10 @@ void Camera::emitRays(int raysPerPixel) {
 				dir = endPos - _cameraPosition;
 
 				Ray ray{ getScene(), _cameraPosition, dir, ColourRGB(1), nullptr, false };
-				//pixelCol = ray.pixelRadiance();
 				pixelCol.addColour(ray.pixelRadiance());
-				//cols.push_back(pixelCol);
 			}
-			//pixelCol = ColourRGB().mixColours(cols);
-			pixelCol.divideColour(raysPerPixel);
-			//std::cout << "\nR: " << pixelCol.getR() << "\nG: " << pixelCol.getG() << "\nB: " << pixelCol.getB() << "\n";
+			pixelCol.divideColour(_numberOfRaysPerPixel);
 			_pixels[i][j].setColour(pixelCol);
-			cols.clear();
 			pixelCol = ColourRGB(0);
 
 			if (counter >= onePercentage) {

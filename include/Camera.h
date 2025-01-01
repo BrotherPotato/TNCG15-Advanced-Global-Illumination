@@ -14,10 +14,11 @@
 
 class Camera {
 public:
-	Camera(Scene* scene, int resolution) {
+	Camera(Scene* scene, int resolution, int samples) {
 		_pixelsPerSide = resolution;
 		_pixels = {std::vector<std::vector<Pixel>>(_pixelsPerSide, std::vector<Pixel>(_pixelsPerSide))};
 		_scene = scene;
+		_numberOfRaysPerPixel = samples;
 	};
 
 
@@ -26,7 +27,7 @@ public:
 	void writeToPPM();
 
 	// Loop through all pixels, shoot a ray through each pixel.
-	void emitRays(int raysPerPixel);
+	void emitRays();
 
 
 	std::vector<Ray> getRays() { return _rays; };
@@ -42,7 +43,7 @@ private:
 	unsigned _pixelsPerSide = 800;
 	std::vector<std::vector<Pixel>> _pixels;
 	const glm::vec3 _cameraPosition = glm::vec3(-1.0,0.0,0); // eye poisition enligt slides
-	const unsigned _numberOfRaysPerPixel = 100;
+	unsigned _numberOfRaysPerPixel = 1;
 
 	std::vector<Ray> _rays;
 

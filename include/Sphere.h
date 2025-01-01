@@ -20,7 +20,7 @@ public:
 
 	Material getMaterial() const override;
 
-
+	bool isSphere() const override { return true; };
 	bool rayIntersection(Ray* ray) override;
 
 private:

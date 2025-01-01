@@ -32,7 +32,6 @@ public:
 
 	// blandar färger så att alla raysperpixel kan klumpa samman till en slutfärg per pixel
 	void addColour(ColourRGB newColour);
-	void addRGB(ColourRGB newColour); // som ovan, men clamped
 
 	ColourRGB mixColours(std::vector<ColourRGB> colours);
 	void mix2Colours(ColourRGB secondCOlour);

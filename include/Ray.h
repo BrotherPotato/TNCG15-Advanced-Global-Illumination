@@ -23,7 +23,7 @@ class LightSource;
 class Ray
 {
 public:
-	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB colour, Ray* prevRay, bool isShadowRay);
+	Ray(Scene* scene, glm::vec3 start, glm::vec3 direction, ColourRGB importance, Ray* prevRay, bool isShadowRay);
 	~Ray();
 
 	Object* rayIntersection();
@@ -91,11 +91,12 @@ private:
 	int _timeToLive = 10; 
 
 	//slidesen skriver att man ska skapa colourRGB s� prob. needs changing later ocks� double precision
-	ColourRGB _colour = ColourRGB();
 	ColourRGB _importance = ColourRGB(1);
-	ColourRGB _radiance = ColourRGB();
-	ColourRGB _directLight = ColourRGB();
+	ColourRGB _radiance = ColourRGB(0);
+	ColourRGB _directLight = ColourRGB(0);
 	Object* _objectHit;
+
+	bool _refracting = false; // om en ray slutar på mirror och refraktar, gör denna true
 
 	std::shared_ptr<glm::vec3> _startingVertexPos;
 

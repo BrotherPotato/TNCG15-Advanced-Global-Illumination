@@ -21,6 +21,9 @@ public:
 	};
 
 	virtual Material getMaterial() const { return Material(); };
+
+	virtual bool isSphere() const { return false; };
+
 private:
-	
+	bool _sphere = false;
 };

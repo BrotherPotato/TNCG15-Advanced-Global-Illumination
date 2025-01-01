@@ -18,11 +18,15 @@ int main() {
 	Scene scene;
 
 	// skapa kamera
-	Camera camera = Camera(&scene, 2000);
-	int raysPerPixel = 25;
+	Camera camera = Camera(&scene, 800, 100);
 
-	// allmän reflektans för diffusa ytor
-	float reflectance = 0.01f;		
+	bool multiThread = true;
+	bool cornellBox = false;
+
+	// Alla lambertian ytors reflektans.
+	// Lågt värde = snabbare rendering, mindre färgspridning.
+	// OBS! Med många vita ytor kan värdet 1.0 ge stack overflow.
+	float reflectance = 0.99f;		
 
 	// allmän ljusstyrka för ljuskällorna
 	float intensity = 50.0f;		
@@ -43,20 +47,24 @@ int main() {
 	glm::vec3 T11(0, 6, -5);
 
 	// Cornell type shit
-	ColourRGB roofColour = ColourRGB(0);
-	ColourRGB floorColour = ColourRGB(1);
-	ColourRGB backColour = ColourRGB(1);
-	ColourRGB leftColour = ColourRGB(0,0,1);
-	ColourRGB rightColour = ColourRGB(1,0,0);
-	ColourRGB frontColour = ColourRGB(1);
+	ColourRGB roofColour = ColourRGB(0);		// Black
+	ColourRGB floorColour = ColourRGB(0);		// White
+	ColourRGB backColour = ColourRGB(0);		// White
+	ColourRGB leftColour = ColourRGB(1,0,0);	// Blue
+	ColourRGB frontColour = ColourRGB(0,0,0);	// White
+	ColourRGB rightColour = ColourRGB(0,0,1);	// Red
+	
 
-	// Färgglatt rum
-	roofColour = ColourRGB(0,0,1);
-	floorColour = ColourRGB(1,1,0);
-	backColour = ColourRGB(0,1,0);
-	leftColour = ColourRGB(1,0,1);
-	rightColour = ColourRGB(0,1,1);
-	frontColour = ColourRGB(1,0,0);
+	if (!cornellBox) {
+		// Färgglatt rum
+		roofColour = ColourRGB(0, 0, 1);			// Blue
+		floorColour = ColourRGB(1, 1, 0);			// Yellow
+		backColour = ColourRGB(0, 1, 0);			// Green
+		leftColour = ColourRGB(1, 0, 1);			// Purple
+		frontColour = ColourRGB(1, 0, 0);			// Red
+		rightColour = ColourRGB(0, 1, 1);			// Cyan
+	}
+
 
 	//Roof
 	Material RoofBlue{ Material::_LambertianReflector, roofColour, reflectance };
@@ -97,34 +105,34 @@ int main() {
 	scene.createTriangle(T1, T3, T2, WallFrontRed); // red in whiteboard
 
 
-	glm::vec3 spherePos1{ 5, 2, 1 };
+	glm::vec3 spherePos1{ 5, 1.75, 1 };
 	Material mirr{ Material::_MirrorReflection, ColourRGB(1,1,1) };
 	scene.createSphere(spherePos1, 1.5, mirr);
 
-	glm::vec3 spherePos2{ 5,-2, 1  };
-	Material purpel{ Material::_Transparent, ColourRGB(1,1,1) };
+	glm::vec3 spherePos2{ 5,-1.75, 1  };
+	Material purpel{ Material::_Transparent, ColourRGB(1,1,0) };
 	scene.createSphere(spherePos2, 1.5, purpel);
-	scene.createSphere(spherePos2, 0.75, purpel);
+	//scene.createSphere(spherePos2, 1.2, purpel); // Om man vill göra den ihålig
 
 	glm::vec3 spherePos3{ 5, 0, -2 };
-	Material sm3{ Material::_LambertianReflector, ColourRGB(1) };
+	Material sm3{ Material::_LambertianReflector, ColourRGB(1), reflectance };
 	scene.createSphere(spherePos3, 1.5, sm3);
 
-	double distanceFromCenter = 0.5;
+	double distanceFromCenter = 1;
 	double lightHeight = 4.9;
-	glm::vec3 L0(5 + distanceFromCenter, distanceFromCenter, lightHeight);
-	glm::vec3 L1(5 - distanceFromCenter, distanceFromCenter, lightHeight);
-	glm::vec3 L2(5 - distanceFromCenter, -distanceFromCenter, lightHeight);
-	glm::vec3 L3(5 + distanceFromCenter, -distanceFromCenter, lightHeight);
+	glm::vec3 L0(6 + distanceFromCenter, distanceFromCenter, lightHeight);
+	glm::vec3 L1(6 - distanceFromCenter, distanceFromCenter, lightHeight);
+	glm::vec3 L2(6 - distanceFromCenter, -distanceFromCenter, lightHeight);
+	glm::vec3 L3(6 + distanceFromCenter, -distanceFromCenter, lightHeight);
 
-	scene.createLightSourceTriangle(L3, L0, L1, intensity);
-	scene.createLightSourceTriangle(L1, L2, L3, intensity);
+	ColourRGB lightColour = ColourRGB(1); // Om man vill t.ex. ha varmare ljus
 
-
+	scene.createLightSourceTriangle(L3, L0, L1, lightColour, intensity);
+	scene.createLightSourceTriangle(L1, L2, L3, lightColour, intensity);
 
 	// skjut rays
-	camera.emitRays(raysPerPixel);			// single thread
-	//camera.render(&scene);				// multi-thread, snabbare men crashar lättare
+	if (multiThread) camera.render(&scene);
+	else camera.emitRays();	
 
 	// render
 	camera.writeToPPM();
