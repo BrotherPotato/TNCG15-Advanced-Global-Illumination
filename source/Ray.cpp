@@ -84,10 +84,6 @@ float Ray::oldCalcIntensity() { //hit a lightsource
 		}
 	}
 	finalLength = finalLength * finalLength;
-	
-	//std::cout << "skibidi: " << ptr->_intensity << "dididid " << finalLength << "asdasdasd " << (ptr->_intensity / finalLength) << "\n";
-	
-	//return glm::clamp((ptr->_intensity / finalLength), 0.0, 1.0);
 	return 0.0;
 }
 
@@ -98,7 +94,7 @@ float Ray::calcIntensity(LightSource* light) const {
 	float length = glm::length(direction);
 	float finalLength = length * length;
 	double intensity = light->getIntensity() / finalLength;
-	return intensity;				//glm::clamp((_intensity / finalLength), 0.0, 1.0);
+	return intensity;
 }
 
 ColourRGB Ray::pixelRadiance() {
@@ -163,7 +159,6 @@ ColourRGB Ray::pixelRadiance() {
 			// and add the result to the radiance of the second radiance ray.
 
 			surfaceColour = ptr->_importance;
-			ptr->_radiance.componentMult(surfaceColour);
 
 			directLight = ptr->_prevRay->_directLight;	// Direct light from shadowrays.
 			directLight.componentMult(surfaceColour); 

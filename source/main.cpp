@@ -25,8 +25,7 @@ int main() {
 
 	// Alla lambertian ytors reflektans.
 	// Lågt värde = snabbare rendering, mindre färgspridning.
-	// OBS! Med många vita ytor kan värdet 1.0 ge stack overflow.
-	float reflectance = 0.99f;		
+	float reflectance = 0.01f; // 1.0 kan ge stack overflow om scenen är för vit
 
 	// allmän ljusstyrka för ljuskällorna
 	float intensity = 50.0f;		
@@ -53,8 +52,6 @@ int main() {
 	ColourRGB leftColour = ColourRGB(1,0,0);	// Blue
 	ColourRGB frontColour = ColourRGB(0,0,0);	// White
 	ColourRGB rightColour = ColourRGB(0,0,1);	// Red
-	
-
 	if (!cornellBox) {
 		// Färgglatt rum
 		roofColour = ColourRGB(0, 0, 1);			// Blue
@@ -64,7 +61,6 @@ int main() {
 		frontColour = ColourRGB(1, 0, 0);			// Red
 		rightColour = ColourRGB(0, 1, 1);			// Cyan
 	}
-
 
 	//Roof
 	Material RoofBlue{ Material::_LambertianReflector, roofColour, reflectance };
@@ -106,17 +102,17 @@ int main() {
 
 
 	glm::vec3 spherePos1{ 5, 1.75, 1 };
-	Material mirr{ Material::_MirrorReflection, ColourRGB(1,1,1) };
-	scene.createSphere(spherePos1, 1.5, mirr);
+	Material mirror{ Material::_MirrorReflection, ColourRGB(1) };
+	scene.createSphere(spherePos1, 1.5, mirror);
 
 	glm::vec3 spherePos2{ 5,-1.75, 1  };
-	Material purpel{ Material::_Transparent, ColourRGB(1,1,0) };
-	scene.createSphere(spherePos2, 1.5, purpel);
-	//scene.createSphere(spherePos2, 1.2, purpel); // Om man vill göra den ihålig
+	Material glass{ Material::_Transparent, ColourRGB(1) };
+	scene.createSphere(spherePos2, 1.5, glass);
+	//scene.createSphere(spherePos2, 1.45, glass); // Om man vill göra den ihålig
 
 	glm::vec3 spherePos3{ 5, 0, -2 };
-	Material sm3{ Material::_LambertianReflector, ColourRGB(1), reflectance };
-	scene.createSphere(spherePos3, 1.5, sm3);
+	Material ball{ Material::_LambertianReflector, ColourRGB(1), reflectance };
+	scene.createSphere(spherePos3, 1.5, ball);
 
 	double distanceFromCenter = 1;
 	double lightHeight = 4.9;
@@ -126,7 +122,6 @@ int main() {
 	glm::vec3 L3(6 + distanceFromCenter, -distanceFromCenter, lightHeight);
 
 	ColourRGB lightColour = ColourRGB(1); // Om man vill t.ex. ha varmare ljus
-
 	scene.createLightSourceTriangle(L3, L0, L1, lightColour, intensity);
 	scene.createLightSourceTriangle(L1, L2, L3, lightColour, intensity);
 
