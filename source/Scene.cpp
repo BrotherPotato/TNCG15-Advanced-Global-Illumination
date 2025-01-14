@@ -56,6 +56,20 @@ void Scene::createBox(glm::vec3& pos, double width, double length, double height
 	_Objects.push_back(new Triangle(t11));
 }
 
+void Scene::createTetrahedron(glm::vec3& pos, double size, Material& material) {
+	float halfSize = size / 2.0f;
+
+	// Calculate the vertices
+	glm::vec3 p0 = glm::vec3(pos.x - halfSize, pos.y, pos.z - halfSize); //Back
+	glm::vec3 p1 = glm::vec3(pos.x + halfSize, pos.y + halfSize, pos.z - halfSize); //Left
+	glm::vec3 p2 = glm::vec3(pos.x + halfSize, pos.y - halfSize, pos.z - halfSize); //Right
+	glm::vec3 p3 = glm::vec3(pos.x, pos.y, pos.z + halfSize); //Top
+	_Objects.push_back(new Triangle(p0, p1, p2, material));//bottom
+	_Objects.push_back(new Triangle(p0, p2, p3, material)); //right
+	_Objects.push_back(new Triangle(p1, p3, p2, material)); //back
+	_Objects.push_back(new Triangle(p0, p3, p1, material)); //left
+}
+
 void Scene::createPlane(glm::vec3& posBotLeft, glm::vec3& posTopRight, Material& material) {
 	// z är upp, skiss finns på whiteboard vänster om COORDSYSTEWM
 	glm::vec3 p0(posBotLeft);

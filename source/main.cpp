@@ -110,9 +110,13 @@ int main() {
 	scene.createSphere(spherePos2, 1.5, glass);
 	//scene.createSphere(spherePos2, 1.45, glass); // Om man vill göra den ihålig
 
-	glm::vec3 spherePos3{ 5, 0, -2 };
-	Material ball{ Material::_LambertianReflector, ColourRGB(1), reflectance };
-	scene.createSphere(spherePos3, 1.5, ball);
+	glm::vec3 squarePos{ 5, -2, -2 };
+	Material square{ Material::_LambertianReflector, ColourRGB(1), reflectance };
+	scene.createBox(squarePos, 1.5, 1.5, 1.5, square);
+
+	glm::vec3 tetraPos{ 5, 2, -2 };
+	Material tetrahedron{ Material::_LambertianReflector, ColourRGB(1), reflectance };
+	scene.createTetrahedron(tetraPos, 2.5, tetrahedron);
 
 	double distanceFromCenter = 1;
 	double lightHeight = 4.9;
