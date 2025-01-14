@@ -110,11 +110,11 @@ int main() {
 	scene.createSphere(spherePos2, 1.5, glass);
 	//scene.createSphere(spherePos2, 1.45, glass); // Om man vill göra den ihålig
 
-	glm::vec3 squarePos{ 5, -2, -2 };
+	glm::vec3 squarePos{ 7, -3, -3 };
 	Material square{ Material::_LambertianReflector, ColourRGB(1), reflectance };
 	scene.createBox(squarePos, 1.5, 1.5, 1.5, square);
 
-	glm::vec3 tetraPos{ 5, 2, -2 };
+	glm::vec3 tetraPos{ 7, 3, -3 };
 	Material tetrahedron{ Material::_LambertianReflector, ColourRGB(1), reflectance };
 	scene.createTetrahedron(tetraPos, 2.5, tetrahedron);
 
