@@ -18,17 +18,18 @@ int main() {
 	Scene scene;
 
 	// skapa kamera
-	Camera camera = Camera(&scene, 800, 100);
+	Camera camera = Camera(&scene, 2000, 20);
 
 	bool multiThread = true;
 	bool cornellBox = false;
 
 	// Alla lambertian ytors reflektans.
 	// Lågt värde = snabbare rendering, mindre färgspridning.
-	float reflectance = 0.01f; // 1.0 kan ge stack overflow om scenen är för vit
+	float reflectance = 1.0f; // 1.0 kan ge stack overflow om scenen är för vit
 
 	// allmän ljusstyrka för ljuskällorna
 	float intensity = 50.0f;		
+	ColourRGB lightColour = ColourRGB(1); // Om man vill t.ex. ha varmare ljus
 
 	// Real scene
 	glm::vec3 T0(13, 0, 5);
@@ -125,7 +126,7 @@ int main() {
 	glm::vec3 L2(6 - distanceFromCenter, -distanceFromCenter, lightHeight);
 	glm::vec3 L3(6 + distanceFromCenter, -distanceFromCenter, lightHeight);
 
-	ColourRGB lightColour = ColourRGB(1); // Om man vill t.ex. ha varmare ljus
+	
 	scene.createLightSourceTriangle(L3, L0, L1, lightColour, intensity);
 	scene.createLightSourceTriangle(L1, L2, L3, lightColour, intensity);
 

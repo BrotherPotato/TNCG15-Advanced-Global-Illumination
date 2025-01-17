@@ -125,7 +125,7 @@ ColourRGB Ray::pixelRadiance() {
 
 		// If the endpoint is on a Lambertian reflector, we compute the direct light and feed this 𝐿𝐷(lecture 7) into the ray.
 		// If it is on a diffuse reflector, you use the estimator for the direct light (lecture 7) to get the radiance values for the first radiance ray.
-		ptr->_radiance = ptr->_directLight.componentMult(ptr->_importance);
+		ptr->_radiance = ptr->_directLight;
 	}
 
 	ColourRGB surfaceColour;
@@ -159,9 +159,10 @@ ColourRGB Ray::pixelRadiance() {
 			// and add the result to the radiance of the second radiance ray.
 
 			surfaceColour = ptr->_importance;
+			ptr->_radiance.componentMult(surfaceColour);
 
 			directLight = ptr->_prevRay->_directLight;	// Direct light from shadowrays.
-			directLight.componentMult(surfaceColour); 
+			directLight.componentMult(surfaceColour);
 
 			ptr->_radiance.addColour(directLight); // Add direct light. 
 			ptr->_prevRay->_radiance = ptr->_radiance; // Outgoing radiance.
@@ -311,28 +312,26 @@ ColourRGB Ray::castRay() {
 				shadowRayLightContribution.addColour(castShadowRay(l));
 		shadowRayLightContribution.divideColour(_shadowRaysPerRay * std::size(getScene()->getLightSources()));
 		_directLight = shadowRayLightContribution;
+		//_directLight.componentMult(colour);
 
-		// Reflect
 
+		//Russian Roulette
+		randAzimuth = 2.0f * PI * yi;
+		randInclination = glm::cos(glm::sqrt(1 - yi));
+		redefAzimuth = randAzimuth / rho;
 		if (_bounces == 1) {
 			// Första rayen är random
-			Ray::createNewRay(ranDir); 
+			Ray::createNewRay(ranDir);
 		}
-		else { 
-			// Resten är Russian Roulette
-			randAzimuth = 2.0f * PI * yi;
-			randInclination = glm::cos(glm::sqrt(1 - yi));
-			redefAzimuth = randAzimuth / rho;
-			if (redefAzimuth <= 2.0f * PI) {
-				// to cartesian
-				_importance.componentMult(rho); // gör svagare, annars kan pixlars resulterande radiance bli starkare än ljuskällan
-				float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
-				float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
-				float randomZ = glm::cos(randInclination);
-				glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
-				glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
-				Ray::createNewRay(randomDirectionGlobal);
-			}
+		else if (redefAzimuth <= 2.0f * PI) {
+			// to cartesian
+			//_importance.componentMult(rho); // gör svagare, annars kan pixlars resulterande radiance bli starkare än ljuskällan
+			float randomX = glm::cos(redefAzimuth) * glm::sin(randInclination);
+			float randomY = glm::sin(redefAzimuth) * glm::sin(randInclination);
+			float randomZ = glm::cos(randInclination);
+			glm::vec3 randomDirectionLocal = glm::vec3(randomX, randomY, randomZ);
+			glm::vec3 randomDirectionGlobal = toGlobalCoord(collisionNormal) * randomDirectionLocal;
+			Ray::createNewRay(randomDirectionGlobal);
 		}
 
 		break;
@@ -354,6 +353,11 @@ ColourRGB Ray::castRay() {
 		//std::cout << "LS ";
 
 		_importance = materialHit.getColour();
+		if (_bounces != 1) {
+			
+			double falloff = 1 / pow(glm::length(_endPos - _startPos), 2.0);
+			_importance.componentMult(falloff);
+		}
 
 		break;
 	default:
