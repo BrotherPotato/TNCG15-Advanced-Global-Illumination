@@ -96,13 +96,6 @@ LightSource::LightSource(const glm::vec3& v0, const glm::vec3& v1, const glm::ve
 	_pos = glm::vec3( (v0.x + v1.x + v2.x)/3.0 , (v0.y + v1.y + v2.y) / 3.0, (v0.z + v1.z + v2.z) / 3.0);
 	_intensity = intensity;
 }
-
-void LightSource::emitPhotons() {
-
-	// shoot em mfs
-}
-
-
 //Lecture 4
 bool LightSource::rayIntersection(Ray* ray) {
 	//Möller-Trumbore algorithm for triangles

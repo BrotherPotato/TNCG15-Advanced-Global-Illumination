@@ -11,7 +11,7 @@ public:
 
 
 	virtual glm::vec3 getNormal(Ray* ray) const {
-		std::cout << "waa ";
+		std::cout << "waa "; // test för att se om just denna funktion kallas, när den egentligen aldrig ska användas.
 		return glm::vec3();
 	}
 
@@ -21,7 +21,6 @@ public:
 	};
 
 	virtual Material getMaterial() const { return Material(); };
-
 	virtual bool isSphere() const { return false; };
 
 private:

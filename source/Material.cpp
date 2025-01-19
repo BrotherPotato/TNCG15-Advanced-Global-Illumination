@@ -3,10 +3,10 @@
 
 
 
-Material::Material(MaterialType material, ColourRGB colour, float reflectance) {
+Material::Material(MaterialType material, ColourRGB colour, float reflectivity) {
 	_ObjectMaterial = material;
 	_ObjectColour = colour;
-	_reflectance = reflectance;
+	_reflectivity = reflectivity;
 };
 // galen syntax jag vet
 Material::MaterialType Material::getMaterialType() const {

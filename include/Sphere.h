@@ -16,8 +16,6 @@ public:
 	glm::vec3 getNormal(Ray* ray) const override;
 	void setNormal(glm::vec3 normal) { _normal = normal; };
 
-	//ColourRGB getColour() const;
-
 	Material getMaterial() const override;
 
 	bool isSphere() const override { return true; };

@@ -122,6 +122,4 @@ void ColourRGB::mix2Colours(ColourRGB secondCOlour) {
 	cols.push_back(*this);
 	cols.push_back(secondCOlour);
 	*this = ColourRGB().mixColours(cols);
-
-	
 }

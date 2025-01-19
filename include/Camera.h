@@ -29,15 +29,11 @@ public:
 	// Loop through all pixels, shoot a ray through each pixel.
 	void emitRays();
 
-
-	std::vector<Ray> getRays() { return _rays; };
+	//std::vector<Ray> getRays() { return _rays; };
 
 	Scene* getScene() { return _scene; };
 
 	void normalizePixelColours();
-
-	void renderRangeOfColums(Scene* scene, int start_colum, int end_colum, int threads_done, int num_threads);
-	void render(Scene* scene);
 
 private:
 	unsigned _pixelsPerSide = 800;

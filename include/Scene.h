@@ -47,10 +47,10 @@ public:
 	std::vector<Object*>& getObjects() { return _Objects; };
 	std::vector<LightSource*>& getLightSources() { return _LightSources; };
 
-	std::vector<Object*>& getOALS();
+	std::vector<Object*>& getOALS(); // OALS = Objects And Light Sources
 
 private:
-	//std::vector<Triangle> a;
+
 	std::vector<Object*> _Objects; // innehåller trianglar och sfärer
 	std::vector<LightSource*> _LightSources; // Lightsource är trianglar 
 

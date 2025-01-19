@@ -31,9 +31,6 @@ public:
 	ColourRGB castRay();
 	ColourRGB castShadowRay(LightSource* light);
 
-
-	//glm::vec3 bounce();
-
 	void setNextRay(Ray* nextRay);
 
 	glm::vec3 getDirection() const;
@@ -43,7 +40,6 @@ public:
 	int getBounces() const;
 	Scene* getScene() const;
 	
-	//ColourRGB getColour();
 
 	float calcIntensity(LightSource* light) const;
 	float oldCalcIntensity();
@@ -51,9 +47,6 @@ public:
 	ColourRGB pixelRadiance();
 
 	const glm::mat3 toLocalCoord(glm::vec3 normal) {
-		//const glm::vec3 Z{ normal };
-		//const glm::vec3 X = glm::normalize(_direction - glm::dot(_direction, Z) * Z);
-		//const glm::vec3 Y = glm::cross(-X, Z);
 
 		// lec 2 slide 13
 		glm::vec3 x_L = glm::normalize(-_direction + glm::dot(normal, _direction) * normal);
@@ -80,15 +73,12 @@ public:
 	    
 private:
 	glm::vec3 _startPos;
-	glm::vec3 _endPos; // se Triangle::rayIntersection f�r att hitta d�r endPos definieras
+	glm::vec3 _endPos; // se Triangle::rayIntersection
 	glm::vec3 _direction;
 
 	//doubly linked list
 	Ray* _prevRay;
 	Ray* _nextRay;
-
-	// om vi vill kunnda d�da en ray efter x antal studsar
-	int _timeToLive = 10; 
 
 	//slidesen skriver att man ska skapa colourRGB s� prob. needs changing later ocks� double precision
 	ColourRGB _importance = ColourRGB(1);
@@ -100,22 +90,17 @@ private:
 
 	std::shared_ptr<glm::vec3> _startingVertexPos;
 
-	//anv�nder _ f�r att visa att det �r klassvariabel.
-
-
-	int _bounces; // b�rja p� 1 annars d�r den, ??? f�r nu ett v�rde i Ray()
+	int _bounces;
 
 	Scene* _scene;
 
 	bool _isShadowRay;
-	bool _lit = false;
+	bool _lit = false; // om en shadowray träffade ljus
 
 	static constexpr int _shadowRaysPerRay = 1;
-	static constexpr float _airRefractiveIndex = 1.0f;
-	static constexpr float _glassRefractiveIndex = 1.5f;
 
-	float _n1 = 1.0f;
-	float _n2 = 1.5f;
+	float _n1 = 1.0f; // för luft, men dessa två värden byter plats om rayen färdas genom ett av dem
+	float _n2 = 1.5f; // för glas
 
 };
 

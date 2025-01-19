@@ -34,9 +34,6 @@ public:
 
 	Material getMaterial() const override;
 
-
-	bool intersect(Ray& ray) const;
-
 private:
 	glm::vec3 _v0, _v1, _v2, _normal;
 	//ColourRGB _colour{ 0,0,0 };
@@ -90,18 +87,10 @@ public:
 	}
 
 	bool rayIntersection(Ray* ray) override; // fixa med normal
-
-	void emitPhotons();
 private:
 
 	glm::vec3 _v0, _v1, _v2, _normal;
 	ColourRGB _lightColour{ 1, 1 ,1 }; //vit default
 	double _intensity;
 	glm::vec3 _pos; 
-
-	//glm::vec3 _v0, _v1, _v2, _normal;
-	//Material _ObjectMaterial = Material::_LightSource;
-
 };
-
-// points

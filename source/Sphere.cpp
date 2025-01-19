@@ -52,19 +52,16 @@ bool Sphere::rayIntersection(Ray* ray) {
 	
 	//no solution, ray miss, Abs < 0
 	if (arg < 0) {
-		//std::cout << "tjabba";
 		return false;
 	}
 
 	//one solution, ray touches sphere, Abs = 0
 	if (arg == 0) {
-		//std::cout << "tjena";
 		tmin = -c2 / (2 * c1);
 	}
 
 	//two solutions, Abs > 0
 	if (arg > 0) {
-		//std::cout << "hallå";
 		// we use the lowest value of tmin - before sqrt
 		t1 = (-c2 - std::sqrt(arg)) / (2.0f * c1);
 		t2 = (-c2 + std::sqrt(arg)) / (2.0f * c1);
@@ -72,7 +69,7 @@ bool Sphere::rayIntersection(Ray* ray) {
 		if (t1 < t2) tmin = t1;
 		else tmin = t2;
 	}
-	//std::cout << tmin;
+
 	glm::vec3 xr = S + D * tmin;
 
 	if (tmin <= epsilon || tmin > 1000.0f) {
